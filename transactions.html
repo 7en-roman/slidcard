@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SlidCard — Інвентар</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>/* ═══════════════════════════════════════════════════════════
+   SlidCard v3.0 — Premium Dark Design System
+   Palette: Deep black + Electric cyan accent
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@600;700;800&display=swap');
+
+:root {
+  /* Core palette */
+  --bg:          #080A0F;
+  --bg2:         #0D1017;
+  --surface:     #111520;
+  --surface2:    #161C2C;
+  --surface3:    #1C2338;
+  --border:      rgba(255,255,255,.06);
+  --border2:     rgba(255,255,255,.10);
+  --border3:     rgba(255,255,255,.16);
+
+  /* Cyan accent system */
+  --cyan:        #00D4FF;
+  --cyan2:       #00A8CC;
+  --cyan3:       #007A99;
+  --cyan-glow:   rgba(0,212,255,.15);
+  --cyan-dim:    rgba(0,212,255,.08);
+
+  /* Text */
+  --text:        #F0F4FF;
+  --text2:       #A8B4CC;
+  --text3:       #6B7A99;
+  --dim:         #4A5568;
+
+  /* Semantic */
+  --up:          #00E5A0;
+  --down:        #FF4D6A;
+  --gold:        #FFB800;
+  --gold2:       #CC9200;
+  --warn:        #FF8C00;
+
+  /* Rarity hex (unchanged for cards) */
+  --c-common:    #7A8595;
+  --c-rare:      #4C8DFF;
+  --c-epic:      #B15CFF;
+  --c-legendary: #F0B429;
+  --c-ultimate:  #FF4757;
+
+  /* Typography */
+  --font-disp:   'Syne', sans-serif;
+  --font-ui:     'Inter', sans-serif;
+  --font-mono:   'JetBrains Mono', monospace;
+
+  /* Spacing & shape */
+  --r-sm:   6px;
+  --r-md:   10px;
+  --r-lg:   14px;
+  --r-xl:   20px;
+  --r-2xl:  28px;
+
+  /* Sidebar */
+  --sidebar-w: 220px;
+  --topbar-h:  56px;
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, select, textarea { font-family: inherit; }
+
+/* ── App layout ─────────────────────────────────────────── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.sidebar-brand {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.sidebar-brand .brand-name {
+  font-family: var(--font-disp);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--text);
+}
+.sidebar-brand .brand-name span { color: var(--cyan); }
+.sidebar-brand .brand-ver {
+  font-size: 10px;
+  color: var(--dim);
+  font-family: var(--font-mono);
+  margin-top: 1px;
+}
+
+.sidebar-section {
+  padding: 0 10px;
+  margin-bottom: 4px;
+}
+.sidebar-section-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--dim);
+  padding: 8px 10px 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--r-md);
+  color: var(--text3);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all .15s;
+  position: relative;
+  cursor: pointer;
+}
+.nav-item:hover {
+  background: var(--surface);
+  color: var(--text2);
+}
+.nav-item.active {
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  font-weight: 600;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 2px;
+  background: var(--cyan);
+  border-radius: 0 2px 2px 0;
+}
+.nav-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  background: var(--surface);
+  flex-shrink: 0;
+  transition: .15s;
+}
+.nav-item.active .nav-icon {
+  background: rgba(0,212,255,.12);
+}
+.nav-item:hover .nav-icon {
+  background: var(--surface2);
+}
+.nav-label { flex: 1; }
+
+.sidebar-spacer { flex: 1; }
+.sidebar-bottom {
+  padding: 10px;
+  border-top: 1px solid var(--border);
+}
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: .15s;
+}
+.sidebar-user:hover { background: var(--surface); }
+.user-av {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan2), #6B6BFF);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-disp);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.user-info { min-width: 0; }
+.user-name { font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-id { font-size: 10px; color: var(--dim); font-family: var(--font-mono); }
+
+/* ── TOPBAR ──────────────────────────────────────────────── */
+.topbar {
+  height: var(--topbar-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-family: var(--font-disp);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.topbar-spacer { flex: 1; }
+
+/* Balance chip */
+.balance-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 999px;
+  padding: 6px 14px 6px 10px;
+  transition: .15s;
+}
+.balance-chip:hover { border-color: var(--border3); }
+.balance-icon {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #00D4FF, #0066FF);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+.balance-amount {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Live badge */
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--up);
+  box-shadow: 0 0 6px var(--up);
+  animation: livePulse 2s infinite;
+}
+@keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.tb-clock {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text3);
+}
+
+/* ── MAIN CONTENT ────────────────────────────────────────── */
+.main-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+.main-content::-webkit-scrollbar { width: 4px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+/* Ticker */
+.ticker-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  height: 32px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.ticker-track {
+  display: flex;
+  animation: tickerScroll 60s linear infinite;
+  white-space: nowrap;
+}
+@keyframes tickerScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 20px;
+  font-size: 11px;
+  border-right: 1px solid var(--border);
+}
+.ticker-item .nm { color: var(--text3); }
+.ticker-item .up { color: var(--up); font-family: var(--font-mono); font-size: 10px; }
+.ticker-item .dn { color: var(--down); font-family: var(--font-mono); font-size: 10px; }
+
+/* ── COMPONENTS ──────────────────────────────────────────── */
+
+/* Page header */
+.page-header { margin-bottom: 24px; }
+.page-title {
+  font-family: var(--font-disp);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -.02em;
+}
+.page-sub { font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+/* Cards/panels */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title {
+  font-family: var(--font-disp);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+.card-body { padding: 20px; }
+
+/* Stat blocks */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 10px; }
+.stat-block {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+}
+.stat-label { font-size: 10px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+.stat-value { font-family: var(--font-disp); font-size: 22px; font-weight: 800; color: var(--text); }
+.stat-value.cyan { color: var(--cyan); }
+.stat-value.up { color: var(--up); }
+.stat-value.down { color: var(--down); }
+.stat-value.gold { color: var(--gold); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all .15s;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+}
+.btn-primary {
+  background: var(--cyan);
+  color: #05080F;
+  border-color: var(--cyan);
+}
+.btn-primary:hover { background: #1ADAFF; box-shadow: 0 0 20px rgba(0,212,255,.3); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text2);
+  border-color: var(--border2);
+}
+.btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: var(--border3); }
+.btn-surface {
+  background: var(--surface2);
+  color: var(--text2);
+  border-color: var(--border);
+}
+.btn-surface:hover { background: var(--surface3); color: var(--text); }
+.btn-up { background: rgba(0,229,160,.12); color: var(--up); border-color: rgba(0,229,160,.2); }
+.btn-up:hover { background: rgba(0,229,160,.2); }
+.btn-down { background: rgba(255,77,106,.12); color: var(--down); border-color: rgba(255,77,106,.2); }
+.btn-down:hover { background: rgba(255,77,106,.2); }
+.btn-gold { background: rgba(255,184,0,.12); color: var(--gold); border-color: rgba(255,184,0,.2); }
+.btn-gold:hover { background: rgba(255,184,0,.2); }
+.btn-block { width: 100%; }
+.btn-lg { padding: 12px 24px; font-size: 14px; }
+.btn-sm { padding: 5px 12px; font-size: 11px; }
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.badge-common    { background:rgba(122,133,149,.15);color:#7A8595 }
+.badge-rare      { background:rgba(76,141,255,.15);color:#4C8DFF }
+.badge-epic      { background:rgba(177,92,255,.15);color:#B15CFF }
+.badge-legendary { background:rgba(240,180,41,.15);color:#F0B429 }
+.badge-ultimate  { background:rgba(255,71,87,.15);color:#FF4757 }
+
+/* Chips / filter pills */
+.chip {
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text3);
+  transition: .12s;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--border2); color: var(--text2); }
+.chip.active { background: rgba(0,212,255,.1); border-color: var(--cyan); color: var(--cyan); }
+
+/* Inputs */
+.input-group { margin-bottom: 14px; }
+.input-label { display: block; font-size: 11px; font-weight: 600; color: var(--text3); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .06em; }
+.input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-md);
+  color: var(--text);
+  font-size: 13px;
+  padding: 9px 13px;
+  outline: none;
+  transition: .15s;
+  font-family: var(--font-ui);
+}
+.input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,.08); }
+.input::placeholder { color: var(--dim); }
+
+/* Auth tabs */
+.auth-tabs { display: flex; gap: 4px; background: var(--surface2); border-radius: var(--r-md); padding: 3px; margin-bottom: 20px; }
+.auth-tab { flex: 1; padding: 7px; border-radius: var(--r-sm); font-size: 12px; font-weight: 600; color: var(--text3); cursor: pointer; text-align: center; transition: .15s; }
+.auth-tab.on { background: var(--surface3); color: var(--text); }
+.auth-err { font-size: 11px; color: var(--down); margin: 4px 0; min-height: 16px; }
+
+/* Tables */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text3);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+}
+.data-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--surface2); }
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,8,15,.8);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-2xl);
+  width: 100%;
+  max-width: 480px;
+  max-height: 88vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 32px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(0,212,255,.06);
+  animation: modalIn .2s ease;
+}
+.modal-sm { max-width: 400px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(16px) scale(.97)} to{opacity:1;transform:none} }
+.modal-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-family: var(--font-disp); font-size: 16px; font-weight: 700; }
+.modal-close { width: 28px; height: 28px; border-radius: 50%; background: var(--surface2); color: var(--text3); font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: .15s; border: 1px solid var(--border); }
+.modal-close:hover { background: var(--surface3); color: var(--text); }
+.modal-body { padding: 22px; overflow-y: auto; flex: 1; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+/* Toasts */
+#toast-root { position: fixed; top: 16px; right: 16px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  border-radius: var(--r-lg);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  animation: toastIn .25s ease;
+  max-width: 320px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+}
+.toast.out { animation: toastOut .3s ease forwards; }
+.toast-win  { border-color: rgba(0,229,160,.3); }
+.toast-lose { border-color: rgba(255,77,106,.3); }
+.toast-warn { border-color: rgba(255,184,0,.3); }
+.toast-icon { font-size: 16px; }
+@keyframes toastIn  { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:none} }
+@keyframes toastOut { to{opacity:0;transform:translateX(20px)} }
+
+/* Currency display */
+.currency {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+.currency::before {
+  content: '$';
+  font-size: .8em;
+  opacity: .7;
+}
+.currency.gold { color: var(--gold); }
+.currency.up   { color: var(--up); }
+.currency.dim  { color: var(--text3); }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* Flex utils */
+.row { display: flex; align-items: center; gap: 10px; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.col { display: flex; flex-direction: column; gap: 10px; }
+.flex1 { flex: 1; }
+
+/* Grid utils */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* Mono */
+.mono { font-family: var(--font-mono); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+/* Glowing elements */
+.glow-cyan { box-shadow: 0 0 30px rgba(0,212,255,.2); }
+.glow-text { text-shadow: 0 0 20px rgba(0,212,255,.4); }
+
+.sport-card{width:140px;height:196px;border-radius:12px;position:relative;overflow:hidden;flex-shrink:0;cursor:pointer;transition:all .2s}
+.sport-card:hover{transform:translateY(-4px) scale(1.03)}
+.sport-card .sc-bg{position:absolute;inset:0;background:var(--panel2);border:1px solid var(--border);border-radius:12px}
+.sport-card .sc-rarity-glow{position:absolute;inset:0;border-radius:12px;border:2px solid transparent;transition:.2s}
+.sport-card .sc-icon{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.sport-card .sc-img{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:42px;line-height:1}
+.sport-card .sc-name{position:absolute;bottom:46px;left:0;right:0;text-align:center;font-family:var(--font-disp);font-size:12px;font-weight:700;padding:0 6px;line-height:1.3}
+.sport-card .sc-team{position:absolute;bottom:30px;left:0;right:0;text-align:center;font-size:9px;color:var(--dim);padding:0 4px}
+.sport-card .sc-pos{position:absolute;bottom:10px;left:8px;font-size:9px;font-family:var(--font-mono);font-weight:600}
+.sport-card .sc-rating{position:absolute;bottom:10px;right:8px;font-size:11px;font-family:var(--font-mono);font-weight:800}
+/* sc-rarity-badge moved to NEW_CARD_CSS */
+.sport-card .sc-year{position:absolute;top:28px;right:6px;font-size:8px;font-weight:800;background:rgba(240,180,41,.9);color:#06080B;border-radius:4px;padding:1px 5px;font-family:var(--font-mono);z-index:2;line-height:1.4}
+.sport-card .sc-cnt{position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;background:rgba(0,0,0,.6);border-radius:4px;padding:2px 5px;font-family:var(--font-mono)}
+.sport-card .sc-price{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--gold)}
+
+/* Rarity styles */
+.rarity-common    .sc-bg{background:linear-gradient(145deg,#1a1f28,#10141A)}
+.rarity-common    .sc-rarity-glow{border-color:var(--c-common);box-shadow:0 0 12px rgba(122,133,149,.2)}
+.rarity-common    .sc-rarity-badge{background:rgba(122,133,149,.2);color:var(--c-common)}
+.rarity-common    .sc-rating{color:var(--c-common)}
+
+.rarity-rare      .sc-bg{background:linear-gradient(145deg,#0d1a2e,#10141A)}
+.rarity-rare      .sc-rarity-glow{border-color:var(--c-rare);box-shadow:0 0 16px rgba(76,141,255,.25)}
+.rarity-rare      .sc-rarity-badge{background:rgba(76,141,255,.2);color:var(--c-rare)}
+.rarity-rare      .sc-rating{color:var(--c-rare)}
+
+.rarity-epic      .sc-bg{background:linear-gradient(145deg,#1a0d2e,#10141A)}
+.rarity-epic      .sc-rarity-glow{border-color:var(--c-epic);box-shadow:0 0 20px rgba(177,92,255,.3)}
+.rarity-epic      .sc-rarity-badge{background:rgba(177,92,255,.2);color:var(--c-epic)}
+.rarity-epic      .sc-rating{color:var(--c-epic)}
+
+.rarity-legendary .sc-bg{background:linear-gradient(145deg,#2a1e00,#10141A)}
+.rarity-legendary .sc-rarity-glow{border-color:var(--c-legendary);box-shadow:0 0 24px rgba(240,180,41,.35)}
+.rarity-legendary .sc-rarity-badge{background:rgba(240,180,41,.45);color:#fff}}
+.rarity-legendary .sc-rating{color:var(--c-legendary)}
+.rarity-legendary .sc-name{color:var(--gold)}
+
+.rarity-ultimate  .sc-bg{background:linear-gradient(145deg,#2a0008,#10141A)}
+.rarity-ultimate  .sc-rarity-glow{border-color:var(--c-ultimate);box-shadow:0 0 30px rgba(255,71,87,.4);animation:ultimatePulse 2s infinite}
+.rarity-ultimate  .sc-rarity-badge{background:rgba(255,71,87,.2);color:var(--c-ultimate)}
+.rarity-ultimate  .sc-rating{color:var(--c-ultimate)}
+.rarity-ultimate  .sc-name{color:var(--c-ultimate)}
+@keyframes ultimatePulse{0%,100%{box-shadow:0 0 30px rgba(255,71,87,.4)}50%{box-shadow:0 0 50px rgba(255,71,87,.7)}}
+
+/* FLIP CARD (pack opening) */
+.card-flip{width:140px;height:196px}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.3,.1,.2,1);transform:rotateY(180deg)}
+.card-flip.revealed .card-inner{transform:rotateY(0deg)}
+.card-face{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;overflow:hidden}
+.card-back{background:repeating-linear-gradient(135deg,#0C0F14 0 8px,#141922 8px 16px);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transform:rotateY(180deg)}
+.card-back .logo{font-family:var(--font-disp);font-size:22px;font-weight:700;color:var(--dim);opacity:.5}
+
+/* ── MODALS ─────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border2);border-radius:var(--radius-xl);width:100%;max-width:480px;max-height:85vh;overflow:clip;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.6);animation:modalIn .2s ease}
+.modal-lg{max-width:640px}
+.modal-sm{max-width:400px}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-family:var(--font-disp);font-size:18px;font-weight:700}
+.modal-close{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:16px;cursor:pointer;transition:.15s}
+.modal-close:hover{background:var(--panel2);color:var(--text)}
+.modal-body{padding:24px 20px 20px;overflow:visible;flex:1}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;flex-shrink:0}
+
+/* ── TOAST ─────────────────────────────────────────── */
+#toast-root{position:fixed;top:64px;right:14px;z-index:9000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--panel);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:10px 16px;min-width:240px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .25s ease;pointer-events:auto;font-size:12px}
+.toast-icon{font-size:16px;flex-shrink:0}
+.toast.out{animation:toastOut .3s ease forwards}
+.toast-win{border-left:3px solid var(--up)}
+.toast-lose{border-left:3px solid var(--down)}
+.toast-info{border-left:3px solid var(--cyan)}
+.toast-warn{border-left:3px solid var(--gold)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+
+/* ── UTILS ─────────────────────────────────────────── */
+.c-up{color:var(--up)!important}
+.c-down{color:var(--down)!important}
+.c-gold{color:var(--gold)!important}
+.c-cyan{color:var(--cyan)!important}
+.c-dim{color:var(--dim)!important}
+.c-common{color:var(--c-common)!important}
+.c-rare{color:var(--c-rare)!important}
+.c-epic{color:var(--c-epic)!important}
+.c-legendary{color:var(--c-legendary)!important}
+.c-ultimate{color:var(--c-ultimate)!important}
+.mono{font-family:var(--font-mono)}
+.disp{font-family:var(--font-disp)}
+.divider{height:1px;background:var(--border);margin:14px 0}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700}
+.badge-common{background:rgba(122,133,149,.15);color:var(--c-common)}
+.badge-rare{background:rgba(76,141,255,.15);color:var(--c-rare)}
+.badge-epic{background:rgba(177,92,255,.15);color:var(--c-epic)}
+.badge-legendary{background:rgba(240,180,41,.15);color:var(--c-legendary)}
+.badge-ultimate{background:rgba(255,71,87,.15);color:var(--c-ultimate)}
+.empty-note{text-align:center;padding:48px 20px;color:var(--dim);font-size:14px}
+.empty-note .icon{font-size:40px;margin-bottom:12px}
+
+/* ── AUTH ─────────────────────────────────────────── */
+.auth-screen{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-box{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px 28px}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.auth-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--gold));display:flex;align-items:center;justify-content:center;font-family:var(--font-disp);font-weight:700;font-size:14px;color:#06080B;flex-shrink:0}
+.auth-logo h1{font-size:24px;margin:0}
+.auth-sub{color:var(--dim);font-size:12px;margin:0 0 24px;line-height:1.6}
+.auth-tabs{display:flex;background:var(--panel2);border-radius:var(--radius-lg);padding:4px;margin-bottom:22px}
+.auth-tab{flex:1;padding:8px;text-align:center;border-radius:var(--radius);font-size:13px;font-weight:700;cursor:pointer;color:var(--dim);background:none;transition:all .2s;font-family:var(--font-disp)}
+.auth-tab.on{background:var(--cyan);color:#06080B}
+.auth-err{color:var(--down);font-size:12px;margin-top:8px;min-height:14px}
+.auth-toggle{text-align:center;margin-top:16px;font-size:12px;color:var(--dim)}
+.auth-toggle a{color:var(--cyan);cursor:pointer}
+
+/* ── SECTION TITLE ──────────────────────────────────── */
+.section-title{font-size:11px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;margin:0 0 14px;font-weight:700;font-family:var(--font-disp)}
+.row-between{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+
+/* ── CHIPS / FILTERS ────────────────────────────────── */
+.chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--panel);border:1px solid var(--border);color:var(--dim);font-size:11px;font-weight:700;padding:6px 13px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.15s}
+.chip:hover{color:var(--text);border-color:var(--border2)}
+.chip.active{background:var(--panel2);color:var(--text);border-color:var(--border2)}
+
+/* ── STAT CARDS ─────────────────────────────────────── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px}
+.stat-card .k{font-size:10px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.stat-card .v{font-family:var(--font-mono);font-size:18px;font-weight:700}
+
+/* ── LEADEVelocity JuniorsOARD ────────────────────────────────────── */
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:6px}
+.lb-rank{font-family:var(--font-disp);font-size:16px;font-weight:700;width:32px;text-align:center;color:var(--dim)}
+.lb-rank.top{color:var(--gold)}
+.lb-name{flex:1;font-weight:600}
+.lb-val{font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--gold)}
+
+
+/* ── SPORT CARD — нова структура ─────────────────────── */
+.sport-card{position:relative;border-radius:12px;overflow:hidden;flex-shrink:0;cursor:pointer;transition:all .2s;display:inline-block}
+.sport-card:hover{transform:translateY(-4px) scale(1.03)}
+.sport-card .sc-bg{position:absolute;inset:0;border-radius:12px}
+.sport-card .sc-rarity-glow{position:absolute;inset:0;border-radius:12px;border:2px solid transparent;transition:.2s;pointer-events:none}
+
+/* Кількість — вгорі зліва */
+.sport-card .sc-cnt{position:absolute !important;top:6px !important;left:6px !important;right:auto !important;font-size:9px;font-weight:800;background:rgba(0,0,0,.6);border-radius:4px;padding:2px 5px;font-family:var(--font-mono);color:#fff;z-index:3;width:auto}
+
+/* Рідкість — вгорі справа */
+.sport-card .sc-rarity-badge{position:absolute !important;top:6px !important;right:6px !important;left:auto !important;font-size:8px;font-weight:800;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.06em;z-index:3;pointer-events:none;border:1px solid rgba(255,255,255,.15);width:auto;display:inline-block}
+
+/* Рік — під рідкістю справа */
+.sport-card .sc-year{position:absolute;top:26px;right:6px;font-size:8px;font-weight:800;border-radius:6px;padding:2px 7px;font-family:var(--font-mono);z-index:3;line-height:1.4;border:1px solid rgba(255,255,255,.15)}
+
+/* Емодзі — по центру верхньої частини */
+.sport-card .sc-img{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);line-height:1;text-align:center}
+
+/* Ім'я */
+.sport-card .sc-name{position:absolute;bottom:38px;left:0;right:0;text-align:center;font-family:var(--font-disp);font-size:12px;font-weight:700;padding:0 6px;line-height:1.3;color:var(--text)}
+
+/* Команда */
+.sport-card .sc-team{position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:9px;color:var(--dim);padding:0 4px}
+
+/* Нижній рядок: позиція + ціна + рейтинг */
+.sport-card .sc-pos{position:absolute;bottom:6px;left:7px;font-size:9px;font-family:var(--font-mono);font-weight:600;color:var(--dim)}
+.sport-card .sc-price{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:9px;font-weight:700;color:var(--gold)}
+.sport-card .sc-rating{position:absolute;bottom:6px;right:7px;font-size:10px;font-family:var(--font-mono);font-weight:800}
+.rarity-common    .sc-rating{color:#7A8595}
+.rarity-rare      .sc-rating{color:#4C8DFF}
+.rarity-epic      .sc-rating{color:#B15CFF}
+.rarity-legendary .sc-rating{color:#F0B429}
+.rarity-ultimate  .sc-rating{color:#FF4757}
+
+.rarity-common    .sc-rarity-badge{background:rgba(122,133,149,.25);color:#7A8595}
+.rarity-rare      .sc-rarity-badge{background:rgba(76,141,255,.2);color:#4C8DFF}
+.rarity-epic      .sc-rarity-badge{background:rgba(177,92,255,.2);color:#B15CFF}
+.rarity-legendary .sc-rarity-badge{background:rgba(240,180,41,.2);color:#F0B429}
+.rarity-ultimate  .sc-rarity-badge{background:rgba(255,71,87,.2);color:#FF4757}
+50%{box-shadow:0 0 55px rgba(255,71,87,.8)}}
+/* ── MODAL CARD FLIP ─── */
+.modal-card-flip{width:160px;height:224px;perspective:800px;cursor:pointer;margin:0 auto;display:block;border-radius:12px}
+.modal-card-inner{width:160px;height:224px;position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,.2,.2,1);margin:0 auto}
+.modal-card-flip.flipped .modal-card-inner{transform:rotateY(180deg)}
+.modal-card-face{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.modal-card-back{transform:rotateY(180deg);border-radius:12px;padding:14px 12px 10px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+
+.modal-card-back .back-title{font-family:var(--font-disp);font-size:12px;font-weight:700;color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:.1em;text-align:center;margin-bottom:6px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1)}
+.modal-card-back .back-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;flex:1;overflow:hidden;align-content:start;min-width:0}
+.modal-card-back .back-col{display:flex;flex-direction:column;gap:4px;overflow:hidden;min-width:0}
+.modal-card-back .back-item{display:flex;flex-direction:column;gap:2px;padding:2px 0}
+.modal-card-back .back-label{font-size:7.5px;color:rgba(255,255,255,.38);font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-family:var(--font-ui)}
+.modal-card-back .back-val{font-size:10px;font-weight:700;color:#fff;word-break:break-word;line-height:1.2;letter-spacing:.01em;font-family:var(--font-disp)}
+.modal-card-back .back-id{font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,.55);word-break:break-all;line-height:1.3}
+.flip-hint{font-size:10px;color:var(--dim);text-align:center;margin-top:6px;opacity:.6}
+/* === sc-small — для маленьких карток 100x140 === */
+.sc-small.sport-card .sc-img{font-size:28px !important;top:8px}
+.sc-small.sport-card .sc-name{font-size:9px;bottom:24px}
+.sc-small.sport-card .sc-team{font-size:7px;bottom:16px}
+.sc-small.sport-card .sc-pos{font-size:7px;bottom:4px;left:5px}
+.sc-small.sport-card .sc-rating{font-size:9px;bottom:4px;right:5px}
+.sc-small.sport-card .sc-price{font-size:8px;bottom:4px}
+.sc-small.sport-card .sc-rarity-badge{font-size:7px;padding:1px 5px;top:4px;right:4px}
+.sc-small.sport-card .sc-year{font-size:7px !important;padding:1px 4px !important;top:23px !important;right:6px !important}
+.sc-small.sport-card .sc-cnt{font-size:8px;padding:1px 4px;top:4px;left:4px}
+
+
+/* ── LIGHT THEME ── */
+[data-theme="light"] {
+  --bg: #F2F5FB;
+  --bg2: #E8EDF8;
+  --surface: #FFFFFF;
+  --surface2: #F0F4FF;
+  --surface3: #E4ECF8;
+  --border: rgba(0,0,0,.08);
+  --border2: rgba(0,0,0,.14);
+  --border3: rgba(0,0,0,.20);
+  --text: #0D1117;
+  --text2: #374151;
+  --text3: #6B7280;
+  --dim: #9CA3AF;
+  --cyan: #0066CC;
+  --cyan2: #0052A3;
+  --cyan3: #003D7A;
+  --cyan-glow: rgba(0,102,204,.12);
+  --cyan-dim: rgba(0,102,204,.06);
+  --up: #15803D;
+  --down: #DC2626;
+  --gold: #B45309;
+  --gold2: #92400E;
+}
+[data-theme="light"] .sidebar { background: #E8EDF8; }
+[data-theme="light"] .topbar { background: #E8EDF8; }
+[data-theme="light"] .ticker-bar { background: #F0F4FF; }
+[data-theme="light"] body { background: #F0F4FF; }
+
+/* ── MIDNIGHT THEME ── */
+[data-theme="midnight"] {
+  --bg: #030712;
+  --bg2: #060D1F;
+  --surface: #0A1128;
+  --surface2: #0F1A38;
+  --surface3: #152248;
+  --border: rgba(0,212,255,.08);
+  --border2: rgba(0,212,255,.14);
+  --border3: rgba(0,212,255,.22);
+  --cyan: #00F5FF;
+  --cyan2: #00C8D4;
+  --cyan-dim: rgba(0,245,255,.06);
+  --cyan-glow: rgba(0,245,255,.12);
+}
+[data-theme="midnight"] .sidebar { background: #060D1F; border-right-color: rgba(0,212,255,.1); }
+[data-theme="midnight"] .topbar { background: #060D1F; border-bottom-color: rgba(0,212,255,.1); }
+[data-theme="midnight"] .balance-icon { background: linear-gradient(135deg,#00F5FF,#0044FF); }
+
+
+/* ── THEMES ─────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:#080A0F; --bg2:#0D1017; --surface:#111520; --surface2:#161C2C;
+  --surface3:#1C2338; --border:rgba(255,255,255,.06); --border2:rgba(255,255,255,.10);
+  --text:#F0F4FF; --text2:#A8B4CC; --text3:#6B7A99; --dim:#4A5568;
+}
+[data-theme="midnight"] {
+  --bg:#030508; --bg2:#070A12; --surface:#0C1020; --surface2:#111828;
+  --surface3:#162030; --border:rgba(0,212,255,.08); --border2:rgba(0,212,255,.14);
+  --text:#E8F4FF; --text2:#90B0D0; --text3:#507090; --dim:#304050;
+  --cyan:#00E5FF; --cyan2:#00B8D4;
+}
+[data-theme="light"] {
+  --bg: #F2F5FB;
+  --bg2: #E8EDF8;
+  --surface: #FFFFFF;
+  --surface2: #F0F4FF;
+  --surface3: #E4ECF8;
+  --border: rgba(0,0,0,.08);
+  --border2: rgba(0,0,0,.14);
+  --border3: rgba(0,0,0,.20);
+  --text: #0D1117;
+  --text2: #374151;
+  --text3: #6B7280;
+  --dim: #9CA3AF;
+  --cyan: #0066CC;
+  --cyan2: #0052A3;
+  --cyan3: #003D7A;
+  --cyan-glow: rgba(0,102,204,.12);
+  --cyan-dim: rgba(0,102,204,.06);
+  --up: #15803D;
+  --down: #DC2626;
+  --gold: #B45309;
+  --gold2: #92400E;
+}
+
+
+
+/* === SlidCard v7 consistency fixes === */
+/* Toasts must be fully opaque on every page. */
+.toast{
+  background:#161C2C !important;
+  background-color:#161C2C !important;
+  opacity:1 !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+/* One rarity colour language everywhere cards are rendered. */
+.rarity-common .sc-year{background:rgba(122,133,149,.22)!important;color:var(--c-common)!important;border-color:rgba(122,133,149,.42)!important}
+.rarity-rare .sc-year{background:rgba(76,141,255,.20)!important;color:var(--c-rare)!important;border-color:rgba(76,141,255,.42)!important}
+.rarity-epic .sc-year{background:rgba(177,92,255,.20)!important;color:var(--c-epic)!important;border-color:rgba(177,92,255,.42)!important}
+.rarity-legendary .sc-year{background:rgba(240,180,41,.20)!important;color:var(--c-legendary)!important;border-color:rgba(240,180,41,.44)!important}
+.rarity-ultimate .sc-year{background:rgba(255,71,87,.20)!important;color:var(--c-ultimate)!important;border-color:rgba(255,71,87,.44)!important}
+
+.rarity-common .sc-name,.rarity-common .sc-rating{color:var(--c-common)!important}
+.rarity-rare .sc-name,.rarity-rare .sc-rating{color:var(--c-rare)!important}
+.rarity-epic .sc-name,.rarity-epic .sc-rating{color:var(--c-epic)!important}
+.rarity-legendary .sc-name,.rarity-legendary .sc-rating{color:var(--c-legendary)!important}
+.rarity-ultimate .sc-name,.rarity-ultimate .sc-rating{color:var(--c-ultimate)!important}
+
+.rarity-common .sc-rarity-badge{color:var(--c-common)!important;background:rgba(122,133,149,.22)!important}
+.rarity-rare .sc-rarity-badge{color:var(--c-rare)!important;background:rgba(76,141,255,.20)!important}
+.rarity-epic .sc-rarity-badge{color:var(--c-epic)!important;background:rgba(177,92,255,.20)!important}
+.rarity-legendary .sc-rarity-badge{color:var(--c-legendary)!important;background:rgba(240,180,41,.20)!important}
+.rarity-ultimate .sc-rarity-badge{color:var(--c-ultimate)!important;background:rgba(255,71,87,.20)!important}
+
+/* Transaction information follows the card rarity too. */
+.tx-card-preview.rarity-common .tx-card-name,.tx-card-preview.rarity-common .tx-rarity,.tx-card-preview.rarity-common .tx-year{color:var(--c-common)!important}
+.tx-card-preview.rarity-rare .tx-card-name,.tx-card-preview.rarity-rare .tx-rarity,.tx-card-preview.rarity-rare .tx-year{color:var(--c-rare)!important}
+.tx-card-preview.rarity-epic .tx-card-name,.tx-card-preview.rarity-epic .tx-rarity,.tx-card-preview.rarity-epic .tx-year{color:var(--c-epic)!important}
+.tx-card-preview.rarity-legendary .tx-card-name,.tx-card-preview.rarity-legendary .tx-rarity,.tx-card-preview.rarity-legendary .tx-year{color:var(--c-legendary)!important}
+.tx-card-preview.rarity-ultimate .tx-card-name,.tx-card-preview.rarity-ultimate .tx-rarity,.tx-card-preview.rarity-ultimate .tx-year{color:var(--c-ultimate)!important}
+
+</style>
+</head><body>
+<div class="app">
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v1.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item active" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Транзакції</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<div class="main-wrap">
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Транзакції</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="main-content">
+<style>
+.tx-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}.tx-tab{appearance:none;border:1px solid var(--border);background:var(--panel);color:var(--text2);border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;transition:.18s}.tx-tab:hover{border-color:var(--border3);color:var(--text)}.tx-tab.active{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
+.tx-pane{display:none}.tx-pane.active{display:block}.tx-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:16px;align-items:start}.tx-box{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}.tx-box h3{font-family:var(--font-disp);font-size:17px;margin:0 0 6px}.tx-help{font-size:12px;color:var(--text3);line-height:1.55;margin-bottom:16px}.tx-field{margin-bottom:14px}.tx-field label{display:block;font-size:11px;color:var(--text3);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}.tx-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.tx-result{display:none;margin-top:16px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}.tx-result.show{display:block}.tx-kv{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}.tx-kv:last-child{border-bottom:0}.tx-kv span:first-child{color:var(--text3)}.tx-kv strong{font-family:var(--font-mono);text-align:right;word-break:break-word}.tx-status{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 9px;font-size:10px;font-weight:800;text-transform:uppercase}.tx-status.pending{background:rgba(240,180,41,.12);color:var(--gold)}.tx-status.completed{background:rgba(33,201,122,.12);color:var(--up)}.tx-status.canceled{background:rgba(255,71,87,.12);color:var(--down)}
+.tx-card-preview{display:flex;gap:16px;align-items:center;min-width:0}.tx-card-mini{width:140px!important;height:196px!important;min-width:140px!important;max-width:140px!important;min-height:196px!important;max-height:196px!important;flex:0 0 140px!important;aspect-ratio:5/7;align-self:flex-start}.tx-card-info{min-width:0}.tx-card-name{font-family:var(--font-disp);font-size:18px;font-weight:800;margin-bottom:5px}.tx-card-meta{font-size:12px;color:var(--text3);line-height:1.7}.tx-empty{text-align:center;padding:32px 10px;color:var(--text3);font-size:12px}.tx-pin-step{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}.tx-pin-step.show{display:block}.tx-code{font-family:var(--font-mono);font-size:18px;font-weight:800;color:var(--cyan);letter-spacing:.03em;word-break:break-all}.tx-note{font-size:11px;color:var(--text3);line-height:1.5;margin-top:10px}.tx-owned-option{display:flex;justify-content:space-between}.tx-copy{font-size:11px;padding:5px 8px}.tx-busy{opacity:.65;pointer-events:none}
+@media(max-width:900px){.tx-layout{grid-template-columns:1fr}.tx-card-preview{align-items:flex-start}}@media(max-width:620px){.tx-card-preview{flex-direction:column;align-items:flex-start}.tx-card-mini{width:140px!important;height:196px!important;min-width:140px!important;max-width:140px!important;min-height:196px!important;max-height:196px!important;flex-basis:140px!important}}
+
+/* Transaction cards keep the exact inventory card proportions. */
+.tx-card-preview .sport-card.tx-card-mini{box-sizing:border-box!important;flex-grow:0!important;flex-shrink:0!important;transform-origin:center top}
+
+/* ── Responsive safety + mobile layout (no desktop redesign) ── */
+html,body{max-width:100%;overflow-x:hidden}
+.app,.main-wrap,.main-content,.card,.card-body,.card-header{min-width:0;max-width:100%}
+img,svg,video,canvas{max-width:100%;height:auto}
+input,select,textarea,button{max-width:100%}
+.row,.row-between{min-width:0}
+.data-table{max-width:100%}
+.mobile-nav-toggle{display:none}
+.mobile-nav-backdrop{display:none}
+.mobile-filter-toggle{display:none;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border2);border-radius:var(--r-md);background:var(--surface);color:var(--text2);font-size:12px;font-weight:700}
+.mobile-filter-toggle .hamb{font-size:17px;line-height:1}
+.mobile-filter-panel{min-width:0}
+
+@media (max-width: 980px){
+  .main-content{padding:18px}
+  .grid-2,.grid-3{grid-template-columns:1fr!important}
+  .modal{width:calc(100vw - 28px)!important;max-width:calc(100vw - 28px)!important;max-height:calc(100dvh - 28px)!important}
+  .modal-body{overflow-y:auto!important;min-width:0}
+  .modal-footer{flex-wrap:wrap}
+  .modal-footer>.btn{flex:1 1 140px}
+}
+
+@media (max-width: 760px){
+  :root{--topbar-h:54px}
+  .app{height:100dvh;min-height:100dvh}
+  .sidebar{position:fixed!important;left:0;top:0;bottom:0;height:100dvh;transform:translateX(-105%);transition:transform .22s ease;box-shadow:18px 0 50px rgba(0,0,0,.45);z-index:1200}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .mobile-nav-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1190}
+  .mobile-nav-backdrop.open{display:block}
+  .mobile-nav-toggle{display:inline-flex;width:34px;height:34px;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:9px;color:var(--text2);background:var(--surface);font-size:18px;flex:0 0 auto}
+  .topbar{padding:0 12px;gap:8px;min-width:0}
+  .topbar-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar .row{gap:7px!important;min-width:0}
+  .live-badge,.tb-clock{display:none}
+  .balance-chip{padding:5px 9px;max-width:130px}
+  .balance-amount{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .main-content{padding:14px 12px 20px;overflow-x:hidden}
+  .page-header{margin-bottom:16px}
+  .page-header.row-between{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
+  .page-header.row-between>div:first-child{flex:1 1 180px;min-width:0}
+  .page-title{font-size:22px;overflow-wrap:anywhere}
+  .page-sub{overflow-wrap:anywhere}
+  .card-header{padding:13px 14px;gap:10px;flex-wrap:wrap}
+  .card-body{padding:14px}
+  .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .grid-2,.grid-3{grid-template-columns:1fr!important}
+  .main-content > [style*="display:grid"][style*="grid-template-columns"]{grid-template-columns:1fr!important;height:auto!important}
+  .main-content > [style*="display:flex"]{max-width:100%}
+  .row-between{flex-wrap:wrap;gap:10px}
+  .ticker-bar{height:28px}
+  .ticker-item{padding:0 12px}
+  .mobile-filter-toggle{display:inline-flex}
+  .mobile-filter-panel{display:none!important;width:100%;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:12px;overflow:hidden}
+  .mobile-filter-panel.open{display:flex!important}
+  .mobile-filter-panel .chip{max-width:100%}
+  .data-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .data-table{min-width:620px}
+  .modal-overlay{padding:12px;overflow:hidden}
+  .modal{width:100%!important;max-width:100%!important;max-height:calc(100dvh - 24px)!important}
+  .modal-header{padding:14px}
+  .modal-body{padding:16px 14px!important;overflow-y:auto!important;overflow-x:hidden!important}
+  .modal-footer{padding:12px 14px;gap:8px}
+  .btn{white-space:normal;min-width:0}
+  .input{width:100%;min-width:0}
+}
+
+@media (max-width: 430px){
+  .main-content{padding-left:10px;padding-right:10px}
+  .stat-grid{grid-template-columns:1fr!important}
+  .page-title{font-size:20px}
+  .topbar{padding-left:9px;padding-right:9px}
+  .balance-chip{max-width:105px}
+}
+
+
+/* flex/grid children may shrink instead of forcing horizontal overflow */
+.main-content>*{max-width:100%}
+.main-content [style*="display:grid"],.main-content [style*="display:flex"]{min-width:0}
+.main-content [style*="display:grid"]>* ,.main-content [style*="display:flex"]>*{min-width:0;max-width:100%}
+</style>
+<div class="page-header">
+  <div class="page-title">Транзакції</div>
+  <div class="page-sub">Безпечна передача карток між акаунтами через Transaction ID + PIN</div>
+</div>
+<div class="tx-tabs">
+  <button class="tx-tab active" data-pane="create">➕ Створити</button>
+  <button class="tx-tab" data-pane="receive">📥 Отримати</button>
+  <button class="tx-tab" data-pane="cancel">✕ Скасувати</button>
+</div>
+
+<section class="tx-pane active" id="tx-create">
+  <div class="tx-layout">
+    <div class="tx-box">
+      <h3>Створити транзакцію</h3>
+      <div class="tx-help">Вибери одну картку, встанови ціну, опис та власний PIN. Після успішного запису на сервер картка одразу зникне з твого інвентарю й залишатиметься в транзакції до отримання або скасування.</div>
+      <div class="tx-field"><label>Картка</label><select class="input" id="create-card"></select></div>
+      <div class="tx-field"><label>Ціна</label><input class="input" id="create-price" type="number" min="1" step="1" placeholder="Наприклад 1000"></div>
+      <div class="tx-field"><label>Опис (необов'язково)</label><textarea class="input" id="create-description" rows="3" maxlength="300" placeholder="Наприклад: картка сезону 2025, домовились особисто"></textarea></div>
+      <div class="tx-field"><label>PIN-код</label><input class="input" id="create-pin" type="password" minlength="4" maxlength="12" autocomplete="off" placeholder="4–12 символів"></div>
+      <div class="tx-actions"><button class="btn btn-primary" id="create-btn">Створити транзакцію</button></div>
+      <div class="tx-result" id="create-result"></div>
+    </div>
+    <div class="tx-box">
+      <h3>Перевірити продаж</h3>
+      <div class="tx-help">Введи ID своєї транзакції. Якщо покупець уже завершив її, гра забере виплату із сервера та нарахує суму після комісії.</div>
+      <div class="tx-field"><label>Transaction ID</label><input class="input" id="seller-status-id" autocomplete="off" placeholder="TRX-XXXXXXXXXX"></div>
+      <div class="tx-actions"><button class="btn btn-ghost" id="seller-status-btn">Перевірити статус</button></div>
+      <div class="tx-result" id="seller-status-result"></div>
+    </div>
+  </div>
+</section>
+
+<section class="tx-pane" id="tx-receive">
+  <div class="tx-layout">
+    <div class="tx-box">
+      <h3>Отримати картку</h3>
+      <div class="tx-help">Спочатку введи лише Transaction ID. Ми покажемо повну інформацію про картку, продавця, ціну й опис. PIN вводиться тільки після перевірки деталей.</div>
+      <div class="tx-field"><label>Transaction ID</label><input class="input" id="receive-id" autocomplete="off" placeholder="TRX-XXXXXXXXXX"></div>
+      <div class="tx-actions"><button class="btn btn-primary" id="receive-find-btn">Знайти транзакцію</button></div>
+      <div class="tx-result" id="receive-result"></div>
+    </div>
+    <div class="tx-box">
+      <h3>Як це працює</h3>
+      <div class="tx-help">1. Отримай Transaction ID від продавця.<br>2. Перевір інформацію та ціну.<br>3. Натисни «Продовжити».<br>4. Введи PIN, який продавець передав тобі особисто.<br>5. Після підтвердження гроші списуються, а картка додається в інвентар.</div>
+      <div class="tx-kv"><span>Твій Account ID</span><strong id="buyer-account-id">—</strong></div>
+      <div class="tx-kv"><span>Баланс</span><strong id="buyer-balance">$0</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="tx-pane" id="tx-cancel">
+  <div class="tx-layout">
+    <div class="tx-box">
+      <h3>Скасувати транзакцію</h3>
+      <div class="tx-help">Скасувати можна тільки власну транзакцію зі статусом <b>pending</b>. Потрібні Transaction ID та той самий PIN, який ти створив. Після успіху картка повернеться в інвентар.</div>
+      <div class="tx-field"><label>Transaction ID</label><input class="input" id="cancel-id" autocomplete="off" placeholder="TRX-XXXXXXXXXX"></div>
+      <div class="tx-field"><label>PIN-код</label><input class="input" id="cancel-pin" type="password" autocomplete="off" placeholder="Твій PIN"></div>
+      <div class="tx-actions"><button class="btn btn-down" id="cancel-btn">Скасувати транзакцію</button></div>
+      <div class="tx-result" id="cancel-result"></div>
+    </div>
+    <div class="tx-box">
+      <h3>Важливо</h3>
+      <div class="tx-help">Після завершення покупцем статус стане <b>completed</b>, і скасування вже неможливе. Скасована транзакція залишається в Google Sheets як історія зі статусом <b>canceled</b>.</div>
+    </div>
+  </div>
+</section>
+</div>
+</div>
+</div>
+<div id="toast-root"></div>
+<script>
+// SlidCard v2.0.0 — shared.js
+
+const CX = {
+  VERSION:    "1.0.0",
+  NAME:       "SlidCard",
+  ACC_KEY:    "slidcard_acc",
+  SAVE_KEY:   "slidcard_save",
+  INIT_COINS: 500,
+};
+
+// ── RARITY — виправлені шанси ─────────────────────────────
+const RARITY = {
+  common:    { label:"Common",    hex:"#7A8595", prob:0.62, mult:1.0   },
+  rare:      { label:"Rare",      hex:"#4C8DFF", prob:0.26, mult:3.0   },
+  epic:      { label:"Epic",      hex:"#B15CFF", prob:0.09, mult:8.0   },
+  legendary: { label:"Hall of Legendsary", hex:"#F0B429", prob:0.025,mult:25.0  },
+  ultimate:  { label:"Ultimate",  hex:"#FF4757", prob:0.005,mult:80.0  },
+};
+
+// ── SPORTS ──────────────────────────────────────────────────
+const SPORTS = {
+  f1:          { label:"Grand Prix",           icon:"🏎", color:"#FF4757" },
+  soccer:      { label:"Soccer",       icon:"⚽", color:"#21C97A" },
+  football:    { label:"Football",     icon:"🏈", color:"#F0B429" },
+  baseball:    { label:"Baseball",     icon:"⚾", color:"#33C6E8" },
+  basketball:  { label:"Basketball",   icon:"🏀", color:"#FF8C00" },
+  volleyball:  { label:"Volleyball",   icon:"🏐", color:"#B15CFF" },
+  tennis:      { label:"Tennis",       icon:"🎾", color:"#21C97A" },
+  mma:         { label:"Combat Sports",      icon:"🥊", color:"#FF4757" },
+  nascar:      { label:"Stock Car",       icon:"🏁", color:"#FFD700" },
+  imsa:        { label:"Endurance",         icon:"🚗", color:"#4C8DFF" },
+  sro:         { label:"GT Racing",          icon:"🏆", color:"#F0B429" },
+};
+
+const SEASONS = [2020,2021,2022,2023,2024,2025,2026];
+
+// ── YEAR MULTIPLIER (старіші = дорожчі) ──────────────────────
+const YEAR_PRICE_MULT = {2026:1.0,2025:1.15,2024:1.32,2023:1.55,2022:1.85,2021:2.25,2020:2.75};
+
+// ── CARDS — 200+ карток ──────────────────────────────────────
+const CARDS = [
+  // ═══ GRAND PRIX (20 карток) ═══
+  { id:"r_hamilton",   sport:"f1", name:"Leon Hampton",      team:"Sterling GP",     country:"🇬🇧", rarity:"legendary", basePrice:180, rating:96, pos:"Driver", icon:"🏎" },
+  { id:"r_verstappen", sport:"f1", name:"Maxim Verden",      team:"Redcrest Racing",     country:"🇳🇱", rarity:"legendary", basePrice:190, rating:97, pos:"Driver", icon:"🏎" },
+  { id:"r_schumacher", sport:"f1", name:"Marek Schumann",       team:"Hall of Legends",       country:"🇩🇪", rarity:"ultimate",  basePrice:280, rating:99, pos:"Driver", icon:"🏆" },
+  { id:"r_senna",      sport:"f1", name:"Ayran Serrano",        team:"Hall of Legends",       country:"🇧🇷", rarity:"ultimate",  basePrice:300, rating:99, pos:"Driver", icon:"🏆" },
+  { id:"r_lauda",      sport:"f1", name:"Niko Lauer",          team:"Hall of Legends",       country:"🇦🇹", rarity:"legendary", basePrice:160, rating:95, pos:"Driver", icon:"🏆" },
+  { id:"r_prost",      sport:"f1", name:"Alen Provan",         team:"Hall of Legends",       country:"🇫🇷", rarity:"legendary", basePrice:155, rating:95, pos:"Driver", icon:"🏆" },
+  { id:"r_leclerc",    sport:"f1", name:"Charles Leclair",     team:"Crimson Corse",      country:"🇲🇨", rarity:"epic",      basePrice:65,  rating:92, pos:"Driver", icon:"🏎" },
+  { id:"r_norris",     sport:"f1", name:"Landon Norton",        team:"Northbridge Racing",      country:"🇬🇧", rarity:"epic",      basePrice:60,  rating:91, pos:"Driver", icon:"🏎" },
+  { id:"r_sainz",      sport:"f1", name:"Carlos Santos",        team:"Crimson Corse",      country:"🇪🇸", rarity:"epic",      basePrice:58,  rating:90, pos:"Driver", icon:"🏎" },
+  { id:"r_perez",      sport:"f1", name:"Sergio Pereira",        team:"Redcrest Racing",     country:"🇲🇽", rarity:"epic",      basePrice:55,  rating:89, pos:"Driver", icon:"🏎" },
+  { id:"r_russell",    sport:"f1", name:"Georg Russelton",      team:"Sterling GP",     country:"🇬🇧", rarity:"epic",      basePrice:54,  rating:89, pos:"Driver", icon:"🏎" },
+  { id:"r_alonso",     sport:"f1", name:"Fernando Alvar",     team:"Emerald Works", country:"🇪🇸", rarity:"rare",      basePrice:30,  rating:88, pos:"Driver", icon:"🏎" },
+  { id:"r_piastri",    sport:"f1", name:"Oscar Piasen",       team:"Northbridge Racing",      country:"🇦🇺", rarity:"rare",      basePrice:25,  rating:86, pos:"Driver", icon:"🏎" },
+  { id:"r_gasly",      sport:"f1", name:"Pierre Gaston",        team:"Alpine Crest",       country:"🇫🇷", rarity:"rare",      basePrice:20,  rating:84, pos:"Driver", icon:"🏎" },
+  { id:"r_albon",      sport:"f1", name:"Alex Albani",          team:"Kingsley Motorsport",     country:"🇹🇭", rarity:"rare",      basePrice:18,  rating:83, pos:"Driver", icon:"🏎" },
+  { id:"r_tsunoda",    sport:"f1", name:"Yuto Tsunari",        team:"Velocity Juniors",           country:"🇯🇵", rarity:"rare",      basePrice:16,  rating:81, pos:"Driver", icon:"🏎" },
+  { id:"r_hulk",       sport:"f1", name:"Nico Hulberg",     team:"Hartwell Racing",         country:"🇩🇪", rarity:"common",    basePrice:5,   rating:78, pos:"Driver", icon:"🏎" },
+  { id:"r_magnussen",  sport:"f1", name:"Kevin Magnor",     team:"Hartwell Racing",         country:"🇩🇰", rarity:"common",    basePrice:4,   rating:77, pos:"Driver", icon:"🏎" },
+  { id:"r_stroll",     sport:"f1", name:"Lance Stellan",        team:"Emerald Works", country:"🇨🇦", rarity:"common",    basePrice:6,   rating:79, pos:"Driver", icon:"🏎" },
+  { id:"r_bottas",     sport:"f1", name:"Valter Borton",     team:"Silverline Motorsport",  country:"🇫🇮", rarity:"common",    basePrice:5,   rating:78, pos:"Driver", icon:"🏎" },
+
+  // ═══ SOCCER (22 картки) ═══
+  { id:"s_messi",      sport:"soccer", name:"Leo Merson",        team:"Miami Coast FC",  country:"🇦🇷", rarity:"legendary", basePrice:175, rating:94, pos:"FW",  icon:"⚽" },
+  { id:"s_ronaldo",    sport:"soccer", name:"Cristian Roldan",   team:"Riyadh Stars",     country:"🇵🇹", rarity:"legendary", basePrice:170, rating:93, pos:"FW",  icon:"⚽" },
+  { id:"s_mbappe",     sport:"soccer", name:"Kylian Mbaret",       team:"Madrid Royale",  country:"🇫🇷", rarity:"legendary", basePrice:185, rating:95, pos:"FW",  icon:"⚽" },
+  { id:"s_pele",       sport:"soccer", name:"Pablo Peleiro",                team:"Hall of Legends",       country:"🇧🇷", rarity:"ultimate",  basePrice:350, rating:99, pos:"FW",  icon:"🏆" },
+  { id:"s_maradona",   sport:"soccer", name:"Diego Maradon",      team:"Hall of Legends",       country:"🇦🇷", rarity:"ultimate",  basePrice:330, rating:99, pos:"AM",  icon:"🏆" },
+  { id:"ua_shevchenko",sport:"soccer", name:"Andriy Shevrenko",   team:"Hall of Legends",       country:"🇺🇦", rarity:"ultimate",  basePrice:290, rating:97, pos:"ST",  icon:"🏆" },
+  { id:"s_haaland",    sport:"soccer", name:"Erik Halandor",      team:"Manchester Sky",     country:"🇳🇴", rarity:"epic",      basePrice:70,  rating:92, pos:"ST",  icon:"⚽" },
+  { id:"s_vini",       sport:"soccer", name:"Vincent Vinero",         team:"Madrid Royale",  country:"🇧🇷", rarity:"epic",      basePrice:65,  rating:91, pos:"FW",  icon:"⚽" },
+  { id:"s_bellingham", sport:"soccer", name:"Jude Bellinger",     team:"Madrid Royale",  country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"epic",      basePrice:62,  rating:90, pos:"CM",  icon:"⚽" },
+  { id:"s_salah",      sport:"soccer", name:"Mahir Salim",       team:"Mersey Athletic",    country:"🇪🇬", rarity:"epic",      basePrice:58,  rating:90, pos:"FW",  icon:"⚽" },
+  { id:"s_saka",       sport:"soccer", name:"Bukai Sakari",         team:"North London Forge",      country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"epic",      basePrice:55,  rating:89, pos:"FW",  icon:"⚽" },
+  { id:"ua_mudryk",    sport:"soccer", name:"Mykhail Mudrenko",     team:"Westbridge FC",      country:"🇺🇦", rarity:"epic",      basePrice:52,  rating:87, pos:"FW",  icon:"⚽" },
+  { id:"s_kane",       sport:"soccer", name:"Harry Kellan",          team:"Bavaria Union",       country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"rare",      basePrice:28,  rating:88, pos:"ST",  icon:"⚽" },
+  { id:"ua_yaremchuk", sport:"soccer", name:"Roman Yarenko",     team:"Valencia Coast",     country:"🇺🇦", rarity:"rare",      basePrice:22,  rating:83, pos:"ST",  icon:"⚽" },
+  { id:"ua_zinchenko", sport:"soccer", name:"Oleks Zinarenko", team:"North London Forge",      country:"🇺🇦", rarity:"rare",      basePrice:20,  rating:82, pos:"LB",  icon:"⚽" },
+  { id:"ua_tsyhankov", sport:"soccer", name:"Viktor Tsyhanenko",    team:"Girona Athletic",       country:"🇺🇦", rarity:"rare",      basePrice:18,  rating:81, pos:"MF",  icon:"⚽" },
+  { id:"ua_rebrov",    sport:"soccer", name:"Serhiy Rebrenko",       team:"Kyiv Dynamo Club",  country:"🇺🇦", rarity:"legendary", basePrice:110, rating:92, pos:"ST",  icon:"⚽" },
+  { id:"s_griezmann",  sport:"soccer", name:"Antoine Griezan",   team:"Madrid Atlético Club",     country:"🇫🇷", rarity:"rare",      basePrice:22,  rating:86, pos:"FW",  icon:"⚽" },
+  { id:"s_mount",      sport:"soccer", name:"Mason Mountley",         team:"Manchester Red",   country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"common",    basePrice:5,   rating:80, pos:"CM",  icon:"⚽" },
+  { id:"s_rashford",   sport:"soccer", name:"Marcus Rashen",     team:"Manchester Red",   country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"common",    basePrice:6,   rating:81, pos:"FW",  icon:"⚽" },
+  { id:"s_pulisic",    sport:"soccer", name:"Christian Pulsen",   team:"Milano Rosson",     country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"FW",  icon:"⚽" },
+  { id:"s_vlahovic",   sport:"soccer", name:"Dusan Vlahen",      team:"Turin Vecchia",     country:"🇷🇸", rarity:"common",    basePrice:7,   rating:82, pos:"ST",  icon:"⚽" },
+
+  // ═══ AMERICAN FOOTBALL (16 карток) ═══
+  { id:"nfl_mahomes",  sport:"football", name:"Pat Maher",      team:"Kansas Monarchs",    country:"🇺🇸", rarity:"legendary", basePrice:170, rating:97, pos:"QB",  icon:"🏈" },
+  { id:"nfl_brady",    sport:"football", name:"Thomas Brayton",            team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:310, rating:99, pos:"QB",  icon:"🏆" },
+  { id:"nfl_allen",    sport:"football", name:"Josh Allard",           team:"Buffalo Thunder",      country:"🇺🇸", rarity:"legendary", basePrice:160, rating:95, pos:"QB",  icon:"🏈" },
+  { id:"nfl_lamar",    sport:"football", name:"Lamar Jacksone",        team:"Baltimore Ravenside",    country:"🇺🇸", rarity:"legendary", basePrice:158, rating:95, pos:"QB",  icon:"🏈" },
+  { id:"nfl_hill",     sport:"football", name:"Ty Hills",          team:"Miami Sharks",        country:"🇺🇸", rarity:"epic",      basePrice:62,  rating:93, pos:"WR",  icon:"🏈" },
+  { id:"nfl_mccaffrey",sport:"football", name:"Christian McCaffren",  team:"San Francisco Gold",     country:"🇺🇸", rarity:"epic",      basePrice:60,  rating:92, pos:"Velocity Juniors",  icon:"🏈" },
+  { id:"nfl_kelce",    sport:"football", name:"Travis Kellan",         team:"Kansas Monarchs",    country:"🇺🇸", rarity:"epic",      basePrice:58,  rating:92, pos:"TE",  icon:"🏈" },
+  { id:"nfl_jefferson",sport:"football", name:"Justin Jeffers",     team:"Minnesota North",    country:"🇺🇸", rarity:"epic",      basePrice:55,  rating:90, pos:"WR",  icon:"🏈" },
+  { id:"nfl_burrow",   sport:"football", name:"Joseph Burton",           team:"Cincinnati Stripes",   country:"🇺🇸", rarity:"rare",      basePrice:28,  rating:88, pos:"QB",  icon:"🏈" },
+  { id:"nfl_bosa",     sport:"football", name:"Nicholas Bosley",            team:"San Francisco Gold",     country:"🇺🇸", rarity:"rare",      basePrice:25,  rating:87, pos:"DE",  icon:"🏈" },
+  { id:"nfl_lamb",     sport:"football", name:"Caden Lamber",          team:"Dallas Starsmen",       country:"🇺🇸", rarity:"rare",      basePrice:24,  rating:87, pos:"WR",  icon:"🏈" },
+  { id:"nfl_diggs",    sport:"football", name:"Stefan Digson",         team:"Houston Forge",      country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:87, pos:"WR",  icon:"🏈" },
+  { id:"nfl_kupp",     sport:"football", name:"Cooper Kupper",          team:"Los Angeles Horns",      country:"🇺🇸", rarity:"common",    basePrice:6,   rating:82, pos:"WR",  icon:"🏈" },
+  { id:"nfl_hopk",     sport:"football", name:"Andre Hopson",      team:"Tennessee Titanside",    country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"WR",  icon:"🏈" },
+  { id:"nfl_henry",    sport:"football", name:"Derrick Henley",        team:"Baltimore Ravenside",    country:"🇺🇸", rarity:"common",    basePrice:7,   rating:83, pos:"Velocity Juniors",  icon:"🏈" },
+  { id:"nfl_purdy",    sport:"football", name:"Brock Purdon",          team:"San Francisco Gold",     country:"🇺🇸", rarity:"common",    basePrice:8,   rating:82, pos:"QB",  icon:"🏈" },
+
+  // ═══ BASEBALL (16 карток) ═══
+  { id:"bb_trout",     sport:"baseball", name:"Michael Trenton",           team:"Los Angeles Halos",    country:"🇺🇸", rarity:"legendary", basePrice:155, rating:95, pos:"CF",  icon:"⚾" },
+  { id:"bb_ohtani",    sport:"baseball", name:"Sho Ohtaro",        team:"Los Angeles Bluecaps",   country:"🇯🇵", rarity:"legendary", basePrice:170, rating:97, pos:"P/DH",icon:"⚾" },
+  { id:"bb_ruth",      sport:"baseball", name:"Babe Ruther",            team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:320, rating:99, pos:"RF",  icon:"🏆" },
+  { id:"bb_judge",     sport:"baseball", name:"Aaron Judson",          team:"New York Empire",   country:"🇺🇸", rarity:"epic",      basePrice:68,  rating:93, pos:"RF",  icon:"⚾" },
+  { id:"bb_acuna",     sport:"baseball", name:"Ronald Acero",      team:"Atlanta Braveside",      country:"🇻🇪", rarity:"epic",      basePrice:62,  rating:92, pos:"RF",  icon:"⚾" },
+  { id:"bb_guerrero",  sport:"baseball", name:"Vlad Guerreron", team:"Toronto Northmen",      country:"🇩🇴", rarity:"epic",      basePrice:58,  rating:91, pos:"1B",  icon:"⚾" },
+  { id:"bb_betts",     sport:"baseball", name:"Mookie Betson",         team:"Los Angeles Bluecaps",   country:"🇺🇸", rarity:"epic",      basePrice:55,  rating:91, pos:"RF",  icon:"⚾" },
+  { id:"bb_devers",    sport:"baseball", name:"Rafael Deveraux",        team:"Boston Redline",       country:"🇩🇴", rarity:"rare",      basePrice:26,  rating:87, pos:"3B",  icon:"⚾" },
+  { id:"bb_alonso",    sport:"baseball", name:"Peter Alvaron",          team:"New York Metros",      country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:86, pos:"1B",  icon:"⚾" },
+  { id:"bb_soto",      sport:"baseball", name:"Juan Sotero",            team:"New York Metros",      country:"🇩🇴", rarity:"rare",      basePrice:28,  rating:88, pos:"RF",  icon:"⚾" },
+  { id:"bb_tatis",     sport:"baseball", name:"Fernando Tatison",    team:"San Diego Coast",    country:"🇩🇴", rarity:"rare",      basePrice:24,  rating:87, pos:"SS",  icon:"⚾" },
+  { id:"bb_strider",   sport:"baseball", name:"Spencer Striden",      team:"Atlanta Braveside",      country:"🇺🇸", rarity:"rare",      basePrice:20,  rating:85, pos:"SP",  icon:"⚾" },
+  { id:"bb_riley",     sport:"baseball", name:"Austin Rylan",         team:"Atlanta Braveside",      country:"🇺🇸", rarity:"common",    basePrice:5,   rating:81, pos:"3B",  icon:"⚾" },
+  { id:"bb_vladsr",    sport:"baseball", name:"Vladimir Guerrin", team:"Hall of Legends",       country:"🇩🇴", rarity:"legendary", basePrice:130, rating:93, pos:"RF",  icon:"⚾" },
+  { id:"bb_griffey",   sport:"baseball", name:"Ken Griffen",       team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:140, rating:94, pos:"CF",  icon:"⚾" },
+  { id:"bb_schm",      sport:"baseball", name:"Kyle Schmid",         team:"Hall of Legends",       country:"🇺🇸", rarity:"common",    basePrice:7,   rating:80, pos:"3B",  icon:"⚾" },
+
+  // ═══ BASKETBALL (18 карток) ═══
+  { id:"b_lebron",     sport:"basketball", name:"Leandro Jameston",        team:"Los Angeles Lakes",    country:"🇺🇸", rarity:"legendary", basePrice:195, rating:97, pos:"SF",  icon:"🏀" },
+  { id:"b_jordan",     sport:"basketball", name:"Marcus Jorden",      team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:340, rating:99, pos:"SG",  icon:"🏆" },
+  { id:"b_kobe",       sport:"basketball", name:"Kobe Bryantley",         team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:320, rating:99, pos:"SG",  icon:"🏆" },
+  { id:"b_curry",      sport:"basketball", name:"Stephen Curran",       team:"Golden Bay", country:"🇺🇸", rarity:"legendary", basePrice:180, rating:96, pos:"PG",  icon:"🏀" },
+  { id:"b_jokic",      sport:"basketball", name:"Nikola Jovek",        team:"Denver Peaks",       country:"🇷🇸", rarity:"epic",      basePrice:78,  rating:95, pos:"C",   icon:"🏀" },
+  { id:"b_doncic",     sport:"basketball", name:"Luka Doncari",         team:"Dallas Starsmen",       country:"🇸🇮", rarity:"epic",      basePrice:72,  rating:94, pos:"PG",  icon:"🏀" },
+  { id:"b_durant",     sport:"basketball", name:"Kevin Durand",        team:"Phoenix Sunside",      country:"🇺🇸", rarity:"epic",      basePrice:68,  rating:93, pos:"SF",  icon:"🏀" },
+  { id:"b_giannis",    sport:"basketball", name:"Giannis Antelon",team:"Milwaukee Bucksmen",   country:"🇬🇷", rarity:"epic",      basePrice:70,  rating:94, pos:"PF",  icon:"🏀" },
+  { id:"b_tatum",      sport:"basketball", name:"Jason Tateman",        team:"Boston Redline",       country:"🇺🇸", rarity:"rare",      basePrice:30,  rating:89, pos:"SF",  icon:"🏀" },
+  { id:"b_embiid",     sport:"basketball", name:"Joel Ember",         team:"Philadelphia Liberty", country:"🇨🇲", rarity:"rare",      basePrice:32,  rating:90, pos:"C",   icon:"🏀" },
+  { id:"b_morant",     sport:"basketball", name:"Ja Morlen",           team:"Memphis Blues",      country:"🇺🇸", rarity:"rare",      basePrice:26,  rating:87, pos:"PG",  icon:"🏀" },
+  { id:"b_booker",     sport:"basketball", name:"Devin Bookan",        team:"Phoenix Sunside",      country:"🇺🇸", rarity:"rare",      basePrice:28,  rating:88, pos:"SG",  icon:"🏀" },
+  { id:"b_bird",       sport:"basketball", name:"Larry Birden",          team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:150, rating:95, pos:"SF",  icon:"🏀" },
+  { id:"b_magic",      sport:"basketball", name:"Ervin Magellan",       team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:155, rating:96, pos:"PG",  icon:"🏀" },
+  { id:"b_brown",      sport:"basketball", name:"Jaylen Browen",        team:"Boston Redline",       country:"🇺🇸", rarity:"common",    basePrice:7,   rating:83, pos:"SG",  icon:"🏀" },
+  { id:"b_beal",       sport:"basketball", name:"Bradley Bealen",        team:"Phoenix Sunside",      country:"🇺🇸", rarity:"common",    basePrice:6,   rating:82, pos:"SG",  icon:"🏀" },
+  { id:"b_ingram",     sport:"basketball", name:"Brandon Ingram",      team:"New Orleans Crescent",  country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"SF",  icon:"🏀" },
+  { id:"b_walker",     sport:"basketball", name:"Kemba Walker",        team:"Legends Archive",      country:"🇺🇸", rarity:"common",    basePrice:4,   rating:79, pos:"PG",  icon:"🏀" },
+
+  // ═══ VOLLEYBALL (14 карток) ═══
+  { id:"v_giba",       sport:"volleyball", name:"Gilberto Gibran",                team:"Hall of Legends",       country:"🇧🇷", rarity:"ultimate",  basePrice:250, rating:99, pos:"OH",  icon:"🏐" },
+  { id:"ua_plotnytskyi",sport:"volleyball",name:"Taras Kovalen",   team:"Kedzierzyn Volley",        country:"🇺🇦", rarity:"legendary", basePrice:120, rating:92, pos:"OH",  icon:"🏐" },
+  { id:"v_earvin",     sport:"volleyball", name:"Oleh Plotnenko",    team:"Kazan Volley Club",    country:"🇫🇷", rarity:"legendary", basePrice:125, rating:93, pos:"OH",  icon:"🏐" },
+  { id:"v_wilfredo",   sport:"volleyball", name:"Erwin Ngaran",      team:"Perugia Shield",   country:"🇨🇺", rarity:"legendary", basePrice:130, rating:94, pos:"OH",  icon:"🏐" },
+  { id:"ua_semeniuk",  sport:"volleyball", name:"Bohdan Dovhan",    team:"Trento Volley",     country:"🇺🇦", rarity:"epic",      basePrice:50,  rating:89, pos:"OH",  icon:"🏐" },
+  { id:"v_ngapeth",    sport:"volleyball", name:"Wilfred Leoran",   team:"Tours Volley",     country:"🇫🇷", rarity:"epic",      basePrice:48,  rating:87, pos:"S",   icon:"🏐" },
+  { id:"v_anderson",   sport:"volleyball", name:"Yurii Semenko",      team:"United States Select",       country:"🇺🇸", rarity:"epic",      basePrice:50,  rating:88, pos:"OH",  icon:"🏐" },
+  { id:"v_muserskiy",  sport:"volleyball", name:"Earvin Ngaret",      team:"Sao Paulo Volley",      country:"🇧🇷", rarity:"rare",      basePrice:22,  rating:85, pos:"MB",  icon:"🏐" },
+  { id:"v_nimir",      sport:"volleyball", name:"Matthew Andersen",   team:"Ankara Volley",     country:"🇳🇱", rarity:"rare",      basePrice:20,  rating:84, pos:"OH",  icon:"🏐" },
+  { id:"ua_dmytrenko", sport:"volleyball", name:"Danylo Melnyk",    team:"Tours Volley",     country:"🇺🇦", rarity:"rare",      basePrice:18,  rating:82, pos:"MB",  icon:"🏐" },
+  { id:"v_lucarelli",  sport:"volleyball", name:"Dmitri Muserin",  team:"Trento Volley",     country:"🇧🇷", rarity:"rare",      basePrice:18,  rating:83, pos:"OH",  icon:"🏐" },
+  { id:"v_leon2",      sport:"volleyball", name:"Nimir Abbas",      team:"Civitanova Volley",         country:"🇦🇷", rarity:"common",    basePrice:5,   rating:79, pos:"OH",  icon:"🏐" },
+  { id:"v_common2",    sport:"volleyball", name:"Volodymyr Dmytren",           team:"Trento Volley",     country:"🇺🇸", rarity:"common",    basePrice:4,   rating:77, pos:"MB",  icon:"🏐" },
+  { id:"v_common3",    sport:"volleyball", name:"Ricardo Lucaren",      team:"Kazan Volley Club",    country:"🇧🇬", rarity:"common",    basePrice:4,   rating:78, pos:"L",   icon:"🏐" },
+
+  // ═══ TENNIS (14 карток) ═══
+  { id:"t_federer",    sport:"tennis", name:"Roger Federen",       team:"Swiss Select",  country:"🇨🇭", rarity:"legendary", basePrice:190, rating:98, pos:"Pro", icon:"🎾" },
+  { id:"t_nadal",      sport:"tennis", name:"Rafael Nadaro",        team:"Iberia Select",        country:"🇪🇸", rarity:"legendary", basePrice:188, rating:97, pos:"Pro", icon:"🎾" },
+  { id:"t_djokovic",   sport:"tennis", name:"Novak Djovan",      team:"Serbian Select",       country:"🇷🇸", rarity:"legendary", basePrice:190, rating:98, pos:"Pro", icon:"🎾" },
+  { id:"t_alcaraz",    sport:"tennis", name:"Carlos Alcaron",      team:"Iberia Select",        country:"🇪🇸", rarity:"epic",      basePrice:66,  rating:93, pos:"Pro", icon:"🎾" },
+  { id:"t_sinner",     sport:"tennis", name:"Jannik Sinnero",       team:"Italia Select",        country:"🇮🇹", rarity:"epic",      basePrice:63,  rating:92, pos:"Pro", icon:"🎾" },
+  { id:"t_hurkacz",    sport:"tennis", name:"Hubert Hurkalen",      team:"Polska Select",       country:"🇵🇱", rarity:"epic",      basePrice:55,  rating:88, pos:"Pro", icon:"🎾" },
+  { id:"t_swiatek",    sport:"tennis", name:"Iga Swiate",         team:"Polska Select",       country:"🇵🇱", rarity:"epic",      basePrice:65,  rating:95, pos:"Pro", icon:"🎾" },
+  { id:"t_zverev",     sport:"tennis", name:"Alexander Zeverin",    team:"German Select",      country:"🇩🇪", rarity:"rare",      basePrice:25,  rating:87, pos:"Pro", icon:"🎾" },
+  { id:"t_tsitsipas",  sport:"tennis", name:"Stefanos Tsitano",  team:"Hellas Select",       country:"🇬🇷", rarity:"rare",      basePrice:23,  rating:86, pos:"Pro", icon:"🎾" },
+  { id:"t_rune",       sport:"tennis", name:"Holger Runen",         team:"Danish Select",      country:"🇩🇰", rarity:"rare",      basePrice:20,  rating:83, pos:"Pro", icon:"🎾" },
+  { id:"t_fritz",      sport:"tennis", name:"Taylor Fritzen",        team:"United States Select",          country:"🇺🇸", rarity:"rare",      basePrice:18,  rating:82, pos:"Pro", icon:"🎾" },
+  { id:"t_ruud",       sport:"tennis", name:"Casper Ruuden",         team:"Nordic Select",       country:"🇳🇴", rarity:"common",    basePrice:5,   rating:81, pos:"Pro", icon:"🎾" },
+  { id:"t_tiafoe",     sport:"tennis", name:"Frances Tiafen",      team:"United States Select",          country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"Pro", icon:"🎾" },
+  { id:"t_musetti",    sport:"tennis", name:"Lorenzo Musen",     team:"Italia Select",        country:"🇮🇹", rarity:"common",    basePrice:4,   rating:79, pos:"Pro", icon:"🎾" },
+
+  // ═══ BOX / MMA (16 карток) ═══
+  { id:"m_ali",        sport:"mma", name:"Amir Alen",        team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:360, rating:99, pos:"HW",  icon:"🏆" },
+  { id:"m_tyson",      sport:"mma", name:"Tyson Tyren",          team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:310, rating:98, pos:"HW",  icon:"🏆" },
+  { id:"ua_usyk",      sport:"mma", name:"Maksym Savych",      team:"World Boxing Circuit",       country:"🇺🇦", rarity:"legendary", basePrice:185, rating:97, pos:"HW",  icon:"🥊" },
+  { id:"ua_lomachenko",sport:"mma", name:"Artem Rudenko",    team:"World Boxing Circuit",       country:"🇺🇦", rarity:"legendary", basePrice:160, rating:96, pos:"LW",  icon:"🥊" },
+  { id:"m_mcgregor",   sport:"mma", name:"Oleks Usaren",      team:"Global Global Combat League",          country:"🇮🇪", rarity:"legendary", basePrice:175, rating:92, pos:"FW",  icon:"🥊" },
+  { id:"m_jones",      sport:"mma", name:"Vasyl Lomanen",           team:"Global Global Combat League",          country:"🇺🇸", rarity:"legendary", basePrice:168, rating:96, pos:"HW",  icon:"🥊" },
+  { id:"m_fury",       sport:"mma", name:"Connor McGrady",          team:"World Boxing Circuit",       country:"🇬🇧", rarity:"epic",      basePrice:62,  rating:93, pos:"HW",  icon:"🥊" },
+  { id:"m_joshua",     sport:"mma", name:"Jonathan Jonan",      team:"World Boxing Circuit",       country:"🇬🇧", rarity:"epic",      basePrice:58,  rating:91, pos:"HW",  icon:"🥊" },
+  { id:"ua_berinchyk", sport:"mma", name:"Ihor Bondaren",     team:"World Boxing Circuit",       country:"🇺🇦", rarity:"epic",      basePrice:55,  rating:90, pos:"LW",  icon:"🥊" },
+  { id:"m_usman",      sport:"mma", name:"Tyson Furion",        team:"Global Global Combat League",          country:"🇳🇬", rarity:"epic",      basePrice:58,  rating:92, pos:"WW",  icon:"🥊" },
+  { id:"m_poirier",    sport:"mma", name:"Anthony Joshen",      team:"Global Global Combat League",          country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:86, pos:"LW",  icon:"🥊" },
+  { id:"m_volk",       sport:"mma", name:"Denys Beranen",    team:"Global Global Combat League",          country:"🇦🇺", rarity:"rare",      basePrice:24,  rating:87, pos:"FW",  icon:"🥊" },
+  { id:"m_adesanya",   sport:"mma", name:"Kamar Usarenko",     team:"Global Global Combat League",          country:"🇳🇬", rarity:"rare",      basePrice:22,  rating:87, pos:"MW",  icon:"🥊" },
+  { id:"m_gaethje",    sport:"mma", name:"Dustin Poiran",      team:"Global Global Combat League",          country:"🇺🇸", rarity:"common",    basePrice:5,   rating:82, pos:"LW",  icon:"🥊" },
+  { id:"m_vettori",    sport:"mma", name:"Alex Volkan",      team:"Global Global Combat League",          country:"🇮🇹", rarity:"common",    basePrice:4,   rating:79, pos:"MW",  icon:"🥊" },
+  { id:"m_whittaker",  sport:"mma", name:"Israel Adesan",    team:"Global Global Combat League",          country:"🇦🇺", rarity:"common",    basePrice:5,   rating:81, pos:"MW",  icon:"🥊" },
+
+  // ═══ NASCAR (14 карток) ═══
+  { id:"nc_earnhardt",  sport:"nascar", name:"Dale Earnen",  team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:280, rating:99, pos:"Driver",icon:"🏆" },
+  { id:"nc_gordon",     sport:"nascar", name:"Jeff Gordon",        team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"legendary", basePrice:145, rating:95, pos:"Driver",icon:"🏁" },
+  { id:"nc_petty",      sport:"nascar", name:"Richard Petten",      team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:140, rating:94, pos:"Driver",icon:"🏆" },
+  { id:"nc_jr",         sport:"nascar", name:"Dale Jr Earnen Jr",  team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"legendary", basePrice:135, rating:92, pos:"Driver",icon:"🏁" },
+  { id:"nc_elliott",    sport:"nascar", name:"Chase Elliot",      team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"epic",      basePrice:58,  rating:91, pos:"Driver",icon:"🏁" },
+  { id:"nc_larson",     sport:"nascar", name:"Kyle Larson",        team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"epic",      basePrice:60,  rating:91, pos:"Driver",icon:"🏁" },
+  { id:"nc_kyle",       sport:"nascar", name:"Kurt Busen",         team:"Richardson Racing",   country:"🇺🇸", rarity:"epic",      basePrice:56,  rating:90, pos:"Driver",icon:"🏁" },
+  { id:"nc_blaney",     sport:"nascar", name:"Ryan Blaney",        team:"Pemberton Racing",country:"🇺🇸", rarity:"rare",      basePrice:24,  rating:87, pos:"Driver",icon:"🏁" },
+  { id:"nc_logano",     sport:"nascar", name:"Joey Logen",        team:"Pemberton Racing",country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:86, pos:"Driver",icon:"🏁" },
+  { id:"nc_hamlin",     sport:"nascar", name:"Denny Hamlen",       team:"Gibson Motorsports",    country:"🇺🇸", rarity:"rare",      basePrice:24,  rating:86, pos:"Driver",icon:"🏁" },
+  { id:"nc_bell",       sport:"nascar", name:"Christopher Bellan",   team:"Gibson Motorsports",    country:"🇺🇸", rarity:"rare",      basePrice:20,  rating:85, pos:"Driver",icon:"🏁" },
+  { id:"nc_truex",      sport:"nascar", name:"Martin Truexen",    team:"Gibson Motorsports",    country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"Driver",icon:"🏁" },
+  { id:"nc_wallace",    sport:"nascar", name:"Bubba Wallan",      team:"TwentyThree Racing",  country:"🇺🇸", rarity:"common",    basePrice:4,   rating:78, pos:"Driver",icon:"🏁" },
+  { id:"nc_reddick",    sport:"nascar", name:"Tyler Reddan",      team:"TwentyThree Racing",  country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"Driver",icon:"🏁" },
+
+  // ═══ IMSA (12 карток) ═══
+  { id:"im_bamber",    sport:"imsa", name:"Earl Bamford",         team:"Stuttgart Performance",      country:"🇳🇿", rarity:"legendary", basePrice:115, rating:91, pos:"Driver",icon:"🚗" },
+  { id:"im_tandy",     sport:"imsa", name:"Nick Tander",          team:"Stuttgart Performance",      country:"🇬🇧", rarity:"legendary", basePrice:110, rating:90, pos:"Driver",icon:"🚗" },
+  { id:"im_taylor",    sport:"imsa", name:"Ricky Taylen",        team:"Apex ARX-6", country:"🇺🇸", rarity:"epic",      basePrice:50,  rating:87, pos:"Driver",icon:"🚗" },
+  { id:"im_bourdais",  sport:"imsa", name:"Sebastien Bourdan",  team:"Crestline Racing",     country:"🇫🇷", rarity:"epic",      basePrice:52,  rating:88, pos:"Driver",icon:"🚗" },
+  { id:"im_derani",    sport:"imsa", name:"Pipo Deran",         team:"Apex ARX-6", country:"🇧🇷", rarity:"epic",      basePrice:48,  rating:86, pos:"Driver",icon:"🚗" },
+  { id:"im_pla",       sport:"imsa", name:"Olivier Planer",         team:"Bavarian Motorworks",          country:"🇫🇷", rarity:"rare",      basePrice:20,  rating:83, pos:"Driver",icon:"🚗" },
+  { id:"im_catsburg",  sport:"imsa", name:"Nicky Catsen",      team:"Bavarian Motorworks",          country:"🇳🇱", rarity:"rare",      basePrice:18,  rating:82, pos:"Driver",icon:"🚗" },
+  { id:"im_edwards",   sport:"imsa", name:"John Edwin",        team:"Weatherline Racing",  country:"🇺🇸", rarity:"rare",      basePrice:16,  rating:81, pos:"Driver",icon:"🚗" },
+  { id:"im_vass",      sport:"imsa", name:"Marco Vassen",       team:"Vettec Racing",     country:"🇩🇰", rarity:"rare",      basePrice:16,  rating:80, pos:"Driver",icon:"🚗" },
+  { id:"im_hardwick",  sport:"imsa", name:"Ryan Hardin",       team:"Wrighton Motorsport",    country:"🇺🇸", rarity:"common",    basePrice:4,   rating:74, pos:"Driver",icon:"🚗" },
+  { id:"im_robichon",  sport:"imsa", name:"Zach Roben",   team:"Stuttgart Performance",      country:"🇨🇦", rarity:"common",    basePrice:5,   rating:76, pos:"Driver",icon:"🚗" },
+  { id:"im_rsr",       sport:"imsa", name:"Roman Rosen",        team:"Stuttgart Performance",      country:"🇺🇸", rarity:"common",    basePrice:4,   rating:75, pos:"Driver",icon:"🚗" },
+
+  // ═══ SRO (12 карток) ═══
+  { id:"sro_vanthoor", sport:"sro", name:"Dries Vandor",       team:"Ingolstadt Sport",   country:"🇧🇪", rarity:"legendary", basePrice:110, rating:91, pos:"Driver",icon:"🏆" },
+  { id:"sro_marciello",sport:"sro", name:"Raffael Marcian",   team:"Sterling Performance", country:"🇨🇭", rarity:"legendary", basePrice:115, rating:92, pos:"Driver",icon:"🏆" },
+  { id:"sro_fuoco",    sport:"sro", name:"Antonio Fucon",        team:"Crimson Corse",      country:"🇮🇹", rarity:"epic",      basePrice:48,  rating:86, pos:"Driver",icon:"🏆" },
+  { id:"sro_ua",       sport:"sro", name:"Maks Koval",     team:"Stuttgart Performance",      country:"🇺🇦", rarity:"epic",      basePrice:46,  rating:85, pos:"Driver",icon:"🏆" },
+  { id:"sro_abril",    sport:"sro", name:"Vincent Abrin",         team:"Sterling Performance", country:"🇫🇷", rarity:"epic",      basePrice:48,  rating:86, pos:"Driver",icon:"🏆" },
+  { id:"sro_pepper",   sport:"sro", name:"Jordan Peppern",        team:"Ingolstadt Sport",   country:"🇩🇪", rarity:"rare",      basePrice:18,  rating:82, pos:"Driver",icon:"🏆" },
+  { id:"sro_robin",    sport:"sro", name:"Robin Roben",         team:"Ingolstadt Sport",   country:"🇳🇱", rarity:"rare",      basePrice:20,  rating:83, pos:"Driver",icon:"🏆" },
+  { id:"sro_weerts",   sport:"sro", name:"Charles Weeren",       team:"Ingolstadt Sport",   country:"🇧🇪", rarity:"rare",      basePrice:19,  rating:82, pos:"Driver",icon:"🏆" },
+  { id:"sro_spinelli", sport:"sro", name:"Luca Spinel",     team:"Crimson Corse",      country:"🇮🇹", rarity:"rare",      basePrice:17,  rating:80, pos:"Driver",icon:"🏆" },
+  { id:"sro_tuck",     sport:"sro", name:"Tobias Tucken",             team:"Barwell Racing",   country:"🇬🇧", rarity:"common",    basePrice:3,   rating:74, pos:"Driver",icon:"🏆" },
+  { id:"sro_mul",      sport:"sro", name:"Marco Mulen",        team:"Bavarian Motorworks",          country:"🇩🇪", rarity:"common",    basePrice:4,   rating:75, pos:"Driver",icon:"🏆" },
+  { id:"sro_ish",      sport:"sro", name:"Ishaan Ishar",       team:"Santoro Corse",  country:"🇦🇹", rarity:"common",    basePrice:3,   rating:73, pos:"Driver",icon:"🏆" },
+];
+
+const CARD_BY_ID = Object.fromEntries(CARDS.map(c => [c.id, c]));
+
+function cardPrice(card) {
+  return Math.round(card.basePrice * RARITY[card.rarity].mult);
+}
+
+// ── PACK SIZES ─────────────────────────────────────────────
+const PACK_SIZES = [
+  { cards:1, mult:1.0  },
+  { cards:2, mult:1.85 },
+  { cards:3, mult:2.65 },
+  { cards:4, mult:3.40 },
+  { cards:5, mult:4.10 },
+  { cards:6, mult:4.75 },
+  { cards:7, mult:5.35 },
+];
+
+// ── PACK DEFINITIONS — РЕАЛІСТИЧНІШІ ШАНСИ ────────────────
+function getPacksForSport(sportId, season) {
+  const sp = SPORTS[sportId];
+  const ym = YEAR_PRICE_MULT[season] || 1.0;
+  return [
+    {
+      id:`${sportId}_${season}_standard`,
+      name:`${sp.label} ${season}`,
+      desc:`Стандартний${ym>1?" 📅 Вінтаж":""}`,
+      gradient:"linear-gradient(135deg,#0d1b2e,#10141A)",
+      glowColor: sp.color,
+      basePrice: Math.round(90 * ym),
+      odds:{ common:0.78, rare:0.17, epic:0.04, legendary:0.009, ultimate:0.001 },
+      guaranteed: null,
+    },
+    {
+      id:`${sportId}_${season}_elite`,
+      name:`${sp.label} ${season} Elite`,
+      desc:`Гарантована Rare+`,
+      gradient:"linear-gradient(135deg,#0d2a1e,#10141A)",
+      glowColor:"#21C97A",
+      basePrice: Math.round(315 * ym),
+      odds:{ common:0.55, rare:0.33, epic:0.10, legendary:0.018, ultimate:0.002 },
+      guaranteed:"rare",
+    },
+    {
+      id:`${sportId}_${season}_epic`,
+      name:`${sp.label} ${season} Epic`,
+      desc:`Гарантована Epic+`,
+      gradient:"linear-gradient(135deg,#1a0d2e,#10141A)",
+      glowColor:"#B15CFF",
+      basePrice: Math.round(1350 * ym),
+      odds:{ common:0.20, rare:0.42, epic:0.30, legendary:0.07, ultimate:0.01 },
+      guaranteed:"epic",
+    },
+    {
+      id:`${sportId}_${season}_legendary`,
+      name:`${sp.label} ${season} Hall of Legends`,
+      desc:`Гарантована Hall of Legendsary+`,
+      gradient:"linear-gradient(135deg,#2a1e00,#10141A)",
+      glowColor:"#F0B429",
+      basePrice: Math.round(6300 * ym),
+      odds:{ common:0.00, rare:0.25, epic:0.50, legendary:0.21, ultimate:0.04 },
+      guaranteed:"legendary",
+    },
+    ...(season === 2026 ? [{
+      id:`${sportId}_2026_future`,
+      name:`${sp.label} 2026 Future ⚡`,
+      desc:`Ultimate шанс 4%`,
+      gradient:"linear-gradient(135deg,#2a0010,#10141A)",
+      glowColor:"#FF4757",
+      basePrice: 22500,
+      odds:{ common:0.00, rare:0.00, epic:0.30, legendary:0.56, ultimate:0.14 },
+      guaranteed:"legendary",
+    }] : []),
+  ];
+}
+
+// ── NEWS ───────────────────────────────────────────────────
+const SPORT_NEWS = [
+  { text:"🔥 Leo Merson scores a hat-trick — card price rising!", card:"s_messi",      effect:+0.12, sport:"soccer" },
+  { text:"⚡ Maxim Verden wins another race!", card:"r_verstappen", effect:+0.10, sport:"f1" },
+  { text:"👑 Leandro Jameston extends a team contract!", card:"b_lebron",     effect:+0.08, sport:"basketball" },
+  { text:"🎾 Carlos Alcaron wins the season final!", card:"t_alcaraz",    effect:+0.15, sport:"tennis" },
+  { text:"🥊 Oleks Usaren announces a comeback fight!", card:"m_mcgregor",   effect:+0.20, sport:"mma" },
+  { text:"😢 Cristian Roldan misses a match with an injury", card:"s_ronaldo",    effect:-0.08, sport:"soccer" },
+  { text:"🏆 Leon Hampton signs a new racing contract!", card:"r_hamilton",   effect:+0.18, sport:"f1" },
+  { text:"🏈 Pat Maher throws 5 touchdowns in the championship final!", card:"nfl_mahomes",  effect:+0.14, sport:"football" },
+  { text:"⚾ Sho Ohtaro delivers a perfect game!", card:"bb_ohtani",    effect:+0.16, sport:"baseball" },
+  { text:"🏁 Dale Jr Earnen Jr joins the Hall of Legends!", card:"nc_jr",        effect:+0.12, sport:"nascar" },
+  { text:"🏀 Nikola Jovek wins another MVP award!", card:"b_jokic",      effect:+0.10, sport:"basketball" },
+  { text:"🎾 Novak Djovan sets a new tour record!", card:"t_djokovic",   effect:+0.08, sport:"tennis" },
+  { text:"⚠️ Charles Leclair receives a race penalty — team files a review", card:"r_leclerc",    effect:-0.10, sport:"f1" },
+  { text:"🏀 Stephen Curran sets a new three-point record!", card:"b_curry",      effect:+0.09, sport:"basketball" },
+  { text:"⚽ Erik Halandor scores 50 goals this season!", card:"s_haaland",    effect:+0.13, sport:"soccer" },
+  { text:"🏐 Taras Kovalen wins tournament MVP!", card:"ua_plotnytskyi",effect:+0.18,sport:"volleyball" },
+  { text:"🥊 Maksym Savych successfully defends the world titles!", card:"ua_usyk",      effect:+0.16, sport:"mma" },
+  { text:"🚗 Earl Bamford wins a 24-hour endurance race!", card:"im_bamber",    effect:+0.13, sport:"imsa" },
+  { text:"🏆 Raffael Marcian wins a 12-hour endurance race!", card:"sro_marciello",effect:+0.12, sport:"sro" },
+  { text:"⚽ Mykhail Mudrenko scores the winning goal!", card:"ua_mudryk",    effect:+0.14, sport:"soccer" },
+  { text:"🥊 Artem Rudenko becomes undisputed champion!", card:"ua_lomachenko",effect:+0.18, sport:"mma" },
+];
+
+// ── STORAGE ────────────────────────────────────────────────
+const Store = {
+  set(k, v) { const s=JSON.stringify(v); try{localStorage.setItem(k,s)}catch(e){} try{sessionStorage.setItem(k,s)}catch(e){} },
+  get(k) { try{const v=localStorage.getItem(k);if(v!==null)return JSON.parse(v)}catch(e){} try{const v=sessionStorage.getItem(k);if(v!==null)return JSON.parse(v)}catch(e){} return null; },
+  remove(k) { try{localStorage.removeItem(k)}catch(e){} try{sessionStorage.removeItem(k)}catch(e){} }
+};
+
+// ── ACCOUNT ────────────────────────────────────────────────
+const Account = {
+  generateId() { return "SC-"+Array.from({length:8},()=>"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.floor(Math.random()*36)]).join(""); },
+  create(d) {
+    const acc={id:this.generateId(),username:(d.username||"").trim(),firstName:(d.firstName||"").trim(),lastName:(d.lastName||"").trim(),email:(d.email||"").trim(),passHash:d.passHash||"",createdAt:new Date().toISOString(),theme:"dark"};
+    Store.set(CX.ACC_KEY,acc);return acc;
+  },
+  get()       { return Store.get(CX.ACC_KEY); },
+  update(f)   { const a={...this.get(),...f};Store.set(CX.ACC_KEY,a);return a; },
+  delete()    { Store.remove(CX.ACC_KEY);Store.remove(CX.SAVE_KEY); },
+  isLoggedIn(){ return !!this.get(); },
+  applyTheme(){ document.documentElement.setAttribute("data-theme",this.get()?.theme||"dark"); },
+  initials()  { const a=this.get();if(!a)return"SC";const f=(a.firstName||a.username||"S")[0]||"S";const l=(a.lastName||"")[0]||(a.username||"C")[1]||"C";return(f+l).toUpperCase(); },
+  logout(){this.delete();},
+  setTheme(t){this.update({theme:t});},
+  register(d){if(!d.username||d.username.length<3)return{success:false,error:"Нікнейм мінімум 3 символи"};if(!d.email||!d.email.includes("@"))return{success:false,error:"Невірний email"};if(!d.password||d.password.length<6)return{success:false,error:"Пароль мінімум 6 символів"};const passHash=btoa(d.password);this.create({...d,passHash});const s=defaultSave();writeSave(s);return{success:true};},
+  login(username,password){const acc=this.get();if(!acc)return{success:false,error:"Акаунт не знайдено"};if(acc.username!==username&&acc.email!==username)return{success:false,error:"Невірний нікнейм або email"};if(acc.passHash!==btoa(password))return{success:false,error:"Невірний пароль"};return{success:true};},
+};
+
+// ── SAVE ───────────────────────────────────────────────────
+function defaultSave() {
+  return { coins:CX.INIT_COINS, owned:{}, packsOpened:0, totalSpent:0, totalEarned:0, tradesDone:0, cardsBought:0, cardsSold:0, cardPrices:{}, priceHistory:{}, log:[], tradedCards:{}, createdAt:new Date().toISOString() };
+}
+function loadSave() { return Store.get(CX.SAVE_KEY)||defaultSave(); }
+function writeSave(s) { Store.set(CX.SAVE_KEY,s); }
+
+// ── PRICE SYSTEM ───────────────────────────────────────────
+function parseCardKey(k) {
+  const m=k.match(/^(.+)_(\d{4})$/);
+  if(m&&YEAR_PRICE_MULT[parseInt(m[2])])return{id:m[1],year:parseInt(m[2])};
+  return{id:k,year:2026};
+}
+function getBaseCard(k) { const {id}=parseCardKey(k);return CARD_BY_ID[id]||CARD_BY_ID[k]; }
+
+function getCardPrice(save,k) {
+  const {id,year}=parseCardKey(k);
+  const card=CARD_BY_ID[id]||CARD_BY_ID[k];
+  if(!card)return 0;
+  const ym=YEAR_PRICE_MULT[year]||1.0;
+  const vintageBase=Math.round(cardPrice(card)*ym);
+  return save.cardPrices[k]||vintageBase;
+}
+
+function initPrices(save) {
+  for(const card of CARDS){
+    const keys=[card.id,...Object.keys(YEAR_PRICE_MULT).filter(y=>parseInt(y)<2026).map(y=>card.id+"_"+y)];
+    for(const k of keys){
+      const {year}=parseCardKey(k);
+      const ym=YEAR_PRICE_MULT[year]||1.0;
+      if(!save.cardPrices[k]){
+        const base=cardPrice(card);
+        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16));
+      }
+      if(!save.priceHistory[k])save.priceHistory[k]=[save.cardPrices[k]];
+    }
+  }
+  return save;
+}
+
+function tickMarket(save) {
+  const vol={common:0.04,rare:0.06,epic:0.08,legendary:0.10,ultimate:0.14};
+  for(const card of CARDS){
+    const keys=[card.id,...Object.keys(YEAR_PRICE_MULT).filter(y=>parseInt(y)<2026).map(y=>card.id+"_"+y)];
+    for(const k of keys){
+      const {year}=parseCardKey(k);
+      const ym=YEAR_PRICE_MULT[year]||1.0;
+      const base=Math.round(cardPrice(card)*ym);
+      const cur=save.cardPrices[k]||base;
+      const v=vol[card.rarity]||0.05;
+      const change=(Math.random()-.5)*2*v;
+      const drift=(base-cur)/base*0.025;
+      const newP=Math.max(Math.round(cur*(1+change+drift)),Math.round(base*0.3));
+      save.cardPrices[k]=newP;
+      const hist=save.priceHistory[k]||[base];
+      hist.push(newP);if(hist.length>60)hist.shift();
+      save.priceHistory[k]=hist;
+    }
+  }
+  return save;
+}
+
+// ── OPEN PACK ──────────────────────────────────────────────
+function openPack(pack,save,count=1) {
+  const sz=PACK_SIZES.find(p=>p.cards===count)||PACK_SIZES[0];
+  const totalPrice=Math.round(pack.basePrice*sz.mult);
+  if(save.coins<totalPrice)return null;
+  save.coins-=totalPrice;save.packsOpened++;save.totalSpent+=totalPrice;
+  const results=[];
+  const sportId=pack.id.split("_")[0];
+  const season=parseInt(pack.id.split("_")[1])||2026;
+  const pool=CARDS.filter(c=>c.sport===sportId);
+  const byRarity={};for(const r of Object.keys(RARITY))byRarity[r]=pool.filter(c=>c.rarity===r);
+  for(let i=0;i<count;i++){
+    let rarity;
+    const rarOrder=["common","rare","epic","legendary","ultimate"];
+    if(i===0&&pack.guaranteed){
+      const minIdx=rarOrder.indexOf(pack.guaranteed);
+      const avail=rarOrder.slice(minIdx).filter(r=>(byRarity[r]||[]).length>0);
+      const weights=avail.map(r=>pack.odds[r]||0);
+      const total=weights.reduce((a,b)=>a+b,0);
+      let rand=Math.random()*total;rarity=avail[0];
+      for(let j=0;j<avail.length;j++){if(rand<weights[j]){rarity=avail[j];break;}rand-=weights[j];}
+    } else {
+      let rand=Math.random();rarity="common";
+      for(const[r,prob]of Object.entries(pack.odds)){if(rand<prob&&(byRarity[r]||[]).length>0){rarity=r;break;}rand-=prob;}
+    }
+    const pool2=byRarity[rarity]||byRarity["common"]||CARDS;
+    const card=pool2[Math.floor(Math.random()*pool2.length)];
+    const cardKey=season<2026?card.id+"_"+season:card.id;
+    const wasNew=!save.owned[cardKey];
+    save.owned[cardKey]=(save.owned[cardKey]||0)+1;
+    results.push({card:{...card,key:cardKey,season},rarity,isNew:wasNew});
+  }
+  addLog(save,"pack",`Відкрито "${pack.name}" (${count} карт.) — ${results.map(r=>r.card.name).join(", ")}`);
+  writeSave(save);return results;
+}
+
+// ── MARKET ─────────────────────────────────────────────────
+function sellCard(save,cardKey,qty=1) {
+  if((save.owned[cardKey]||0)<qty)return false;
+  const price=getCardPrice(save,cardKey);
+  const card=getBaseCard(cardKey);
+  const {year}=parseCardKey(cardKey);
+  save.owned[cardKey]-=qty;
+  if(save.owned[cardKey]===0)delete save.owned[cardKey];
+  save.coins+=price*qty;save.totalEarned+=price*qty;save.cardsSold+=qty;
+  const yt=year<2026?" ["+year+"]":"";
+  addLog(save,"sell",`Продано ${qty}x ${card?.name}${yt} за ${fmtCoins(price*qty)} монет`);
+  writeSave(save);return true;
+}
+
+function buyCard(save,cardKey,qty=1) {
+  const price=getCardPrice(save,cardKey);
+  const total=price*qty;
+  const card=getBaseCard(cardKey);
+  const {year}=parseCardKey(cardKey);
+  if(save.coins<total)return false;
+  save.coins-=total;
+  save.owned[cardKey]=(save.owned[cardKey]||0)+qty;
+  save.totalSpent+=total;save.cardsBought+=qty;
+  const yt=year<2026?" ["+year+"]":"";
+  addLog(save,"buy",`Куплено ${qty}x ${card?.name}${yt} за ${fmtCoins(total)} монет`);
+  writeSave(save);return true;
+}
+
+// ── TRADES — ОБМЕЖЕННЯ ─────────────────────────────────────
+function canTrade(save,myKey,botKey){
+  const myCard=getBaseCard(myKey);const botCard=getBaseCard(botKey);
+  if(!myCard||!botCard)return{ok:false,reason:"Картка не знайдена"};
+  const myP=getCardPrice(save,myKey);const botP=getCardPrice(save,botKey);
+  const ratio=Math.max(myP,botP)/Math.max(Math.min(myP,botP),1);
+  if(ratio>5)return{ok:false,reason:`Різниця цін надто велика (${ratio.toFixed(1)}x)`};
+  const rarOrder=["common","rare","epic","legendary","ultimate"];
+  const myR=rarOrder.indexOf(myCard.rarity);const botR=rarOrder.indexOf(botCard.rarity);
+  if(Math.abs(myR-botR)>1)return{ok:false,reason:"Рідкість карток надто відрізняється"};
+  const now=Date.now();const windowMs=10*60*1000;
+  if(!save.tradeWindow)save.tradeWindow={start:now,count:0};
+  if(now-save.tradeWindow.start>windowMs)save.tradeWindow={start:now,count:0};
+  if(save.tradeWindow.count>=50)return{ok:false,reason:"Ліміт 50 обмінів за 10 хв вичерпано"};
+  const tradedCount=(save.tradedCards||{})[myKey]||0;
+  if(tradedCount>=(save.owned[myKey]||0))return{ok:false,reason:"Ця картка вже була в обміні"};
+  return{ok:true,reason:""};
+}
+function tradeCards(save,myKey,botKey){
+  const check=canTrade(save,myKey,botKey);
+  if(!check.ok)return{success:false,reason:check.reason};
+  if((save.owned[myKey]||0)<1)return{success:false,reason:"Немає цієї картки"};
+  save.owned[myKey]--;if(save.owned[myKey]===0)delete save.owned[myKey];
+  save.owned[botKey]=(save.owned[botKey]||0)+1;
+  save.tradesDone++;
+  if(!save.tradedCards)save.tradedCards={};
+  save.tradedCards[myKey]=(save.tradedCards[myKey]||0)+1;
+  if(!save.tradeWindow)save.tradeWindow={start:Date.now(),count:0};
+  save.tradeWindow.count++;
+  const mc=getBaseCard(myKey);const bc=getBaseCard(botKey);
+  addLog(save,"trade",`Обмін: ${mc?.name} → ${bc?.name}`);
+  writeSave(save);return{success:true,reason:""};
+}
+function generateBotOffer(save,myKey){
+  const now=Date.now();const cacheMs=10*60*1000;
+  if(!save.botOffers)save.botOffers={};
+  const cache=save.botOffers[myKey];
+  if(!cache||now-cache.ts>cacheMs){
+    const count=10+Math.floor(Math.random()*11);
+    const myP=getCardPrice(save,myKey);const myCard=getBaseCard(myKey);
+    const rarOrder=["common","rare","epic","legendary","ultimate"];
+    const myR=rarOrder.indexOf(myCard?.rarity||"common");
+    const candidates=CARDS.filter(c=>{
+      if(c.id===parseCardKey(myKey).id)return false;
+      const cR=rarOrder.indexOf(c.rarity);if(Math.abs(cR-myR)>1)return false;
+      const cP=getCardPrice(save,c.id);
+      return Math.max(myP,cP)/Math.max(Math.min(myP,cP),1)<=5;
+    });
+    const pool=candidates.length?candidates:CARDS;
+    const shuffled=pool.slice().sort(()=>Math.random()-.5).slice(0,count);
+    save.botOffers[myKey]={ts:now,offers:shuffled.map(c=>c.id),idx:0};
+    writeSave(save);
+  }
+  const oc=save.botOffers[myKey];
+  return CARD_BY_ID[oc.offers[oc.idx%oc.offers.length]]||CARDS[0];
+}
+function nextBotOffer(save,myKey){
+  if(!save.botOffers||!save.botOffers[myKey])return generateBotOffer(save,myKey);
+  save.botOffers[myKey].idx=(save.botOffers[myKey].idx||0)+1;
+  const oc=save.botOffers[myKey];
+  writeSave(save);
+  return CARD_BY_ID[oc.offers[oc.idx%oc.offers.length]]||CARDS[0];
+}
+
+// ── MARKET ─────────────────────────────────────────────────
+function sellCard(save,cardKey,qty=1) {
+  if((save.owned[cardKey]||0)<qty)return false;
+  const price=getCardPrice(save,cardKey);
+  const card=getBaseCard(cardKey);
+  const {year}=parseCardKey(cardKey);
+  save.owned[cardKey]-=qty;
+  if(save.owned[cardKey]===0)delete save.owned[cardKey];
+  save.coins+=price*qty;save.totalEarned+=price*qty;save.cardsSold+=qty;
+  const yt=year<2026?" ["+year+"]":"";
+  addLog(save,"sell",`Продано ${qty}x ${card?.name}${yt} за ${fmtCoins(price*qty)} монет`);
+  writeSave(save);return true;
+}
+
+function buyCard(save,cardKey,qty=1) {
+  const price=getCardPrice(save,cardKey);
+  const total=price*qty;
+  const card=getBaseCard(cardKey);
+  const {year}=parseCardKey(cardKey);
+  if(save.coins<total)return false;
+  save.coins-=total;
+  save.owned[cardKey]=(save.owned[cardKey]||0)+qty;
+  save.totalSpent+=total;save.cardsBought+=qty;
+  const yt=year<2026?" ["+year+"]":"";
+  addLog(save,"buy",`Куплено ${qty}x ${card?.name}${yt} за ${fmtCoins(total)} монет`);
+  writeSave(save);return true;
+}
+
+// ── TRADES — ОБМЕЖЕННЯ ─────────────────────────────────────
+function canTrade(save,myKey,botKey){
+  const myCard=getBaseCard(myKey);const botCard=getBaseCard(botKey);
+  if(!myCard||!botCard)return{ok:false,reason:"Картка не знайдена"};
+  const myP=getCardPrice(save,myKey);const botP=getCardPrice(save,botKey);
+  const ratio=Math.max(myP,botP)/Math.max(Math.min(myP,botP),1);
+  if(ratio>5)return{ok:false,reason:`Різниця цін надто велика (${ratio.toFixed(1)}x)`};
+  const rarOrder=["common","rare","epic","legendary","ultimate"];
+  const myR=rarOrder.indexOf(myCard.rarity);const botR=rarOrder.indexOf(botCard.rarity);
+  if(Math.abs(myR-botR)>1)return{ok:false,reason:"Рідкість карток надто відрізняється"};
+  const now=Date.now();const windowMs=10*60*1000;
+  if(!save.tradeWindow)save.tradeWindow={start:now,count:0};
+  if(now-save.tradeWindow.start>windowMs)save.tradeWindow={start:now,count:0};
+  if(save.tradeWindow.count>=50)return{ok:false,reason:"Ліміт 50 обмінів за 10 хв вичерпано"};
+  const tradedCount=(save.tradedCards||{})[myKey]||0;
+  if(tradedCount>=(save.owned[myKey]||0))return{ok:false,reason:"Ця картка вже була в обміні"};
+  return{ok:true,reason:""};
+}
+function tradeCards(save,myKey,botKey){
+  const check=canTrade(save,myKey,botKey);
+  if(!check.ok)return{success:false,reason:check.reason};
+  if((save.owned[myKey]||0)<1)return{success:false,reason:"Немає цієї картки"};
+  save.owned[myKey]--;if(save.owned[myKey]===0)delete save.owned[myKey];
+  save.owned[botKey]=(save.owned[botKey]||0)+1;
+  save.tradesDone++;
+  if(!save.tradedCards)save.tradedCards={};
+  save.tradedCards[myKey]=(save.tradedCards[myKey]||0)+1;
+  if(!save.tradeWindow)save.tradeWindow={start:Date.now(),count:0};
+  save.tradeWindow.count++;
+  const mc=getBaseCard(myKey);const bc=getBaseCard(botKey);
+  addLog(save,"trade",`Обмін: ${mc?.name} → ${bc?.name}`);
+  writeSave(save);return{success:true,reason:""};
+}
+function generateBotOffer(save,myKey) {
+  const myPrice=getCardPrice(save,myKey);
+  const myCard=getBaseCard(myKey);
+  if(!myCard)return CARDS[0];
+  const myRarOrder=["common","rare","epic","legendary","ultimate"];
+  const myRIdx=myRarOrder.indexOf(myCard.rarity);
+  // Тільки картки схожої рідкості (±1 рівень) і ціни (до 3x різниці)
+  const candidates=CARDS.filter(c=>{
+    const rIdx=myRarOrder.indexOf(c.rarity);
+    if(Math.abs(rIdx-myRIdx)>1)return false;
+    const p=getCardPrice(save,c.id);
+    const ratio=Math.max(myPrice,p)/Math.max(Math.min(myPrice,p),1);
+    return ratio<=3&&c.id!==myCard.id;
+  });
+  if(!candidates.length)return CARDS.filter(c=>c.rarity===myCard.rarity)[0]||CARDS[0];
+  return candidates[Math.floor(Math.random()*candidates.length)];
+}
+
+// ── UTILS ─────────────────────────────────────────────────
+function addLog(save,type,text) {
+  const now=new Date().toLocaleTimeString("uk-UA",{hour:"2-digit",minute:"2-digit"});
+  save.log.unshift({type,text,time:now,date:new Date().toISOString()});
+  if(save.log.length>200)save.log.pop();
+}
+function netWorth(save) {
+  let w=save.coins;
+  for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
+  return w;
+}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US");}
+function toast(msg,type="info"){
+  const root=document.getElementById("toast-root");if(!root)return;
+  const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};
+  const el=document.createElement("div");el.className=`toast toast-${type}`;
+  el.innerHTML=`<span class="toast-icon">${icons[type]||"💬"}</span><span>${msg}</span>`;
+  root.appendChild(el);
+  setTimeout(()=>{el.classList.add("out");setTimeout(()=>el.remove(),350);},3500);
+}
+function openModal(id){document.getElementById(id)?.classList.add("open");}
+function closeModal(id){document.getElementById(id)?.classList.remove("open");}
+function initNav(activePage){
+  document.querySelectorAll(".nav-item[href]").forEach(a=>a.classList.toggle("active",a.getAttribute("href")===activePage));
+  const av=document.getElementById("tb-avatar");
+  if(av){av.textContent=Account.initials();av.onclick=()=>location.href="account.html";}
+  function tick(){const el=document.getElementById("tb-clock");if(el)el.textContent=new Date().toLocaleTimeString("uk-UA");}
+  tick();setInterval(tick,1000);
+  Account.applyTheme();updateCoinsDisplay();
+}
+function updateCoinsDisplay(){
+  const s=loadSave();const el=document.getElementById("tb-coins");
+  if(el)el.textContent=fmtCoins(s.coins);
+}
+</script>
+<script>
+const TRANSACTION_API_URL = 'https://script.google.com/macros/s/AKfycbzJowGxl284sZf5XzYbRLGPV2lRnl0IgebzaAGA1Xt4Q-9AySX-_v8B1AvYo2F8BSKs/exec';
+
+if(!Account.isLoggedIn()){ location.href='index.html'; }
+(function initTransactionPage(){
+  const acc=Account.get()||{};
+  const av=document.getElementById('sb-av'), nm=document.getElementById('sb-name'), id=document.getElementById('sb-id');
+  if(av) av.textContent=Account.initials();
+  if(nm) nm.textContent=[acc.firstName,acc.lastName].filter(Boolean).join(' ')||acc.username||'Гравець';
+  if(id) id.textContent='ID: '+(acc.id||'—');
+  Account.applyTheme();
+  initNav('transactions.html');
+  updateTransactionHeader();
+  renderCreateCards();
+  const buyerId=document.getElementById('buyer-account-id'); if(buyerId) buyerId.textContent=acc.id||'—';
+  initTicker();
+})();
+
+function initTicker(){
+  const t=document.getElementById('ticker-track'); if(!t)return;
+  const s=loadSave(); const items=CARDS.slice(0,30).map(c=>{const p=getCardPrice(s,c.id);const h=s.priceHistory[c.id]||[p,p];const o=h[h.length-2]||p;const u=p>=o;return `<span class="ticker-item"><span class="nm">${escapeHtml(c.name)}</span><span class="${u?'up':'dn'}">${u?'▲':'▼'} ${fmtCoins(p)}</span></span>`;}).join('');
+  t.innerHTML=items+items;
+}
+
+function updateTransactionHeader(){
+  const s=loadSave();
+  const coins=document.getElementById('tb-coins'); if(coins) coins.textContent=fmtCoins(s.coins);
+  const bal=document.getElementById('buyer-balance'); if(bal) bal.textContent=fmtCoins(s.coins);
+}
+
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function normalizeTxId(v){return String(v||'').trim().toUpperCase();}
+function statusBadge(status){const s=String(status||'').toLowerCase();return `<span class="tx-status ${escapeHtml(s)}">${escapeHtml(s||'—')}</span>`;}
+function txApplied(save){save.transactionApplied=save.transactionApplied||{};return save.transactionApplied;}
+function txCanceled(save){save.transactionCanceled=save.transactionCanceled||{};return save.transactionCanceled;}
+function txClaims(save){save.transactionClaims=save.transactionClaims||{};return save.transactionClaims;}
+
+async function transactionApi(action,data={}){
+  let response;
+  try{
+    response=await fetch(TRANSACTION_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,data}),redirect:'follow'});
+  }catch(err){throw new Error('Немає зв’язку з сервером. Перевір інтернет і Apps Script.');}
+  if(!response.ok) throw new Error('Помилка сервера HTTP '+response.status);
+  let result; try{result=await response.json();}catch(e){throw new Error('Сервер повернув неправильну відповідь.');}
+  if(!result.success){const er=new Error(result.error||'Операцію не виконано');er.payload=result;throw er;}
+  return result;
+}
+
+function setBusy(btn,busy,label){
+  if(!btn)return; if(busy){btn.dataset.oldText=btn.textContent;btn.textContent=label||'Зачекай…';btn.disabled=true;btn.classList.add('tx-busy');}else{btn.textContent=btn.dataset.oldText||btn.textContent;btn.disabled=false;btn.classList.remove('tx-busy');}
+}
+
+function getCardTransferPayload(key){
+  const parsed=parseCardKey(key); const base=CARD_BY_ID[parsed.id]||CARD_BY_ID[key]; if(!base)return null;
+  return {...base,id:key,key:key,baseId:parsed.id,year:parsed.year,season:parsed.year,transferVersion:1};
+}
+function cardKeyFromServer(card){return String(card?.key||card?.id||'').trim();}
+function addTransferredCard(save,card){const key=cardKeyFromServer(card);if(!key)throw new Error('Сервер не повернув ID картки');save.owned=save.owned||{};save.owned[key]=(save.owned[key]||0)+1;return key;}
+
+function renderCreateCards(){
+  const sel=document.getElementById('create-card'); if(!sel)return; const save=loadSave();
+  const items=Object.entries(save.owned||{}).filter(([,q])=>q>0).map(([key,qty])=>{const p=parseCardKey(key);const card=CARD_BY_ID[p.id]||CARD_BY_ID[key];return {key,qty,year:p.year,card};}).filter(x=>x.card).sort((a,b)=>a.card.name.localeCompare(b.card.name));
+  if(!items.length){sel.innerHTML='<option value="">Немає карток в інвентарі</option>';document.getElementById('create-btn').disabled=true;return;}
+  document.getElementById('create-btn').disabled=false;
+  sel.innerHTML='<option value="">— Обери картку —</option>'+items.map(x=>`<option value="${escapeHtml(x.key)}">${escapeHtml(x.card.name)} · ${x.year} · x${x.qty} · ${escapeHtml(RARITY[x.card.rarity]?.label||x.card.rarity)}</option>`).join('');
+}
+
+function renderCardMini(card){
+  if(!card)return '<div class="tx-empty">Немає даних картки</div>'; const key=cardKeyFromServer(card);const parsed=parseCardKey(key);const base=CARD_BY_ID[card.baseId||parsed.id]||CARD_BY_ID[parsed.id]||card;const rarity=base.rarity||card.rarity||'common';const year=card.year||card.season||parsed.year||2026;
+  return `<div class="tx-card-preview rarity-${escapeHtml(rarity)}"><div class="sport-card rarity-${escapeHtml(rarity)} tx-card-mini"><div class="sc-bg"></div><div class="sc-rarity-glow"></div><div class="sc-rarity-badge">${escapeHtml(RARITY[rarity]?.label||rarity)}</div><div class="sc-year">${escapeHtml(year)}</div><div class="sc-img" style="font-size:36px">${base.icon||card.icon||'🃏'}</div><div class="sc-name">${escapeHtml(base.name||card.name||'Card')}</div><div class="sc-team">${escapeHtml(base.country||'')} ${escapeHtml(base.team||'')}</div><div class="sc-pos">${escapeHtml(base.pos||'')}</div><div class="sc-rating">${escapeHtml(base.rating||'')}</div></div><div class="tx-card-info"><div class="tx-card-name">${escapeHtml(base.name||card.name||'Card')}</div><div class="tx-card-meta">ID: <span class="mono">${escapeHtml(key)}</span><br>Рідкість: <span class="tx-rarity">${escapeHtml(RARITY[rarity]?.label||rarity)}</span><br>Сезон: <span class="tx-year">${escapeHtml(year)}</span></div></div></div>`;
+}
+
+// Tabs
+document.querySelectorAll('.tx-tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tx-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tx-pane').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('tx-'+btn.dataset.pane)?.classList.add('active');updateTransactionHeader();}));
+
+// CREATE
+document.getElementById('create-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('create-btn'), key=document.getElementById('create-card').value, price=Number(document.getElementById('create-price').value), description=document.getElementById('create-description').value.trim(), pin=document.getElementById('create-pin').value.trim(), out=document.getElementById('create-result'), acc=Account.get();
+  if(!key)return toast('Обери картку','warn'); if(!Number.isFinite(price)||price<1)return toast('Вкажи правильну ціну','warn'); if(pin.length<4||pin.length>12)return toast('PIN має містити 4–12 символів','warn');
+  const save=loadSave();if((save.owned?.[key]||0)<1)return toast('Цієї картки вже немає в інвентарі','warn');const card=getCardTransferPayload(key);if(!card)return toast('Не вдалося прочитати картку','lose');
+  setBusy(btn,true,'Створюємо…');out.classList.remove('show');
+  try{
+    const r=await transactionApi('create',{sellerId:acc.id,card,price,description,pin});
+    const tx=r.transaction;
+    const latest=loadSave();if((latest.owned?.[key]||0)<1)throw new Error('Транзакцію створено на сервері, але локальної картки вже немає. Не створюй повторну транзакцію з цим ID.');
+    latest.owned[key]-=1;if(latest.owned[key]<=0)delete latest.owned[key];latest.transactionEscrow=latest.transactionEscrow||{};latest.transactionEscrow[tx.id]={cardKey:key,createdAt:new Date().toISOString(),price:Number(tx.price||price)};addLog(latest,'trade',`Картку ${card.name} передано в транзакцію ${tx.id} за ${fmtCoins(price)}`);writeSave(latest);
+    out.innerHTML=`<div style="font-weight:800;margin-bottom:10px;color:var(--up)">✅ Транзакцію створено</div>${renderCardMini(card)}<div style="margin-top:12px" class="tx-kv"><span>Transaction ID</span><strong class="tx-code">${escapeHtml(tx.id)}</strong></div><div class="tx-kv"><span>PIN</span><strong class="tx-code">${escapeHtml(pin)}</strong></div><div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('pending')}</strong></div><div class="tx-actions"><button class="btn btn-ghost tx-copy" onclick="navigator.clipboard?.writeText('${escapeHtml(tx.id)}');toast('ID скопійовано','win')">Копіювати ID</button></div><div class="tx-note">Передай покупцю Transaction ID та PIN особисто. Картка вже вилучена з твого інвентарю й знаходиться в транзакції.</div>`;out.classList.add('show');
+    document.getElementById('create-pin').value='';renderCreateCards();updateTransactionHeader();toast('Транзакцію створено','win');
+  }catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');toast(e.message,'lose');}
+  finally{setBusy(btn,false);}
+});
+
+// LOOKUP / RECEIVE
+let receiveTx=null;
+document.getElementById('receive-find-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('receive-find-btn'),id=normalizeTxId(document.getElementById('receive-id').value),out=document.getElementById('receive-result');if(!id)return toast('Введи Transaction ID','warn');setBusy(btn,true,'Шукаємо…');out.classList.remove('show');receiveTx=null;
+  try{const r=await transactionApi('lookup',{transactionId:id});receiveTx=r.transaction;const t=r.transaction;const can=t.status==='pending';out.innerHTML=`${renderCardMini(t.card)}<div style="margin-top:12px"><div class="tx-kv"><span>Transaction ID</span><strong>${escapeHtml(t.id)}</strong></div><div class="tx-kv"><span>Продавець</span><strong>${escapeHtml(t.sellerId)}</strong></div><div class="tx-kv"><span>Ціна</span><strong style="color:var(--gold)">${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Опис</span><strong>${escapeHtml(t.description||'—')}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div></div>${can?`<div class="tx-actions"><button class="btn btn-primary" id="receive-continue-btn">Продовжити</button></div><div class="tx-pin-step" id="receive-pin-step"><div class="tx-field"><label>PIN-код</label><input class="input" id="receive-pin" type="password" autocomplete="off" placeholder="PIN від продавця"></div><div class="tx-actions"><button class="btn btn-primary" id="receive-complete-btn">Придбати за ${fmtCoins(t.price)}</button></div></div>`:'<div class="tx-note">Ця транзакція вже не доступна для отримання.</div>'}`;out.classList.add('show');if(can){document.getElementById('receive-continue-btn').onclick=()=>document.getElementById('receive-pin-step').classList.add('show');document.getElementById('receive-complete-btn').onclick=completeReceive;}}catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');}finally{setBusy(btn,false);}
+});
+
+async function applyCompletedTransaction(t, cardOverride=null){
+  const acc=Account.get(),save=loadSave(),applied=txApplied(save);if(applied[t.id])return false;if(String(t.buyerId||acc.id)!==String(acc.id))throw new Error('Ця транзакція завершена іншим покупцем');const price=Number(t.price||0);if(save.coins<price)throw new Error('Недостатньо коштів для цієї транзакції');const card=cardOverride||t.card;const key=addTransferredCard(save,card);save.coins-=price;save.totalSpent=(save.totalSpent||0)+price;save.cardsBought=(save.cardsBought||0)+1;applied[t.id]={at:new Date().toISOString(),cardKey:key,price};addLog(save,'buy',`Отримано картку ${card?.name||key} через ${t.id} за ${fmtCoins(price)}`);writeSave(save);updateTransactionHeader();return true;
+}
+
+async function completeReceive(){
+  if(!receiveTx)return;const btn=document.getElementById('receive-complete-btn'),pin=document.getElementById('receive-pin').value.trim(),acc=Account.get();if(!pin)return toast('Введи PIN','warn');const before=loadSave();if(before.coins<Number(receiveTx.price))return toast('Недостатньо коштів','lose');if(String(receiveTx.sellerId)===String(acc.id))return toast('Не можна отримати власну транзакцію','warn');setBusy(btn,true,'Підтверджуємо…');
+  try{const r=await transactionApi('complete',{transactionId:receiveTx.id,buyerId:acc.id,pin});const t={...receiveTx,status:'completed',buyerId:acc.id,price:r.price??receiveTx.price,card:r.card||receiveTx.card};await applyCompletedTransaction(t,r.card||receiveTx.card);receiveTx=t;document.getElementById('receive-result').innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію завершено</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Сплачено</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('completed')}</strong></div><div class="tx-note">Картку додано у твій інвентар.</div>`;renderCreateCards();toast('Картку отримано','win');}
+  catch(e){
+    // Recovery: server may have completed before the browser lost the response.
+    try{const look=await transactionApi('lookup',{transactionId:receiveTx.id});const t=look.transaction;if(t.status==='completed'&&String(t.buyerId)===String(acc.id)){const applied=await applyCompletedTransaction(t,t.card);document.getElementById('receive-result').innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію завершено</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Сплачено</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('completed')}</strong></div><div class="tx-note">${applied?'Картку додано у твій інвентар.':'Ця транзакція вже була зарахована раніше.'}</div>`;receiveTx=t;renderCreateCards();toast('Транзакцію синхронізовано','win');return;}}catch(_){}
+    toast(e.message,'lose');
+  }finally{setBusy(btn,false);}
+}
+
+// CANCEL
+document.getElementById('cancel-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('cancel-btn'),id=normalizeTxId(document.getElementById('cancel-id').value),pin=document.getElementById('cancel-pin').value.trim(),out=document.getElementById('cancel-result'),acc=Account.get();if(!id)return toast('Введи Transaction ID','warn');if(!pin)return toast('Введи PIN','warn');setBusy(btn,true,'Скасовуємо…');out.classList.remove('show');
+  const applyCancel=(t,card)=>{const save=loadSave(),done=txCanceled(save);if(done[id])return false;const key=addTransferredCard(save,card||t.card);done[id]={at:new Date().toISOString(),cardKey:key};if(save.transactionEscrow)delete save.transactionEscrow[id];addLog(save,'trade',`Транзакцію ${id} скасовано — картку повернено`);writeSave(save);return true;};
+  try{const r=await transactionApi('cancel',{transactionId:id,sellerId:acc.id,pin});applyCancel({id},r.card);out.innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію скасовано</div>${renderCardMini(r.card)}<div class="tx-kv"><span>Статус</span><strong>${statusBadge('canceled')}</strong></div><div class="tx-note">Картку повернено у твій інвентар.</div>`;out.classList.add('show');document.getElementById('cancel-pin').value='';renderCreateCards();updateTransactionHeader();toast('Картку повернено','win');}
+  catch(e){
+    try{const look=await transactionApi('lookup',{transactionId:id});const t=look.transaction;if(t.status==='canceled'&&String(t.sellerId)===String(acc.id)){const was=applyCancel(t,t.card);out.innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакція скасована</div>${renderCardMini(t.card)}<div class="tx-note">${was?'Картку повернено у твій інвентар.':'Повернення вже було зараховано раніше.'}</div>`;out.classList.add('show');renderCreateCards();updateTransactionHeader();return;}}catch(_){}
+    out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');toast(e.message,'lose');
+  }finally{setBusy(btn,false);}
+});
+
+// SELLER STATUS + CLAIM
+document.getElementById('seller-status-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('seller-status-btn'),id=normalizeTxId(document.getElementById('seller-status-id').value),out=document.getElementById('seller-status-result'),acc=Account.get();if(!id)return toast('Введи Transaction ID','warn');setBusy(btn,true,'Перевіряємо…');out.classList.remove('show');
+  try{
+    let t=(await transactionApi('lookup',{transactionId:id})).transaction;if(String(t.sellerId)!==String(acc.id))throw new Error('Ця транзакція належить іншому продавцю');
+    let payMsg='';
+    if(t.status==='completed'){
+      const save=loadSave(),claims=txClaims(save);
+      if(!claims[id]){
+        if(!t.sellerClaimed){try{const claim=await transactionApi('claim',{transactionId:id,sellerId:acc.id});const latest=loadSave();txClaims(latest)[id]={at:new Date().toISOString(),amount:Number(claim.amount)};latest.coins+=Number(claim.amount||0);latest.totalEarned=(latest.totalEarned||0)+Number(claim.amount||0);latest.cardsSold=(latest.cardsSold||0)+1;if(latest.transactionEscrow)delete latest.transactionEscrow[id];addLog(latest,'sell',`Виплата за ${id}: ${fmtCoins(claim.amount)} після комісії`);writeSave(latest);payMsg=`✅ Нараховано ${fmtCoins(claim.amount)} після комісії.`;}catch(claimErr){if(!claimErr.payload?.alreadyClaimed)throw claimErr;}}
+        // Recovery if server says already claimed but local browser has not applied it.
+        const verify=(await transactionApi('lookup',{transactionId:id})).transaction;if(verify.sellerClaimed&&!txClaims(loadSave())[id]){const latest=loadSave();const amount=Number(verify.sellerAmount||0);txClaims(latest)[id]={at:new Date().toISOString(),amount,recovered:true};latest.coins+=amount;latest.totalEarned=(latest.totalEarned||0)+amount;latest.cardsSold=(latest.cardsSold||0)+1;if(latest.transactionEscrow)delete latest.transactionEscrow[id];addLog(latest,'sell',`Відновлено виплату за ${id}: ${fmtCoins(amount)}`);writeSave(latest);payMsg=`✅ Відновлено виплату ${fmtCoins(amount)}.`;}
+      }else payMsg='ℹ️ Виплату за цю транзакцію вже було зараховано.';
+      t=(await transactionApi('lookup',{transactionId:id})).transaction;
+    }
+    out.innerHTML=`${renderCardMini(t.card)}<div style="margin-top:12px"><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div><div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Комісія</span><strong>${escapeHtml(t.feePercent)}% (${fmtCoins(t.feeAmount)})</strong></div><div class="tx-kv"><span>Продавцю</span><strong style="color:var(--up)">${fmtCoins(t.sellerAmount)}</strong></div><div class="tx-kv"><span>Покупець</span><strong>${escapeHtml(t.buyerId||'—')}</strong></div></div>${payMsg?`<div class="tx-note" style="color:var(--up);font-weight:700">${escapeHtml(payMsg)}</div>`:''}`;out.classList.add('show');updateTransactionHeader();renderCreateCards();
+  }catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');toast(e.message,'lose');}finally{setBusy(btn,false);}
+});
+
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+</script>
+<script>
+
+// Mobile navigation drawer — desktop appearance stays unchanged.
+(function(){
+  const sidebar=document.querySelector('.sidebar');
+  const topbar=document.querySelector('.topbar');
+  if(!sidebar||!topbar)return;
+  if(!topbar.querySelector('.mobile-nav-toggle')){
+    const btn=document.createElement('button');
+    btn.className='mobile-nav-toggle';btn.type='button';btn.setAttribute('aria-label','Відкрити меню');btn.textContent='☰';
+    topbar.insertBefore(btn,topbar.firstChild);
+    const bd=document.createElement('div');bd.className='mobile-nav-backdrop';document.body.appendChild(bd);
+    const close=()=>{sidebar.classList.remove('mobile-open');bd.classList.remove('open');};
+    btn.addEventListener('click',()=>{sidebar.classList.toggle('mobile-open');bd.classList.toggle('open',sidebar.classList.contains('mobile-open'));});
+    bd.addEventListener('click',close);
+    sidebar.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));
+    window.addEventListener('resize',()=>{if(innerWidth>760)close();},{passive:true});
+  }
+})();
+
+</script>
+</body></html>
