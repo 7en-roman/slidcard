@@ -783,6 +783,11 @@ input, select, textarea { font-family: inherit; }
 .modal-card-flip{width:160px;height:224px;perspective:800px;cursor:pointer;margin:0 auto;display:block;border-radius:12px}
 .modal-card-inner{width:160px;height:224px;position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,.2,.2,1);margin:0 auto}
 .modal-card-flip.flipped .modal-card-inner{transform:rotateY(180deg)}
+.modal-card-flip{transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease;will-change:transform}
+@media (hover:hover) and (pointer:fine){
+  .modal-card-flip:hover{transform:translate3d(0,-4px,0);box-shadow:0 12px 28px rgba(0,0,0,.28)}
+}
+@media (hover:none),(pointer:coarse){.modal-card-flip:hover{transform:none!important;box-shadow:none!important}}
 .modal-card-face{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .modal-card-back{transform:rotateY(180deg);border-radius:12px;padding:14px 12px 10px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
 
@@ -1050,6 +1055,10 @@ input,select,textarea,button{max-width:100%}
 .tx-card-preview.rarity-ultimate .tx-card-name,.tx-card-preview.rarity-ultimate .tx-rarity,.tx-card-preview.rarity-ultimate .tx-year{color:var(--c-ultimate)!important}
 
 </style>
+<link rel="stylesheet" href="theme-system.css">
+<link rel="stylesheet" href="card-system.css">
+<script src="theme-system.js"></script>
+<script src="card-system.js"></script>
 </head><body>
 <div class="app">
 <nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v1.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item active" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Транзакції</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
@@ -1103,8 +1112,8 @@ input,select,textarea,button{max-width:100%}
 const CX = {
   VERSION:    "1.0.0",
   NAME:       "SlidCard",
-  ACC_KEY:    "slidcard_acc",
-  SAVE_KEY:   "slidcard_save",
+  ACC_KEY:    "slidcard_v11_acc",
+  SAVE_KEY:   "slidcard_v11_save",
   INIT_COINS: 500,
 };
 
@@ -1113,7 +1122,7 @@ const RARITY = {
   common:    { label:"Common",    hex:"#7A8595", prob:0.62, mult:1.0   },
   rare:      { label:"Rare",      hex:"#4C8DFF", prob:0.26, mult:3.0   },
   epic:      { label:"Epic",      hex:"#B15CFF", prob:0.09, mult:8.0   },
-  legendary: { label:"Hall of Legendsary", hex:"#F0B429", prob:0.025,mult:25.0  },
+  legendary: { label:"Legendary", hex:"#F0B429", prob:0.025,mult:25.0  },
   ultimate:  { label:"Ultimate",  hex:"#FF4757", prob:0.005,mult:80.0  },
 };
 
@@ -1140,201 +1149,204 @@ const YEAR_PRICE_MULT = {2026:1.0,2025:1.15,2024:1.32,2023:1.55,2022:1.85,2021:2
 // ── CARDS — 200+ карток ──────────────────────────────────────
 const CARDS = [
   // ═══ GRAND PRIX (20 карток) ═══
-  { id:"r_hamilton",   sport:"f1", name:"Leon Hampton",      team:"Sterling GP",     country:"🇬🇧", rarity:"legendary", basePrice:180, rating:96, pos:"Driver", icon:"🏎" },
-  { id:"r_verstappen", sport:"f1", name:"Maxim Verden",      team:"Redcrest Racing",     country:"🇳🇱", rarity:"legendary", basePrice:190, rating:97, pos:"Driver", icon:"🏎" },
-  { id:"r_schumacher", sport:"f1", name:"Marek Schumann",       team:"Hall of Legends",       country:"🇩🇪", rarity:"ultimate",  basePrice:280, rating:99, pos:"Driver", icon:"🏆" },
-  { id:"r_senna",      sport:"f1", name:"Ayran Serrano",        team:"Hall of Legends",       country:"🇧🇷", rarity:"ultimate",  basePrice:300, rating:99, pos:"Driver", icon:"🏆" },
-  { id:"r_lauda",      sport:"f1", name:"Niko Lauer",          team:"Hall of Legends",       country:"🇦🇹", rarity:"legendary", basePrice:160, rating:95, pos:"Driver", icon:"🏆" },
-  { id:"r_prost",      sport:"f1", name:"Alen Provan",         team:"Hall of Legends",       country:"🇫🇷", rarity:"legendary", basePrice:155, rating:95, pos:"Driver", icon:"🏆" },
-  { id:"r_leclerc",    sport:"f1", name:"Charles Leclair",     team:"Crimson Corse",      country:"🇲🇨", rarity:"epic",      basePrice:65,  rating:92, pos:"Driver", icon:"🏎" },
-  { id:"r_norris",     sport:"f1", name:"Landon Norton",        team:"Northbridge Racing",      country:"🇬🇧", rarity:"epic",      basePrice:60,  rating:91, pos:"Driver", icon:"🏎" },
-  { id:"r_sainz",      sport:"f1", name:"Carlos Santos",        team:"Crimson Corse",      country:"🇪🇸", rarity:"epic",      basePrice:58,  rating:90, pos:"Driver", icon:"🏎" },
-  { id:"r_perez",      sport:"f1", name:"Sergio Pereira",        team:"Redcrest Racing",     country:"🇲🇽", rarity:"epic",      basePrice:55,  rating:89, pos:"Driver", icon:"🏎" },
-  { id:"r_russell",    sport:"f1", name:"Georg Russelton",      team:"Sterling GP",     country:"🇬🇧", rarity:"epic",      basePrice:54,  rating:89, pos:"Driver", icon:"🏎" },
-  { id:"r_alonso",     sport:"f1", name:"Fernando Alvar",     team:"Emerald Works", country:"🇪🇸", rarity:"rare",      basePrice:30,  rating:88, pos:"Driver", icon:"🏎" },
-  { id:"r_piastri",    sport:"f1", name:"Oscar Piasen",       team:"Northbridge Racing",      country:"🇦🇺", rarity:"rare",      basePrice:25,  rating:86, pos:"Driver", icon:"🏎" },
-  { id:"r_gasly",      sport:"f1", name:"Pierre Gaston",        team:"Alpine Crest",       country:"🇫🇷", rarity:"rare",      basePrice:20,  rating:84, pos:"Driver", icon:"🏎" },
-  { id:"r_albon",      sport:"f1", name:"Alex Albani",          team:"Kingsley Motorsport",     country:"🇹🇭", rarity:"rare",      basePrice:18,  rating:83, pos:"Driver", icon:"🏎" },
-  { id:"r_tsunoda",    sport:"f1", name:"Yuto Tsunari",        team:"Velocity Juniors",           country:"🇯🇵", rarity:"rare",      basePrice:16,  rating:81, pos:"Driver", icon:"🏎" },
-  { id:"r_hulk",       sport:"f1", name:"Nico Hulberg",     team:"Hartwell Racing",         country:"🇩🇪", rarity:"common",    basePrice:5,   rating:78, pos:"Driver", icon:"🏎" },
-  { id:"r_magnussen",  sport:"f1", name:"Kevin Magnor",     team:"Hartwell Racing",         country:"🇩🇰", rarity:"common",    basePrice:4,   rating:77, pos:"Driver", icon:"🏎" },
-  { id:"r_stroll",     sport:"f1", name:"Lance Stellan",        team:"Emerald Works", country:"🇨🇦", rarity:"common",    basePrice:6,   rating:79, pos:"Driver", icon:"🏎" },
-  { id:"r_bottas",     sport:"f1", name:"Valter Borton",     team:"Silverline Motorsport",  country:"🇫🇮", rarity:"common",    basePrice:5,   rating:78, pos:"Driver", icon:"🏎" },
+  { id:"sc_leon_hampton",   sport:"f1", name:"Leon Hampton",      team:"Sterling GP",     country:"🇬🇧", rarity:"legendary", basePrice:180, rating:96, pos:"Driver", icon:"🏎" },
+  { id:"sc_maxim_verden", sport:"f1", name:"Maxim Verden",      team:"Redcrest Racing",     country:"🇳🇱", rarity:"legendary", basePrice:190, rating:97, pos:"Driver", icon:"🏎" },
+  { id:"sc_marek_schumann", sport:"f1", name:"Marek Schumann",       team:"Hall of Legends",       country:"🇩🇪", rarity:"ultimate",  basePrice:280, rating:99, pos:"Driver", icon:"🏆" },
+  { id:"sc_ayran_serrano",      sport:"f1", name:"Ayran Serrano",        team:"Hall of Legends",       country:"🇧🇷", rarity:"ultimate",  basePrice:300, rating:99, pos:"Driver", icon:"🏆" },
+  { id:"sc_niko_lauer",      sport:"f1", name:"Niko Lauer",          team:"Hall of Legends",       country:"🇦🇹", rarity:"legendary", basePrice:160, rating:95, pos:"Driver", icon:"🏆" },
+  { id:"sc_alen_provan",      sport:"f1", name:"Alen Provan",         team:"Hall of Legends",       country:"🇫🇷", rarity:"legendary", basePrice:155, rating:95, pos:"Driver", icon:"🏆" },
+  { id:"sc_charles_leclair",    sport:"f1", name:"Charles Leclair",     team:"Crimson Corse",      country:"🇲🇨", rarity:"epic",      basePrice:65,  rating:92, pos:"Driver", icon:"🏎" },
+  { id:"sc_landon_norton",     sport:"f1", name:"Landon Norton",        team:"Northbridge Racing",      country:"🇬🇧", rarity:"epic",      basePrice:60,  rating:91, pos:"Driver", icon:"🏎" },
+  { id:"sc_carlos_santos",      sport:"f1", name:"Carlos Santos",        team:"Crimson Corse",      country:"🇪🇸", rarity:"epic",      basePrice:58,  rating:90, pos:"Driver", icon:"🏎" },
+  { id:"sc_sergio_pereira",      sport:"f1", name:"Sergio Pereira",        team:"Redcrest Racing",     country:"🇲🇽", rarity:"epic",      basePrice:55,  rating:89, pos:"Driver", icon:"🏎" },
+  { id:"sc_georg_russelton",    sport:"f1", name:"Georg Russelton",      team:"Sterling GP",     country:"🇬🇧", rarity:"epic",      basePrice:54,  rating:89, pos:"Driver", icon:"🏎" },
+  { id:"sc_fernando_alvar",     sport:"f1", name:"Fernando Alvar",     team:"Emerald Works", country:"🇪🇸", rarity:"rare",      basePrice:30,  rating:88, pos:"Driver", icon:"🏎" },
+  { id:"sc_oscar_piasen",    sport:"f1", name:"Oscar Piasen",       team:"Northbridge Racing",      country:"🇦🇺", rarity:"rare",      basePrice:25,  rating:86, pos:"Driver", icon:"🏎" },
+  { id:"sc_pierre_gaston",      sport:"f1", name:"Pierre Gaston",        team:"Alpine Crest",       country:"🇫🇷", rarity:"rare",      basePrice:20,  rating:84, pos:"Driver", icon:"🏎" },
+  { id:"sc_alex_albani",      sport:"f1", name:"Alex Albani",          team:"Kingsley Motorsport",     country:"🇹🇭", rarity:"rare",      basePrice:18,  rating:83, pos:"Driver", icon:"🏎" },
+  { id:"sc_yuto_tsunari",    sport:"f1", name:"Yuto Tsunari",        team:"Velocity Juniors",           country:"🇯🇵", rarity:"rare",      basePrice:16,  rating:81, pos:"Driver", icon:"🏎" },
+  { id:"sc_nico_hulberg",       sport:"f1", name:"Nico Hulberg",     team:"Hartwell Racing",         country:"🇩🇪", rarity:"common",    basePrice:5,   rating:78, pos:"Driver", icon:"🏎" },
+  { id:"sc_kevin_magnor",  sport:"f1", name:"Kevin Magnor",     team:"Hartwell Racing",         country:"🇩🇰", rarity:"common",    basePrice:4,   rating:77, pos:"Driver", icon:"🏎" },
+  { id:"sc_lance_stellan",     sport:"f1", name:"Lance Stellan",        team:"Emerald Works", country:"🇨🇦", rarity:"common",    basePrice:6,   rating:79, pos:"Driver", icon:"🏎" },
+  { id:"sc_valter_borton",     sport:"f1", name:"Valter Borton",     team:"Silverline Motorsport",  country:"🇫🇮", rarity:"common",    basePrice:5,   rating:78, pos:"Driver", icon:"🏎" },
 
   // ═══ SOCCER (22 картки) ═══
-  { id:"s_messi",      sport:"soccer", name:"Leo Merson",        team:"Miami Coast FC",  country:"🇦🇷", rarity:"legendary", basePrice:175, rating:94, pos:"FW",  icon:"⚽" },
-  { id:"s_ronaldo",    sport:"soccer", name:"Cristian Roldan",   team:"Riyadh Stars",     country:"🇵🇹", rarity:"legendary", basePrice:170, rating:93, pos:"FW",  icon:"⚽" },
-  { id:"s_mbappe",     sport:"soccer", name:"Kylian Mbaret",       team:"Madrid Royale",  country:"🇫🇷", rarity:"legendary", basePrice:185, rating:95, pos:"FW",  icon:"⚽" },
-  { id:"s_pele",       sport:"soccer", name:"Pablo Peleiro",                team:"Hall of Legends",       country:"🇧🇷", rarity:"ultimate",  basePrice:350, rating:99, pos:"FW",  icon:"🏆" },
-  { id:"s_maradona",   sport:"soccer", name:"Diego Maradon",      team:"Hall of Legends",       country:"🇦🇷", rarity:"ultimate",  basePrice:330, rating:99, pos:"AM",  icon:"🏆" },
-  { id:"ua_shevchenko",sport:"soccer", name:"Andriy Shevrenko",   team:"Hall of Legends",       country:"🇺🇦", rarity:"ultimate",  basePrice:290, rating:97, pos:"ST",  icon:"🏆" },
-  { id:"s_haaland",    sport:"soccer", name:"Erik Halandor",      team:"Manchester Sky",     country:"🇳🇴", rarity:"epic",      basePrice:70,  rating:92, pos:"ST",  icon:"⚽" },
-  { id:"s_vini",       sport:"soccer", name:"Vincent Vinero",         team:"Madrid Royale",  country:"🇧🇷", rarity:"epic",      basePrice:65,  rating:91, pos:"FW",  icon:"⚽" },
-  { id:"s_bellingham", sport:"soccer", name:"Jude Bellinger",     team:"Madrid Royale",  country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"epic",      basePrice:62,  rating:90, pos:"CM",  icon:"⚽" },
-  { id:"s_salah",      sport:"soccer", name:"Mahir Salim",       team:"Mersey Athletic",    country:"🇪🇬", rarity:"epic",      basePrice:58,  rating:90, pos:"FW",  icon:"⚽" },
-  { id:"s_saka",       sport:"soccer", name:"Bukai Sakari",         team:"North London Forge",      country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"epic",      basePrice:55,  rating:89, pos:"FW",  icon:"⚽" },
-  { id:"ua_mudryk",    sport:"soccer", name:"Mykhail Mudrenko",     team:"Westbridge FC",      country:"🇺🇦", rarity:"epic",      basePrice:52,  rating:87, pos:"FW",  icon:"⚽" },
-  { id:"s_kane",       sport:"soccer", name:"Harry Kellan",          team:"Bavaria Union",       country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"rare",      basePrice:28,  rating:88, pos:"ST",  icon:"⚽" },
-  { id:"ua_yaremchuk", sport:"soccer", name:"Roman Yarenko",     team:"Valencia Coast",     country:"🇺🇦", rarity:"rare",      basePrice:22,  rating:83, pos:"ST",  icon:"⚽" },
-  { id:"ua_zinchenko", sport:"soccer", name:"Oleks Zinarenko", team:"North London Forge",      country:"🇺🇦", rarity:"rare",      basePrice:20,  rating:82, pos:"LB",  icon:"⚽" },
-  { id:"ua_tsyhankov", sport:"soccer", name:"Viktor Tsyhanenko",    team:"Girona Athletic",       country:"🇺🇦", rarity:"rare",      basePrice:18,  rating:81, pos:"MF",  icon:"⚽" },
-  { id:"ua_rebrov",    sport:"soccer", name:"Serhiy Rebrenko",       team:"Kyiv Dynamo Club",  country:"🇺🇦", rarity:"legendary", basePrice:110, rating:92, pos:"ST",  icon:"⚽" },
-  { id:"s_griezmann",  sport:"soccer", name:"Antoine Griezan",   team:"Madrid Atlético Club",     country:"🇫🇷", rarity:"rare",      basePrice:22,  rating:86, pos:"FW",  icon:"⚽" },
-  { id:"s_mount",      sport:"soccer", name:"Mason Mountley",         team:"Manchester Red",   country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"common",    basePrice:5,   rating:80, pos:"CM",  icon:"⚽" },
-  { id:"s_rashford",   sport:"soccer", name:"Marcus Rashen",     team:"Manchester Red",   country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"common",    basePrice:6,   rating:81, pos:"FW",  icon:"⚽" },
-  { id:"s_pulisic",    sport:"soccer", name:"Christian Pulsen",   team:"Milano Rosson",     country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"FW",  icon:"⚽" },
-  { id:"s_vlahovic",   sport:"soccer", name:"Dusan Vlahen",      team:"Turin Vecchia",     country:"🇷🇸", rarity:"common",    basePrice:7,   rating:82, pos:"ST",  icon:"⚽" },
+  { id:"sc_leo_merson",      sport:"soccer", name:"Leo Merson",        team:"Miami Coast FC",  country:"🇦🇷", rarity:"legendary", basePrice:175, rating:94, pos:"FW",  icon:"⚽" },
+  { id:"sc_cristian_roldan",    sport:"soccer", name:"Cristian Roldan",   team:"Riyadh Stars",     country:"🇵🇹", rarity:"legendary", basePrice:170, rating:93, pos:"FW",  icon:"⚽" },
+  { id:"sc_kylian_mbaret",     sport:"soccer", name:"Kylian Mbaret",       team:"Madrid Royale",  country:"🇫🇷", rarity:"legendary", basePrice:185, rating:95, pos:"FW",  icon:"⚽" },
+  { id:"sc_pablo_peleiro",       sport:"soccer", name:"Pablo Peleiro",                team:"Hall of Legends",       country:"🇧🇷", rarity:"ultimate",  basePrice:350, rating:99, pos:"FW",  icon:"🏆" },
+  { id:"sc_diego_maradon",   sport:"soccer", name:"Diego Maradon",      team:"Hall of Legends",       country:"🇦🇷", rarity:"ultimate",  basePrice:330, rating:99, pos:"AM",  icon:"🏆" },
+  { id:"sc_andriy_shevrenko",sport:"soccer", name:"Andriy Shevrenko",   team:"Hall of Legends",       country:"🇺🇦", rarity:"ultimate",  basePrice:290, rating:97, pos:"ST",  icon:"🏆" },
+  { id:"sc_erik_halandor",    sport:"soccer", name:"Erik Halandor",      team:"Manchester Sky",     country:"🇳🇴", rarity:"epic",      basePrice:70,  rating:92, pos:"ST",  icon:"⚽" },
+  { id:"sc_vincent_vinero",       sport:"soccer", name:"Vincent Vinero",         team:"Madrid Royale",  country:"🇧🇷", rarity:"epic",      basePrice:65,  rating:91, pos:"FW",  icon:"⚽" },
+  { id:"sc_jude_bellinger", sport:"soccer", name:"Jude Bellinger",     team:"Madrid Royale",  country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"epic",      basePrice:62,  rating:90, pos:"CM",  icon:"⚽" },
+  { id:"sc_mahir_salim",      sport:"soccer", name:"Mahir Salim",       team:"Mersey Athletic",    country:"🇪🇬", rarity:"epic",      basePrice:58,  rating:90, pos:"FW",  icon:"⚽" },
+  { id:"sc_bukai_sakari",       sport:"soccer", name:"Bukai Sakari",         team:"North London Forge",      country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"epic",      basePrice:55,  rating:89, pos:"FW",  icon:"⚽" },
+  { id:"sc_mykhail_mudrenko",    sport:"soccer", name:"Mykhail Mudrenko",     team:"Westbridge FC",      country:"🇺🇦", rarity:"epic",      basePrice:52,  rating:87, pos:"FW",  icon:"⚽" },
+  { id:"sc_harry_kellan",       sport:"soccer", name:"Harry Kellan",          team:"Bavaria Union",       country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"rare",      basePrice:28,  rating:88, pos:"ST",  icon:"⚽" },
+  { id:"sc_roman_yarenko", sport:"soccer", name:"Roman Yarenko",     team:"Valencia Coast",     country:"🇺🇦", rarity:"rare",      basePrice:22,  rating:83, pos:"ST",  icon:"⚽" },
+  { id:"sc_oleks_zinarenko", sport:"soccer", name:"Oleks Zinarenko", team:"North London Forge",      country:"🇺🇦", rarity:"rare",      basePrice:20,  rating:82, pos:"LB",  icon:"⚽" },
+  { id:"sc_viktor_tsyhanenko", sport:"soccer", name:"Viktor Tsyhanenko",    team:"Girona Athletic",       country:"🇺🇦", rarity:"rare",      basePrice:18,  rating:81, pos:"MF",  icon:"⚽" },
+  { id:"sc_serhiy_rebrenko",    sport:"soccer", name:"Serhiy Rebrenko",       team:"Kyiv Dynamo Club",  country:"🇺🇦", rarity:"legendary", basePrice:110, rating:92, pos:"ST",  icon:"⚽" },
+  { id:"sc_antoine_griezan",  sport:"soccer", name:"Antoine Griezan",   team:"Madrid Atlético Club",     country:"🇫🇷", rarity:"rare",      basePrice:22,  rating:86, pos:"FW",  icon:"⚽" },
+  { id:"sc_mason_mountley",      sport:"soccer", name:"Mason Mountley",         team:"Manchester Red",   country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"common",    basePrice:5,   rating:80, pos:"CM",  icon:"⚽" },
+  { id:"sc_marcus_rashen",   sport:"soccer", name:"Marcus Rashen",     team:"Manchester Red",   country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", rarity:"common",    basePrice:6,   rating:81, pos:"FW",  icon:"⚽" },
+  { id:"sc_christian_pulsen",    sport:"soccer", name:"Christian Pulsen",   team:"Milano Rosson",     country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"FW",  icon:"⚽" },
+  { id:"sc_dusan_vlahen",   sport:"soccer", name:"Dusan Vlahen",      team:"Turin Vecchia",     country:"🇷🇸", rarity:"common",    basePrice:7,   rating:82, pos:"ST",  icon:"⚽" },
 
   // ═══ AMERICAN FOOTBALL (16 карток) ═══
-  { id:"nfl_mahomes",  sport:"football", name:"Pat Maher",      team:"Kansas Monarchs",    country:"🇺🇸", rarity:"legendary", basePrice:170, rating:97, pos:"QB",  icon:"🏈" },
-  { id:"nfl_brady",    sport:"football", name:"Thomas Brayton",            team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:310, rating:99, pos:"QB",  icon:"🏆" },
-  { id:"nfl_allen",    sport:"football", name:"Josh Allard",           team:"Buffalo Thunder",      country:"🇺🇸", rarity:"legendary", basePrice:160, rating:95, pos:"QB",  icon:"🏈" },
-  { id:"nfl_lamar",    sport:"football", name:"Lamar Jacksone",        team:"Baltimore Ravenside",    country:"🇺🇸", rarity:"legendary", basePrice:158, rating:95, pos:"QB",  icon:"🏈" },
-  { id:"nfl_hill",     sport:"football", name:"Ty Hills",          team:"Miami Sharks",        country:"🇺🇸", rarity:"epic",      basePrice:62,  rating:93, pos:"WR",  icon:"🏈" },
-  { id:"nfl_mccaffrey",sport:"football", name:"Christian McCaffren",  team:"San Francisco Gold",     country:"🇺🇸", rarity:"epic",      basePrice:60,  rating:92, pos:"Velocity Juniors",  icon:"🏈" },
-  { id:"nfl_kelce",    sport:"football", name:"Travis Kellan",         team:"Kansas Monarchs",    country:"🇺🇸", rarity:"epic",      basePrice:58,  rating:92, pos:"TE",  icon:"🏈" },
-  { id:"nfl_jefferson",sport:"football", name:"Justin Jeffers",     team:"Minnesota North",    country:"🇺🇸", rarity:"epic",      basePrice:55,  rating:90, pos:"WR",  icon:"🏈" },
-  { id:"nfl_burrow",   sport:"football", name:"Joseph Burton",           team:"Cincinnati Stripes",   country:"🇺🇸", rarity:"rare",      basePrice:28,  rating:88, pos:"QB",  icon:"🏈" },
-  { id:"nfl_bosa",     sport:"football", name:"Nicholas Bosley",            team:"San Francisco Gold",     country:"🇺🇸", rarity:"rare",      basePrice:25,  rating:87, pos:"DE",  icon:"🏈" },
-  { id:"nfl_lamb",     sport:"football", name:"Caden Lamber",          team:"Dallas Starsmen",       country:"🇺🇸", rarity:"rare",      basePrice:24,  rating:87, pos:"WR",  icon:"🏈" },
-  { id:"nfl_diggs",    sport:"football", name:"Stefan Digson",         team:"Houston Forge",      country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:87, pos:"WR",  icon:"🏈" },
-  { id:"nfl_kupp",     sport:"football", name:"Cooper Kupper",          team:"Los Angeles Horns",      country:"🇺🇸", rarity:"common",    basePrice:6,   rating:82, pos:"WR",  icon:"🏈" },
-  { id:"nfl_hopk",     sport:"football", name:"Andre Hopson",      team:"Tennessee Titanside",    country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"WR",  icon:"🏈" },
-  { id:"nfl_henry",    sport:"football", name:"Derrick Henley",        team:"Baltimore Ravenside",    country:"🇺🇸", rarity:"common",    basePrice:7,   rating:83, pos:"Velocity Juniors",  icon:"🏈" },
-  { id:"nfl_purdy",    sport:"football", name:"Brock Purdon",          team:"San Francisco Gold",     country:"🇺🇸", rarity:"common",    basePrice:8,   rating:82, pos:"QB",  icon:"🏈" },
+  { id:"sc_pat_maher",  sport:"football", name:"Pat Maher",      team:"Kansas Monarchs",    country:"🇺🇸", rarity:"legendary", basePrice:170, rating:97, pos:"QB",  icon:"🏈" },
+  { id:"sc_thomas_brayton",    sport:"football", name:"Thomas Brayton",            team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:310, rating:99, pos:"QB",  icon:"🏆" },
+  { id:"sc_josh_allard",    sport:"football", name:"Josh Allard",           team:"Buffalo Thunder",      country:"🇺🇸", rarity:"legendary", basePrice:160, rating:95, pos:"QB",  icon:"🏈" },
+  { id:"sc_lamar_jacksone",    sport:"football", name:"Lamar Jacksone",        team:"Baltimore Ravenside",    country:"🇺🇸", rarity:"legendary", basePrice:158, rating:95, pos:"QB",  icon:"🏈" },
+  { id:"sc_ty_hills",     sport:"football", name:"Ty Hills",          team:"Miami Sharks",        country:"🇺🇸", rarity:"epic",      basePrice:62,  rating:93, pos:"WR",  icon:"🏈" },
+  { id:"sc_christian_mccaffren",sport:"football", name:"Christian McCaffren",  team:"San Francisco Gold",     country:"🇺🇸", rarity:"epic",      basePrice:60,  rating:92, pos:"Velocity Juniors",  icon:"🏈" },
+  { id:"sc_travis_kellan",    sport:"football", name:"Travis Kellan",         team:"Kansas Monarchs",    country:"🇺🇸", rarity:"epic",      basePrice:58,  rating:92, pos:"TE",  icon:"🏈" },
+  { id:"sc_justin_jeffers",sport:"football", name:"Justin Jeffers",     team:"Minnesota North",    country:"🇺🇸", rarity:"epic",      basePrice:55,  rating:90, pos:"WR",  icon:"🏈" },
+  { id:"sc_joseph_burton",   sport:"football", name:"Joseph Burton",           team:"Cincinnati Stripes",   country:"🇺🇸", rarity:"rare",      basePrice:28,  rating:88, pos:"QB",  icon:"🏈" },
+  { id:"sc_nicholas_bosley",     sport:"football", name:"Nicholas Bosley",            team:"San Francisco Gold",     country:"🇺🇸", rarity:"rare",      basePrice:25,  rating:87, pos:"DE",  icon:"🏈" },
+  { id:"sc_caden_lamber",     sport:"football", name:"Caden Lamber",          team:"Dallas Starsmen",       country:"🇺🇸", rarity:"rare",      basePrice:24,  rating:87, pos:"WR",  icon:"🏈" },
+  { id:"sc_stefan_digson",    sport:"football", name:"Stefan Digson",         team:"Houston Forge",      country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:87, pos:"WR",  icon:"🏈" },
+  { id:"sc_cooper_kupper",     sport:"football", name:"Cooper Kupper",          team:"Los Angeles Horns",      country:"🇺🇸", rarity:"common",    basePrice:6,   rating:82, pos:"WR",  icon:"🏈" },
+  { id:"sc_andre_hopson",     sport:"football", name:"Andre Hopson",      team:"Tennessee Titanside",    country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"WR",  icon:"🏈" },
+  { id:"sc_derrick_henley",    sport:"football", name:"Derrick Henley",        team:"Baltimore Ravenside",    country:"🇺🇸", rarity:"common",    basePrice:7,   rating:83, pos:"Velocity Juniors",  icon:"🏈" },
+  { id:"sc_brock_purdon",    sport:"football", name:"Brock Purdon",          team:"San Francisco Gold",     country:"🇺🇸", rarity:"common",    basePrice:8,   rating:82, pos:"QB",  icon:"🏈" },
 
   // ═══ BASEBALL (16 карток) ═══
-  { id:"bb_trout",     sport:"baseball", name:"Michael Trenton",           team:"Los Angeles Halos",    country:"🇺🇸", rarity:"legendary", basePrice:155, rating:95, pos:"CF",  icon:"⚾" },
-  { id:"bb_ohtani",    sport:"baseball", name:"Sho Ohtaro",        team:"Los Angeles Bluecaps",   country:"🇯🇵", rarity:"legendary", basePrice:170, rating:97, pos:"P/DH",icon:"⚾" },
-  { id:"bb_ruth",      sport:"baseball", name:"Babe Ruther",            team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:320, rating:99, pos:"RF",  icon:"🏆" },
-  { id:"bb_judge",     sport:"baseball", name:"Aaron Judson",          team:"New York Empire",   country:"🇺🇸", rarity:"epic",      basePrice:68,  rating:93, pos:"RF",  icon:"⚾" },
-  { id:"bb_acuna",     sport:"baseball", name:"Ronald Acero",      team:"Atlanta Braveside",      country:"🇻🇪", rarity:"epic",      basePrice:62,  rating:92, pos:"RF",  icon:"⚾" },
-  { id:"bb_guerrero",  sport:"baseball", name:"Vlad Guerreron", team:"Toronto Northmen",      country:"🇩🇴", rarity:"epic",      basePrice:58,  rating:91, pos:"1B",  icon:"⚾" },
-  { id:"bb_betts",     sport:"baseball", name:"Mookie Betson",         team:"Los Angeles Bluecaps",   country:"🇺🇸", rarity:"epic",      basePrice:55,  rating:91, pos:"RF",  icon:"⚾" },
-  { id:"bb_devers",    sport:"baseball", name:"Rafael Deveraux",        team:"Boston Redline",       country:"🇩🇴", rarity:"rare",      basePrice:26,  rating:87, pos:"3B",  icon:"⚾" },
-  { id:"bb_alonso",    sport:"baseball", name:"Peter Alvaron",          team:"New York Metros",      country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:86, pos:"1B",  icon:"⚾" },
-  { id:"bb_soto",      sport:"baseball", name:"Juan Sotero",            team:"New York Metros",      country:"🇩🇴", rarity:"rare",      basePrice:28,  rating:88, pos:"RF",  icon:"⚾" },
-  { id:"bb_tatis",     sport:"baseball", name:"Fernando Tatison",    team:"San Diego Coast",    country:"🇩🇴", rarity:"rare",      basePrice:24,  rating:87, pos:"SS",  icon:"⚾" },
-  { id:"bb_strider",   sport:"baseball", name:"Spencer Striden",      team:"Atlanta Braveside",      country:"🇺🇸", rarity:"rare",      basePrice:20,  rating:85, pos:"SP",  icon:"⚾" },
-  { id:"bb_riley",     sport:"baseball", name:"Austin Rylan",         team:"Atlanta Braveside",      country:"🇺🇸", rarity:"common",    basePrice:5,   rating:81, pos:"3B",  icon:"⚾" },
-  { id:"bb_vladsr",    sport:"baseball", name:"Vladimir Guerrin", team:"Hall of Legends",       country:"🇩🇴", rarity:"legendary", basePrice:130, rating:93, pos:"RF",  icon:"⚾" },
-  { id:"bb_griffey",   sport:"baseball", name:"Ken Griffen",       team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:140, rating:94, pos:"CF",  icon:"⚾" },
-  { id:"bb_schm",      sport:"baseball", name:"Kyle Schmid",         team:"Hall of Legends",       country:"🇺🇸", rarity:"common",    basePrice:7,   rating:80, pos:"3B",  icon:"⚾" },
+  { id:"sc_michael_trenton",     sport:"baseball", name:"Michael Trenton",           team:"Los Angeles Halos",    country:"🇺🇸", rarity:"legendary", basePrice:155, rating:95, pos:"CF",  icon:"⚾" },
+  { id:"sc_sho_ohtaro",    sport:"baseball", name:"Sho Ohtaro",        team:"Los Angeles Bluecaps",   country:"🇯🇵", rarity:"legendary", basePrice:170, rating:97, pos:"P/DH",icon:"⚾" },
+  { id:"sc_babe_ruther",      sport:"baseball", name:"Babe Ruther",            team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:320, rating:99, pos:"RF",  icon:"🏆" },
+  { id:"sc_aaron_judson",     sport:"baseball", name:"Aaron Judson",          team:"New York Empire",   country:"🇺🇸", rarity:"epic",      basePrice:68,  rating:93, pos:"RF",  icon:"⚾" },
+  { id:"sc_ronald_acero",     sport:"baseball", name:"Ronald Acero",      team:"Atlanta Braveside",      country:"🇻🇪", rarity:"epic",      basePrice:62,  rating:92, pos:"RF",  icon:"⚾" },
+  { id:"sc_vlad_guerreron",  sport:"baseball", name:"Vlad Guerreron", team:"Toronto Northmen",      country:"🇩🇴", rarity:"epic",      basePrice:58,  rating:91, pos:"1B",  icon:"⚾" },
+  { id:"sc_mookie_betson",     sport:"baseball", name:"Mookie Betson",         team:"Los Angeles Bluecaps",   country:"🇺🇸", rarity:"epic",      basePrice:55,  rating:91, pos:"RF",  icon:"⚾" },
+  { id:"sc_rafael_deveraux",    sport:"baseball", name:"Rafael Deveraux",        team:"Boston Redline",       country:"🇩🇴", rarity:"rare",      basePrice:26,  rating:87, pos:"3B",  icon:"⚾" },
+  { id:"sc_peter_alvaron",    sport:"baseball", name:"Peter Alvaron",          team:"New York Metros",      country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:86, pos:"1B",  icon:"⚾" },
+  { id:"sc_juan_sotero",      sport:"baseball", name:"Juan Sotero",            team:"New York Metros",      country:"🇩🇴", rarity:"rare",      basePrice:28,  rating:88, pos:"RF",  icon:"⚾" },
+  { id:"sc_fernando_tatison",     sport:"baseball", name:"Fernando Tatison",    team:"San Diego Coast",    country:"🇩🇴", rarity:"rare",      basePrice:24,  rating:87, pos:"SS",  icon:"⚾" },
+  { id:"sc_spencer_striden",   sport:"baseball", name:"Spencer Striden",      team:"Atlanta Braveside",      country:"🇺🇸", rarity:"rare",      basePrice:20,  rating:85, pos:"SP",  icon:"⚾" },
+  { id:"sc_austin_rylan",     sport:"baseball", name:"Austin Rylan",         team:"Atlanta Braveside",      country:"🇺🇸", rarity:"common",    basePrice:5,   rating:81, pos:"3B",  icon:"⚾" },
+  { id:"sc_vladimir_guerrin",    sport:"baseball", name:"Vladimir Guerrin", team:"Hall of Legends",       country:"🇩🇴", rarity:"legendary", basePrice:130, rating:93, pos:"RF",  icon:"⚾" },
+  { id:"sc_ken_griffen",   sport:"baseball", name:"Ken Griffen",       team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:140, rating:94, pos:"CF",  icon:"⚾" },
+  { id:"sc_kyle_schmid",      sport:"baseball", name:"Kyle Schmid",         team:"Hall of Legends",       country:"🇺🇸", rarity:"common",    basePrice:7,   rating:80, pos:"3B",  icon:"⚾" },
 
   // ═══ BASKETBALL (18 карток) ═══
-  { id:"b_lebron",     sport:"basketball", name:"Leandro Jameston",        team:"Los Angeles Lakes",    country:"🇺🇸", rarity:"legendary", basePrice:195, rating:97, pos:"SF",  icon:"🏀" },
-  { id:"b_jordan",     sport:"basketball", name:"Marcus Jorden",      team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:340, rating:99, pos:"SG",  icon:"🏆" },
-  { id:"b_kobe",       sport:"basketball", name:"Kobe Bryantley",         team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:320, rating:99, pos:"SG",  icon:"🏆" },
-  { id:"b_curry",      sport:"basketball", name:"Stephen Curran",       team:"Golden Bay", country:"🇺🇸", rarity:"legendary", basePrice:180, rating:96, pos:"PG",  icon:"🏀" },
-  { id:"b_jokic",      sport:"basketball", name:"Nikola Jovek",        team:"Denver Peaks",       country:"🇷🇸", rarity:"epic",      basePrice:78,  rating:95, pos:"C",   icon:"🏀" },
-  { id:"b_doncic",     sport:"basketball", name:"Luka Doncari",         team:"Dallas Starsmen",       country:"🇸🇮", rarity:"epic",      basePrice:72,  rating:94, pos:"PG",  icon:"🏀" },
-  { id:"b_durant",     sport:"basketball", name:"Kevin Durand",        team:"Phoenix Sunside",      country:"🇺🇸", rarity:"epic",      basePrice:68,  rating:93, pos:"SF",  icon:"🏀" },
-  { id:"b_giannis",    sport:"basketball", name:"Giannis Antelon",team:"Milwaukee Bucksmen",   country:"🇬🇷", rarity:"epic",      basePrice:70,  rating:94, pos:"PF",  icon:"🏀" },
-  { id:"b_tatum",      sport:"basketball", name:"Jason Tateman",        team:"Boston Redline",       country:"🇺🇸", rarity:"rare",      basePrice:30,  rating:89, pos:"SF",  icon:"🏀" },
-  { id:"b_embiid",     sport:"basketball", name:"Joel Ember",         team:"Philadelphia Liberty", country:"🇨🇲", rarity:"rare",      basePrice:32,  rating:90, pos:"C",   icon:"🏀" },
-  { id:"b_morant",     sport:"basketball", name:"Ja Morlen",           team:"Memphis Blues",      country:"🇺🇸", rarity:"rare",      basePrice:26,  rating:87, pos:"PG",  icon:"🏀" },
-  { id:"b_booker",     sport:"basketball", name:"Devin Bookan",        team:"Phoenix Sunside",      country:"🇺🇸", rarity:"rare",      basePrice:28,  rating:88, pos:"SG",  icon:"🏀" },
-  { id:"b_bird",       sport:"basketball", name:"Larry Birden",          team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:150, rating:95, pos:"SF",  icon:"🏀" },
-  { id:"b_magic",      sport:"basketball", name:"Ervin Magellan",       team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:155, rating:96, pos:"PG",  icon:"🏀" },
-  { id:"b_brown",      sport:"basketball", name:"Jaylen Browen",        team:"Boston Redline",       country:"🇺🇸", rarity:"common",    basePrice:7,   rating:83, pos:"SG",  icon:"🏀" },
-  { id:"b_beal",       sport:"basketball", name:"Bradley Bealen",        team:"Phoenix Sunside",      country:"🇺🇸", rarity:"common",    basePrice:6,   rating:82, pos:"SG",  icon:"🏀" },
-  { id:"b_ingram",     sport:"basketball", name:"Brandon Ingram",      team:"New Orleans Crescent",  country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"SF",  icon:"🏀" },
-  { id:"b_walker",     sport:"basketball", name:"Kemba Walker",        team:"Legends Archive",      country:"🇺🇸", rarity:"common",    basePrice:4,   rating:79, pos:"PG",  icon:"🏀" },
+  { id:"sc_leandro_jameston",     sport:"basketball", name:"Leandro Jameston",        team:"Los Angeles Lakes",    country:"🇺🇸", rarity:"legendary", basePrice:195, rating:97, pos:"SF",  icon:"🏀" },
+  { id:"sc_marcus_jorden",     sport:"basketball", name:"Marcus Jorden",      team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:340, rating:99, pos:"SG",  icon:"🏆" },
+  { id:"sc_kobe_bryantley",       sport:"basketball", name:"Kobe Bryantley",         team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:320, rating:99, pos:"SG",  icon:"🏆" },
+  { id:"sc_stephen_curran",      sport:"basketball", name:"Stephen Curran",       team:"Golden Bay", country:"🇺🇸", rarity:"legendary", basePrice:180, rating:96, pos:"PG",  icon:"🏀" },
+  { id:"sc_nikola_jovek",      sport:"basketball", name:"Nikola Jovek",        team:"Denver Peaks",       country:"🇷🇸", rarity:"epic",      basePrice:78,  rating:95, pos:"C",   icon:"🏀" },
+  { id:"sc_luka_doncari",     sport:"basketball", name:"Luka Doncari",         team:"Dallas Starsmen",       country:"🇸🇮", rarity:"epic",      basePrice:72,  rating:94, pos:"PG",  icon:"🏀" },
+  { id:"sc_kevin_durand",     sport:"basketball", name:"Kevin Durand",        team:"Phoenix Sunside",      country:"🇺🇸", rarity:"epic",      basePrice:68,  rating:93, pos:"SF",  icon:"🏀" },
+  { id:"sc_giannis_antelon",    sport:"basketball", name:"Giannis Antelon",team:"Milwaukee Bucksmen",   country:"🇬🇷", rarity:"epic",      basePrice:70,  rating:94, pos:"PF",  icon:"🏀" },
+  { id:"sc_jason_tateman",      sport:"basketball", name:"Jason Tateman",        team:"Boston Redline",       country:"🇺🇸", rarity:"rare",      basePrice:30,  rating:89, pos:"SF",  icon:"🏀" },
+  { id:"sc_joel_ember",     sport:"basketball", name:"Joel Ember",         team:"Philadelphia Liberty", country:"🇨🇲", rarity:"rare",      basePrice:32,  rating:90, pos:"C",   icon:"🏀" },
+  { id:"sc_ja_morlen",     sport:"basketball", name:"Ja Morlen",           team:"Memphis Blues",      country:"🇺🇸", rarity:"rare",      basePrice:26,  rating:87, pos:"PG",  icon:"🏀" },
+  { id:"sc_devin_bookan",     sport:"basketball", name:"Devin Bookan",        team:"Phoenix Sunside",      country:"🇺🇸", rarity:"rare",      basePrice:28,  rating:88, pos:"SG",  icon:"🏀" },
+  { id:"sc_larry_birden",       sport:"basketball", name:"Larry Birden",          team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:150, rating:95, pos:"SF",  icon:"🏀" },
+  { id:"sc_ervin_magellan",      sport:"basketball", name:"Ervin Magellan",       team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:155, rating:96, pos:"PG",  icon:"🏀" },
+  { id:"sc_jaylen_browen",      sport:"basketball", name:"Jaylen Browen",        team:"Boston Redline",       country:"🇺🇸", rarity:"common",    basePrice:7,   rating:83, pos:"SG",  icon:"🏀" },
+  { id:"sc_bradley_bealen",       sport:"basketball", name:"Bradley Bealen",        team:"Phoenix Sunside",      country:"🇺🇸", rarity:"common",    basePrice:6,   rating:82, pos:"SG",  icon:"🏀" },
+  { id:"sc_brandon_ingren",     sport:"basketball", name:"Brandon Ingram",      team:"New Orleans Crescent",  country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"SF",  icon:"🏀" },
+  { id:"sc_kemba_walken",     sport:"basketball", name:"Kemba Walker",        team:"Legends Archive",      country:"🇺🇸", rarity:"common",    basePrice:4,   rating:79, pos:"PG",  icon:"🏀" },
 
   // ═══ VOLLEYBALL (14 карток) ═══
-  { id:"v_giba",       sport:"volleyball", name:"Gilberto Gibran",                team:"Hall of Legends",       country:"🇧🇷", rarity:"ultimate",  basePrice:250, rating:99, pos:"OH",  icon:"🏐" },
-  { id:"ua_plotnytskyi",sport:"volleyball",name:"Taras Kovalen",   team:"Kedzierzyn Volley",        country:"🇺🇦", rarity:"legendary", basePrice:120, rating:92, pos:"OH",  icon:"🏐" },
-  { id:"v_earvin",     sport:"volleyball", name:"Oleh Plotnenko",    team:"Kazan Volley Club",    country:"🇫🇷", rarity:"legendary", basePrice:125, rating:93, pos:"OH",  icon:"🏐" },
-  { id:"v_wilfredo",   sport:"volleyball", name:"Erwin Ngaran",      team:"Perugia Shield",   country:"🇨🇺", rarity:"legendary", basePrice:130, rating:94, pos:"OH",  icon:"🏐" },
-  { id:"ua_semeniuk",  sport:"volleyball", name:"Bohdan Dovhan",    team:"Trento Volley",     country:"🇺🇦", rarity:"epic",      basePrice:50,  rating:89, pos:"OH",  icon:"🏐" },
-  { id:"v_ngapeth",    sport:"volleyball", name:"Wilfred Leoran",   team:"Tours Volley",     country:"🇫🇷", rarity:"epic",      basePrice:48,  rating:87, pos:"S",   icon:"🏐" },
-  { id:"v_anderson",   sport:"volleyball", name:"Yurii Semenko",      team:"United States Select",       country:"🇺🇸", rarity:"epic",      basePrice:50,  rating:88, pos:"OH",  icon:"🏐" },
-  { id:"v_muserskiy",  sport:"volleyball", name:"Earvin Ngaret",      team:"Sao Paulo Volley",      country:"🇧🇷", rarity:"rare",      basePrice:22,  rating:85, pos:"MB",  icon:"🏐" },
-  { id:"v_nimir",      sport:"volleyball", name:"Matthew Andersen",   team:"Ankara Volley",     country:"🇳🇱", rarity:"rare",      basePrice:20,  rating:84, pos:"OH",  icon:"🏐" },
-  { id:"ua_dmytrenko", sport:"volleyball", name:"Danylo Melnyk",    team:"Tours Volley",     country:"🇺🇦", rarity:"rare",      basePrice:18,  rating:82, pos:"MB",  icon:"🏐" },
-  { id:"v_lucarelli",  sport:"volleyball", name:"Dmitri Muserin",  team:"Trento Volley",     country:"🇧🇷", rarity:"rare",      basePrice:18,  rating:83, pos:"OH",  icon:"🏐" },
-  { id:"v_leon2",      sport:"volleyball", name:"Nimir Abbas",      team:"Civitanova Volley",         country:"🇦🇷", rarity:"common",    basePrice:5,   rating:79, pos:"OH",  icon:"🏐" },
-  { id:"v_common2",    sport:"volleyball", name:"Volodymyr Dmytren",           team:"Trento Volley",     country:"🇺🇸", rarity:"common",    basePrice:4,   rating:77, pos:"MB",  icon:"🏐" },
-  { id:"v_common3",    sport:"volleyball", name:"Ricardo Lucaren",      team:"Kazan Volley Club",    country:"🇧🇬", rarity:"common",    basePrice:4,   rating:78, pos:"L",   icon:"🏐" },
+  { id:"sc_gilberto_gibran",       sport:"volleyball", name:"Gilberto Gibran",                team:"Hall of Legends",       country:"🇧🇷", rarity:"ultimate",  basePrice:250, rating:99, pos:"OH",  icon:"🏐" },
+  { id:"sc_taras_kovalen",sport:"volleyball",name:"Taras Kovalen",   team:"Kedzierzyn Volley",        country:"🇺🇦", rarity:"legendary", basePrice:120, rating:92, pos:"OH",  icon:"🏐" },
+  { id:"sc_oleh_platonenko",     sport:"volleyball", name:"Oleh Platonenko",    team:"Kyiv Volley",    country:"🇺🇦", rarity:"legendary", basePrice:125, rating:93, pos:"OH",  icon:"🏐" },
+  { id:"sc_erwin_ngaran",   sport:"volleyball", name:"Erwin Ngaran",      team:"Perugia Shield",   country:"🇨🇺", rarity:"legendary", basePrice:130, rating:94, pos:"OH",  icon:"🏐" },
+  { id:"sc_bohdan_dovhan",  sport:"volleyball", name:"Bohdan Dovhan",    team:"Trento Volley",     country:"🇺🇦", rarity:"epic",      basePrice:50,  rating:89, pos:"OH",  icon:"🏐" },
+  { id:"sc_wilfred_leoran",    sport:"volleyball", name:"Wilfred Leoran",   team:"Tours Volley",     country:"🇫🇷", rarity:"epic",      basePrice:48,  rating:87, pos:"S",   icon:"🏐" },
+  { id:"sc_yurii_semenko",   sport:"volleyball", name:"Yurii Semenko",      team:"United States Select",       country:"🇺🇸", rarity:"epic",      basePrice:50,  rating:88, pos:"OH",  icon:"🏐" },
+  { id:"sc_taras_hrytsenko",  sport:"volleyball", name:"Taras Hrytsenko",      team:"Lviv Volley",      country:"🇺🇦", rarity:"rare",      basePrice:22,  rating:85, pos:"MB",  icon:"🏐" },
+  { id:"sc_matthew_andersen",      sport:"volleyball", name:"Matthew Andersen",   team:"Ankara Volley",     country:"🇳🇱", rarity:"rare",      basePrice:20,  rating:84, pos:"OH",  icon:"🏐" },
+  { id:"sc_danylo_melnyk", sport:"volleyball", name:"Danylo Melnyk",    team:"Tours Volley",     country:"🇺🇦", rarity:"rare",      basePrice:18,  rating:82, pos:"MB",  icon:"🏐" },
+  { id:"sc_andrii_melnichenko",  sport:"volleyball", name:"Andrii Melnichenko",  team:"Dnipro Volley",     country:"🇺🇦", rarity:"rare",      basePrice:18,  rating:83, pos:"OH",  icon:"🏐" },
+  { id:"sc_nimir_abbas",      sport:"volleyball", name:"Nimir Abbas",      team:"Civitanova Volley",         country:"🇦🇷", rarity:"common",    basePrice:5,   rating:79, pos:"OH",  icon:"🏐" },
+  { id:"sc_volodymyr_dmytren",    sport:"volleyball", name:"Volodymyr Dmytren",           team:"Trento Volley",     country:"🇺🇸", rarity:"common",    basePrice:4,   rating:77, pos:"MB",  icon:"🏐" },
+  { id:"sc_roman_kovalchuk",    sport:"volleyball", name:"Roman Kovalchuk",      team:"Kharkiv Volley",    country:"🇺🇦", rarity:"common",    basePrice:4,   rating:78, pos:"L",   icon:"🏐" },
 
   // ═══ TENNIS (14 карток) ═══
-  { id:"t_federer",    sport:"tennis", name:"Roger Federen",       team:"Swiss Select",  country:"🇨🇭", rarity:"legendary", basePrice:190, rating:98, pos:"Pro", icon:"🎾" },
-  { id:"t_nadal",      sport:"tennis", name:"Rafael Nadaro",        team:"Iberia Select",        country:"🇪🇸", rarity:"legendary", basePrice:188, rating:97, pos:"Pro", icon:"🎾" },
-  { id:"t_djokovic",   sport:"tennis", name:"Novak Djovan",      team:"Serbian Select",       country:"🇷🇸", rarity:"legendary", basePrice:190, rating:98, pos:"Pro", icon:"🎾" },
-  { id:"t_alcaraz",    sport:"tennis", name:"Carlos Alcaron",      team:"Iberia Select",        country:"🇪🇸", rarity:"epic",      basePrice:66,  rating:93, pos:"Pro", icon:"🎾" },
-  { id:"t_sinner",     sport:"tennis", name:"Jannik Sinnero",       team:"Italia Select",        country:"🇮🇹", rarity:"epic",      basePrice:63,  rating:92, pos:"Pro", icon:"🎾" },
-  { id:"t_hurkacz",    sport:"tennis", name:"Hubert Hurkalen",      team:"Polska Select",       country:"🇵🇱", rarity:"epic",      basePrice:55,  rating:88, pos:"Pro", icon:"🎾" },
-  { id:"t_swiatek",    sport:"tennis", name:"Iga Swiate",         team:"Polska Select",       country:"🇵🇱", rarity:"epic",      basePrice:65,  rating:95, pos:"Pro", icon:"🎾" },
-  { id:"t_zverev",     sport:"tennis", name:"Alexander Zeverin",    team:"German Select",      country:"🇩🇪", rarity:"rare",      basePrice:25,  rating:87, pos:"Pro", icon:"🎾" },
-  { id:"t_tsitsipas",  sport:"tennis", name:"Stefanos Tsitano",  team:"Hellas Select",       country:"🇬🇷", rarity:"rare",      basePrice:23,  rating:86, pos:"Pro", icon:"🎾" },
-  { id:"t_rune",       sport:"tennis", name:"Holger Runen",         team:"Danish Select",      country:"🇩🇰", rarity:"rare",      basePrice:20,  rating:83, pos:"Pro", icon:"🎾" },
-  { id:"t_fritz",      sport:"tennis", name:"Taylor Fritzen",        team:"United States Select",          country:"🇺🇸", rarity:"rare",      basePrice:18,  rating:82, pos:"Pro", icon:"🎾" },
-  { id:"t_ruud",       sport:"tennis", name:"Casper Ruuden",         team:"Nordic Select",       country:"🇳🇴", rarity:"common",    basePrice:5,   rating:81, pos:"Pro", icon:"🎾" },
-  { id:"t_tiafoe",     sport:"tennis", name:"Frances Tiafen",      team:"United States Select",          country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"Pro", icon:"🎾" },
-  { id:"t_musetti",    sport:"tennis", name:"Lorenzo Musen",     team:"Italia Select",        country:"🇮🇹", rarity:"common",    basePrice:4,   rating:79, pos:"Pro", icon:"🎾" },
+  { id:"sc_roger_federen",    sport:"tennis", name:"Roger Federen",       team:"Swiss Select",  country:"🇨🇭", rarity:"legendary", basePrice:190, rating:98, pos:"Pro", icon:"🎾" },
+  { id:"sc_rafael_nadaro",      sport:"tennis", name:"Rafael Nadaro",        team:"Iberia Select",        country:"🇪🇸", rarity:"legendary", basePrice:188, rating:97, pos:"Pro", icon:"🎾" },
+  { id:"sc_novak_djovan",   sport:"tennis", name:"Novak Djovan",      team:"Serbian Select",       country:"🇷🇸", rarity:"legendary", basePrice:190, rating:98, pos:"Pro", icon:"🎾" },
+  { id:"sc_carlos_alcaron",    sport:"tennis", name:"Carlos Alcaron",      team:"Iberia Select",        country:"🇪🇸", rarity:"epic",      basePrice:66,  rating:93, pos:"Pro", icon:"🎾" },
+  { id:"sc_jannik_sinnero",     sport:"tennis", name:"Jannik Sinnero",       team:"Italia Select",        country:"🇮🇹", rarity:"epic",      basePrice:63,  rating:92, pos:"Pro", icon:"🎾" },
+  { id:"sc_hubert_hurkalen",    sport:"tennis", name:"Hubert Hurkalen",      team:"Polska Select",       country:"🇵🇱", rarity:"epic",      basePrice:55,  rating:88, pos:"Pro", icon:"🎾" },
+  { id:"sc_iga_swiate",    sport:"tennis", name:"Iga Swiate",         team:"Polska Select",       country:"🇵🇱", rarity:"epic",      basePrice:65,  rating:95, pos:"Pro", icon:"🎾" },
+  { id:"sc_alexander_zeverin",     sport:"tennis", name:"Alexander Zeverin",    team:"German Select",      country:"🇩🇪", rarity:"rare",      basePrice:25,  rating:87, pos:"Pro", icon:"🎾" },
+  { id:"sc_stefanos_tsitano",  sport:"tennis", name:"Stefanos Tsitano",  team:"Hellas Select",       country:"🇬🇷", rarity:"rare",      basePrice:23,  rating:86, pos:"Pro", icon:"🎾" },
+  { id:"sc_holger_runen",       sport:"tennis", name:"Holger Runen",         team:"Danish Select",      country:"🇩🇰", rarity:"rare",      basePrice:20,  rating:83, pos:"Pro", icon:"🎾" },
+  { id:"sc_taylor_fritzen",      sport:"tennis", name:"Taylor Fritzen",        team:"United States Select",          country:"🇺🇸", rarity:"rare",      basePrice:18,  rating:82, pos:"Pro", icon:"🎾" },
+  { id:"sc_casper_ruuden",       sport:"tennis", name:"Casper Ruuden",         team:"Nordic Select",       country:"🇳🇴", rarity:"common",    basePrice:5,   rating:81, pos:"Pro", icon:"🎾" },
+  { id:"sc_frances_tiafen",     sport:"tennis", name:"Frances Tiafen",      team:"United States Select",          country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"Pro", icon:"🎾" },
+  { id:"sc_lorenzo_musen",    sport:"tennis", name:"Lorenzo Musen",     team:"Italia Select",        country:"🇮🇹", rarity:"common",    basePrice:4,   rating:79, pos:"Pro", icon:"🎾" },
 
   // ═══ BOX / MMA (16 карток) ═══
-  { id:"m_ali",        sport:"mma", name:"Amir Alen",        team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:360, rating:99, pos:"HW",  icon:"🏆" },
-  { id:"m_tyson",      sport:"mma", name:"Tyson Tyren",          team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:310, rating:98, pos:"HW",  icon:"🏆" },
-  { id:"ua_usyk",      sport:"mma", name:"Maksym Savych",      team:"World Boxing Circuit",       country:"🇺🇦", rarity:"legendary", basePrice:185, rating:97, pos:"HW",  icon:"🥊" },
-  { id:"ua_lomachenko",sport:"mma", name:"Artem Rudenko",    team:"World Boxing Circuit",       country:"🇺🇦", rarity:"legendary", basePrice:160, rating:96, pos:"LW",  icon:"🥊" },
-  { id:"m_mcgregor",   sport:"mma", name:"Oleks Usaren",      team:"Global Global Combat League",          country:"🇮🇪", rarity:"legendary", basePrice:175, rating:92, pos:"FW",  icon:"🥊" },
-  { id:"m_jones",      sport:"mma", name:"Vasyl Lomanen",           team:"Global Global Combat League",          country:"🇺🇸", rarity:"legendary", basePrice:168, rating:96, pos:"HW",  icon:"🥊" },
-  { id:"m_fury",       sport:"mma", name:"Connor McGrady",          team:"World Boxing Circuit",       country:"🇬🇧", rarity:"epic",      basePrice:62,  rating:93, pos:"HW",  icon:"🥊" },
-  { id:"m_joshua",     sport:"mma", name:"Jonathan Jonan",      team:"World Boxing Circuit",       country:"🇬🇧", rarity:"epic",      basePrice:58,  rating:91, pos:"HW",  icon:"🥊" },
-  { id:"ua_berinchyk", sport:"mma", name:"Ihor Bondaren",     team:"World Boxing Circuit",       country:"🇺🇦", rarity:"epic",      basePrice:55,  rating:90, pos:"LW",  icon:"🥊" },
-  { id:"m_usman",      sport:"mma", name:"Tyson Furion",        team:"Global Global Combat League",          country:"🇳🇬", rarity:"epic",      basePrice:58,  rating:92, pos:"WW",  icon:"🥊" },
-  { id:"m_poirier",    sport:"mma", name:"Anthony Joshen",      team:"Global Global Combat League",          country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:86, pos:"LW",  icon:"🥊" },
-  { id:"m_volk",       sport:"mma", name:"Denys Beranen",    team:"Global Global Combat League",          country:"🇦🇺", rarity:"rare",      basePrice:24,  rating:87, pos:"FW",  icon:"🥊" },
-  { id:"m_adesanya",   sport:"mma", name:"Kamar Usarenko",     team:"Global Global Combat League",          country:"🇳🇬", rarity:"rare",      basePrice:22,  rating:87, pos:"MW",  icon:"🥊" },
-  { id:"m_gaethje",    sport:"mma", name:"Dustin Poiran",      team:"Global Global Combat League",          country:"🇺🇸", rarity:"common",    basePrice:5,   rating:82, pos:"LW",  icon:"🥊" },
-  { id:"m_vettori",    sport:"mma", name:"Alex Volkan",      team:"Global Global Combat League",          country:"🇮🇹", rarity:"common",    basePrice:4,   rating:79, pos:"MW",  icon:"🥊" },
-  { id:"m_whittaker",  sport:"mma", name:"Israel Adesan",    team:"Global Global Combat League",          country:"🇦🇺", rarity:"common",    basePrice:5,   rating:81, pos:"MW",  icon:"🥊" },
+  { id:"sc_amir_alen",        sport:"mma", name:"Amir Alen",        team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:360, rating:99, pos:"HW",  icon:"🏆" },
+  { id:"sc_tyson_tyren",      sport:"mma", name:"Tyson Tyren",          team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:310, rating:98, pos:"HW",  icon:"🏆" },
+  { id:"sc_maksym_savych",      sport:"mma", name:"Maksym Savych",      team:"World Boxing Circuit",       country:"🇺🇦", rarity:"legendary", basePrice:185, rating:97, pos:"HW",  icon:"🥊" },
+  { id:"sc_artem_rudenko",sport:"mma", name:"Artem Rudenko",    team:"World Boxing Circuit",       country:"🇺🇦", rarity:"legendary", basePrice:160, rating:96, pos:"LW",  icon:"🥊" },
+  { id:"sc_oleks_usaren",   sport:"mma", name:"Oleks Usaren",      team:"Global Global Combat League",          country:"🇮🇪", rarity:"legendary", basePrice:175, rating:92, pos:"FW",  icon:"🥊" },
+  { id:"sc_vasyl_lomanen",      sport:"mma", name:"Vasyl Lomanen",           team:"Global Global Combat League",          country:"🇺🇸", rarity:"legendary", basePrice:168, rating:96, pos:"HW",  icon:"🥊" },
+  { id:"sc_connor_mcgrady",       sport:"mma", name:"Connor McGrady",          team:"World Boxing Circuit",       country:"🇬🇧", rarity:"epic",      basePrice:62,  rating:93, pos:"HW",  icon:"🥊" },
+  { id:"sc_jonathan_jonan",     sport:"mma", name:"Jonathan Jonan",      team:"World Boxing Circuit",       country:"🇬🇧", rarity:"epic",      basePrice:58,  rating:91, pos:"HW",  icon:"🥊" },
+  { id:"sc_ihor_bondaren", sport:"mma", name:"Ihor Bondaren",     team:"World Boxing Circuit",       country:"🇺🇦", rarity:"epic",      basePrice:55,  rating:90, pos:"LW",  icon:"🥊" },
+  { id:"sc_tyson_furion",      sport:"mma", name:"Tyson Furion",        team:"Global Global Combat League",          country:"🇳🇬", rarity:"epic",      basePrice:58,  rating:92, pos:"WW",  icon:"🥊" },
+  { id:"sc_anthony_joshen",    sport:"mma", name:"Anthony Joshen",      team:"Global Global Combat League",          country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:86, pos:"LW",  icon:"🥊" },
+  { id:"sc_denys_beranen",       sport:"mma", name:"Denys Beranen",    team:"Global Global Combat League",          country:"🇦🇺", rarity:"rare",      basePrice:24,  rating:87, pos:"FW",  icon:"🥊" },
+  { id:"sc_kamar_usarenko",   sport:"mma", name:"Kamar Usarenko",     team:"Global Global Combat League",          country:"🇳🇬", rarity:"rare",      basePrice:22,  rating:87, pos:"MW",  icon:"🥊" },
+  { id:"sc_dustin_poiran",    sport:"mma", name:"Dustin Poiran",      team:"Global Global Combat League",          country:"🇺🇸", rarity:"common",    basePrice:5,   rating:82, pos:"LW",  icon:"🥊" },
+  { id:"sc_alex_volkan",    sport:"mma", name:"Alex Volkan",      team:"Global Global Combat League",          country:"🇮🇹", rarity:"common",    basePrice:4,   rating:79, pos:"MW",  icon:"🥊" },
+  { id:"sc_israel_adesan",  sport:"mma", name:"Israel Adesan",    team:"Global Global Combat League",          country:"🇦🇺", rarity:"common",    basePrice:5,   rating:81, pos:"MW",  icon:"🥊" },
 
   // ═══ NASCAR (14 карток) ═══
-  { id:"nc_earnhardt",  sport:"nascar", name:"Dale Earnen",  team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:280, rating:99, pos:"Driver",icon:"🏆" },
-  { id:"nc_gordon",     sport:"nascar", name:"Jeff Gordon",        team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"legendary", basePrice:145, rating:95, pos:"Driver",icon:"🏁" },
-  { id:"nc_petty",      sport:"nascar", name:"Richard Petten",      team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:140, rating:94, pos:"Driver",icon:"🏆" },
-  { id:"nc_jr",         sport:"nascar", name:"Dale Jr Earnen Jr",  team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"legendary", basePrice:135, rating:92, pos:"Driver",icon:"🏁" },
-  { id:"nc_elliott",    sport:"nascar", name:"Chase Elliot",      team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"epic",      basePrice:58,  rating:91, pos:"Driver",icon:"🏁" },
-  { id:"nc_larson",     sport:"nascar", name:"Kyle Larson",        team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"epic",      basePrice:60,  rating:91, pos:"Driver",icon:"🏁" },
-  { id:"nc_kyle",       sport:"nascar", name:"Kurt Busen",         team:"Richardson Racing",   country:"🇺🇸", rarity:"epic",      basePrice:56,  rating:90, pos:"Driver",icon:"🏁" },
-  { id:"nc_blaney",     sport:"nascar", name:"Ryan Blaney",        team:"Pemberton Racing",country:"🇺🇸", rarity:"rare",      basePrice:24,  rating:87, pos:"Driver",icon:"🏁" },
-  { id:"nc_logano",     sport:"nascar", name:"Joey Logen",        team:"Pemberton Racing",country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:86, pos:"Driver",icon:"🏁" },
-  { id:"nc_hamlin",     sport:"nascar", name:"Denny Hamlen",       team:"Gibson Motorsports",    country:"🇺🇸", rarity:"rare",      basePrice:24,  rating:86, pos:"Driver",icon:"🏁" },
-  { id:"nc_bell",       sport:"nascar", name:"Christopher Bellan",   team:"Gibson Motorsports",    country:"🇺🇸", rarity:"rare",      basePrice:20,  rating:85, pos:"Driver",icon:"🏁" },
-  { id:"nc_truex",      sport:"nascar", name:"Martin Truexen",    team:"Gibson Motorsports",    country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"Driver",icon:"🏁" },
-  { id:"nc_wallace",    sport:"nascar", name:"Bubba Wallan",      team:"TwentyThree Racing",  country:"🇺🇸", rarity:"common",    basePrice:4,   rating:78, pos:"Driver",icon:"🏁" },
-  { id:"nc_reddick",    sport:"nascar", name:"Tyler Reddan",      team:"TwentyThree Racing",  country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"Driver",icon:"🏁" },
+  { id:"sc_dale_earnen",  sport:"nascar", name:"Dale Earnen",  team:"Hall of Legends",       country:"🇺🇸", rarity:"ultimate",  basePrice:280, rating:99, pos:"Driver",icon:"🏆" },
+  { id:"sc_jeff_gordan",     sport:"nascar", name:"Jeff Gordon",        team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"legendary", basePrice:145, rating:95, pos:"Driver",icon:"🏁" },
+  { id:"sc_richard_petten",      sport:"nascar", name:"Richard Petten",      team:"Hall of Legends",       country:"🇺🇸", rarity:"legendary", basePrice:140, rating:94, pos:"Driver",icon:"🏆" },
+  { id:"sc_dale_jr_earnen_jr",         sport:"nascar", name:"Dale Jr Earnen Jr",  team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"legendary", basePrice:135, rating:92, pos:"Driver",icon:"🏁" },
+  { id:"sc_chase_elliot",    sport:"nascar", name:"Chase Elliot",      team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"epic",      basePrice:58,  rating:91, pos:"Driver",icon:"🏁" },
+  { id:"sc_kyle_larsen",     sport:"nascar", name:"Kyle Larson",        team:"Hendrix Motorsport",  country:"🇺🇸", rarity:"epic",      basePrice:60,  rating:91, pos:"Driver",icon:"🏁" },
+  { id:"sc_kurt_busen",       sport:"nascar", name:"Kurt Busen",         team:"Richardson Racing",   country:"🇺🇸", rarity:"epic",      basePrice:56,  rating:90, pos:"Driver",icon:"🏁" },
+  { id:"sc_ryan_blaine",     sport:"nascar", name:"Ryan Blaney",        team:"Pemberton Racing",country:"🇺🇸", rarity:"rare",      basePrice:24,  rating:87, pos:"Driver",icon:"🏁" },
+  { id:"sc_joey_logen",     sport:"nascar", name:"Joey Logen",        team:"Pemberton Racing",country:"🇺🇸", rarity:"rare",      basePrice:22,  rating:86, pos:"Driver",icon:"🏁" },
+  { id:"sc_denny_hamlen",     sport:"nascar", name:"Denny Hamlen",       team:"Gibson Motorsports",    country:"🇺🇸", rarity:"rare",      basePrice:24,  rating:86, pos:"Driver",icon:"🏁" },
+  { id:"sc_christopher_bellan",       sport:"nascar", name:"Christopher Bellan",   team:"Gibson Motorsports",    country:"🇺🇸", rarity:"rare",      basePrice:20,  rating:85, pos:"Driver",icon:"🏁" },
+  { id:"sc_martin_truexen",      sport:"nascar", name:"Martin Truexen",    team:"Gibson Motorsports",    country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"Driver",icon:"🏁" },
+  { id:"sc_bubba_wallan",    sport:"nascar", name:"Bubba Wallan",      team:"TwentyThree Racing",  country:"🇺🇸", rarity:"common",    basePrice:4,   rating:78, pos:"Driver",icon:"🏁" },
+  { id:"sc_tyler_reddan",    sport:"nascar", name:"Tyler Reddan",      team:"TwentyThree Racing",  country:"🇺🇸", rarity:"common",    basePrice:5,   rating:80, pos:"Driver",icon:"🏁" },
 
   // ═══ IMSA (12 карток) ═══
-  { id:"im_bamber",    sport:"imsa", name:"Earl Bamford",         team:"Stuttgart Performance",      country:"🇳🇿", rarity:"legendary", basePrice:115, rating:91, pos:"Driver",icon:"🚗" },
-  { id:"im_tandy",     sport:"imsa", name:"Nick Tander",          team:"Stuttgart Performance",      country:"🇬🇧", rarity:"legendary", basePrice:110, rating:90, pos:"Driver",icon:"🚗" },
-  { id:"im_taylor",    sport:"imsa", name:"Ricky Taylen",        team:"Apex ARX-6", country:"🇺🇸", rarity:"epic",      basePrice:50,  rating:87, pos:"Driver",icon:"🚗" },
-  { id:"im_bourdais",  sport:"imsa", name:"Sebastien Bourdan",  team:"Crestline Racing",     country:"🇫🇷", rarity:"epic",      basePrice:52,  rating:88, pos:"Driver",icon:"🚗" },
-  { id:"im_derani",    sport:"imsa", name:"Pipo Deran",         team:"Apex ARX-6", country:"🇧🇷", rarity:"epic",      basePrice:48,  rating:86, pos:"Driver",icon:"🚗" },
-  { id:"im_pla",       sport:"imsa", name:"Olivier Planer",         team:"Bavarian Motorworks",          country:"🇫🇷", rarity:"rare",      basePrice:20,  rating:83, pos:"Driver",icon:"🚗" },
-  { id:"im_catsburg",  sport:"imsa", name:"Nicky Catsen",      team:"Bavarian Motorworks",          country:"🇳🇱", rarity:"rare",      basePrice:18,  rating:82, pos:"Driver",icon:"🚗" },
-  { id:"im_edwards",   sport:"imsa", name:"John Edwin",        team:"Weatherline Racing",  country:"🇺🇸", rarity:"rare",      basePrice:16,  rating:81, pos:"Driver",icon:"🚗" },
-  { id:"im_vass",      sport:"imsa", name:"Marco Vassen",       team:"Vettec Racing",     country:"🇩🇰", rarity:"rare",      basePrice:16,  rating:80, pos:"Driver",icon:"🚗" },
-  { id:"im_hardwick",  sport:"imsa", name:"Ryan Hardin",       team:"Wrighton Motorsport",    country:"🇺🇸", rarity:"common",    basePrice:4,   rating:74, pos:"Driver",icon:"🚗" },
-  { id:"im_robichon",  sport:"imsa", name:"Zach Roben",   team:"Stuttgart Performance",      country:"🇨🇦", rarity:"common",    basePrice:5,   rating:76, pos:"Driver",icon:"🚗" },
-  { id:"im_rsr",       sport:"imsa", name:"Roman Rosen",        team:"Stuttgart Performance",      country:"🇺🇸", rarity:"common",    basePrice:4,   rating:75, pos:"Driver",icon:"🚗" },
+  { id:"sc_earl_bamford",    sport:"imsa", name:"Earl Bamford",         team:"Stuttgart Performance",      country:"🇳🇿", rarity:"legendary", basePrice:115, rating:91, pos:"Driver",icon:"🚗" },
+  { id:"sc_nick_tander",     sport:"imsa", name:"Nick Tander",          team:"Stuttgart Performance",      country:"🇬🇧", rarity:"legendary", basePrice:110, rating:90, pos:"Driver",icon:"🚗" },
+  { id:"sc_ricky_taylen",    sport:"imsa", name:"Ricky Taylen",        team:"Apex ARX-6", country:"🇺🇸", rarity:"epic",      basePrice:50,  rating:87, pos:"Driver",icon:"🚗" },
+  { id:"sc_sebastien_bourdan",  sport:"imsa", name:"Sebastien Bourdan",  team:"Crestline Racing",     country:"🇫🇷", rarity:"epic",      basePrice:52,  rating:88, pos:"Driver",icon:"🚗" },
+  { id:"sc_pipo_deran",    sport:"imsa", name:"Pipo Deran",         team:"Apex ARX-6", country:"🇧🇷", rarity:"epic",      basePrice:48,  rating:86, pos:"Driver",icon:"🚗" },
+  { id:"sc_olivier_planer",       sport:"imsa", name:"Olivier Planer",         team:"Bavarian Motorworks",          country:"🇫🇷", rarity:"rare",      basePrice:20,  rating:83, pos:"Driver",icon:"🚗" },
+  { id:"sc_nicky_catsen",  sport:"imsa", name:"Nicky Catsen",      team:"Bavarian Motorworks",          country:"🇳🇱", rarity:"rare",      basePrice:18,  rating:82, pos:"Driver",icon:"🚗" },
+  { id:"sc_john_edwin",   sport:"imsa", name:"John Edwin",        team:"Weatherline Racing",  country:"🇺🇸", rarity:"rare",      basePrice:16,  rating:81, pos:"Driver",icon:"🚗" },
+  { id:"sc_marco_vassen",      sport:"imsa", name:"Marco Vassen",       team:"Vettec Racing",     country:"🇩🇰", rarity:"rare",      basePrice:16,  rating:80, pos:"Driver",icon:"🚗" },
+  { id:"sc_ryan_hardin",  sport:"imsa", name:"Ryan Hardin",       team:"Wrighton Motorsport",    country:"🇺🇸", rarity:"common",    basePrice:4,   rating:74, pos:"Driver",icon:"🚗" },
+  { id:"sc_zach_roben",  sport:"imsa", name:"Zach Roben",   team:"Stuttgart Performance",      country:"🇨🇦", rarity:"common",    basePrice:5,   rating:76, pos:"Driver",icon:"🚗" },
+  { id:"sc_roman_rosen",       sport:"imsa", name:"Roman Rosen",        team:"Stuttgart Performance",      country:"🇺🇸", rarity:"common",    basePrice:4,   rating:75, pos:"Driver",icon:"🚗" },
 
   // ═══ SRO (12 карток) ═══
-  { id:"sro_vanthoor", sport:"sro", name:"Dries Vandor",       team:"Ingolstadt Sport",   country:"🇧🇪", rarity:"legendary", basePrice:110, rating:91, pos:"Driver",icon:"🏆" },
-  { id:"sro_marciello",sport:"sro", name:"Raffael Marcian",   team:"Sterling Performance", country:"🇨🇭", rarity:"legendary", basePrice:115, rating:92, pos:"Driver",icon:"🏆" },
-  { id:"sro_fuoco",    sport:"sro", name:"Antonio Fucon",        team:"Crimson Corse",      country:"🇮🇹", rarity:"epic",      basePrice:48,  rating:86, pos:"Driver",icon:"🏆" },
-  { id:"sro_ua",       sport:"sro", name:"Maks Koval",     team:"Stuttgart Performance",      country:"🇺🇦", rarity:"epic",      basePrice:46,  rating:85, pos:"Driver",icon:"🏆" },
-  { id:"sro_abril",    sport:"sro", name:"Vincent Abrin",         team:"Sterling Performance", country:"🇫🇷", rarity:"epic",      basePrice:48,  rating:86, pos:"Driver",icon:"🏆" },
-  { id:"sro_pepper",   sport:"sro", name:"Jordan Peppern",        team:"Ingolstadt Sport",   country:"🇩🇪", rarity:"rare",      basePrice:18,  rating:82, pos:"Driver",icon:"🏆" },
-  { id:"sro_robin",    sport:"sro", name:"Robin Roben",         team:"Ingolstadt Sport",   country:"🇳🇱", rarity:"rare",      basePrice:20,  rating:83, pos:"Driver",icon:"🏆" },
-  { id:"sro_weerts",   sport:"sro", name:"Charles Weeren",       team:"Ingolstadt Sport",   country:"🇧🇪", rarity:"rare",      basePrice:19,  rating:82, pos:"Driver",icon:"🏆" },
-  { id:"sro_spinelli", sport:"sro", name:"Luca Spinel",     team:"Crimson Corse",      country:"🇮🇹", rarity:"rare",      basePrice:17,  rating:80, pos:"Driver",icon:"🏆" },
-  { id:"sro_tuck",     sport:"sro", name:"Tobias Tucken",             team:"Barwell Racing",   country:"🇬🇧", rarity:"common",    basePrice:3,   rating:74, pos:"Driver",icon:"🏆" },
-  { id:"sro_mul",      sport:"sro", name:"Marco Mulen",        team:"Bavarian Motorworks",          country:"🇩🇪", rarity:"common",    basePrice:4,   rating:75, pos:"Driver",icon:"🏆" },
-  { id:"sro_ish",      sport:"sro", name:"Ishaan Ishar",       team:"Santoro Corse",  country:"🇦🇹", rarity:"common",    basePrice:3,   rating:73, pos:"Driver",icon:"🏆" },
+  { id:"sc_dries_vandor", sport:"sro", name:"Dries Vandor",       team:"Ingolstadt Sport",   country:"🇧🇪", rarity:"legendary", basePrice:110, rating:91, pos:"Driver",icon:"🏆" },
+  { id:"sc_raffael_marcian",sport:"sro", name:"Raffael Marcian",   team:"Sterling Performance", country:"🇨🇭", rarity:"legendary", basePrice:115, rating:92, pos:"Driver",icon:"🏆" },
+  { id:"sc_antonio_fucon",    sport:"sro", name:"Antonio Fucon",        team:"Crimson Corse",      country:"🇮🇹", rarity:"epic",      basePrice:48,  rating:86, pos:"Driver",icon:"🏆" },
+  { id:"sc_maks_koval",       sport:"sro", name:"Maks Koval",     team:"Stuttgart Performance",      country:"🇺🇦", rarity:"epic",      basePrice:46,  rating:85, pos:"Driver",icon:"🏆" },
+  { id:"sc_vincent_abrin",    sport:"sro", name:"Vincent Abrin",         team:"Sterling Performance", country:"🇫🇷", rarity:"epic",      basePrice:48,  rating:86, pos:"Driver",icon:"🏆" },
+  { id:"sc_jordan_peppern",   sport:"sro", name:"Jordan Peppern",        team:"Ingolstadt Sport",   country:"🇩🇪", rarity:"rare",      basePrice:18,  rating:82, pos:"Driver",icon:"🏆" },
+  { id:"sc_robin_roben",    sport:"sro", name:"Robin Roben",         team:"Ingolstadt Sport",   country:"🇳🇱", rarity:"rare",      basePrice:20,  rating:83, pos:"Driver",icon:"🏆" },
+  { id:"sc_charles_weeren",   sport:"sro", name:"Charles Weeren",       team:"Ingolstadt Sport",   country:"🇧🇪", rarity:"rare",      basePrice:19,  rating:82, pos:"Driver",icon:"🏆" },
+  { id:"sc_luca_spinel", sport:"sro", name:"Luca Spinel",     team:"Crimson Corse",      country:"🇮🇹", rarity:"rare",      basePrice:17,  rating:80, pos:"Driver",icon:"🏆" },
+  { id:"sc_tobias_tucken",     sport:"sro", name:"Tobias Tucken",             team:"Barwell Racing",   country:"🇬🇧", rarity:"common",    basePrice:3,   rating:74, pos:"Driver",icon:"🏆" },
+  { id:"sc_marco_mulen",      sport:"sro", name:"Marco Mulen",        team:"Bavarian Motorworks",          country:"🇩🇪", rarity:"common",    basePrice:4,   rating:75, pos:"Driver",icon:"🏆" },
+  { id:"sc_ishaan_ishar",      sport:"sro", name:"Ishaan Ishar",       team:"Santoro Corse",  country:"🇦🇹", rarity:"common",    basePrice:3,   rating:73, pos:"Driver",icon:"🏆" },
 ];
+
+const EXTRA_CARDS = [{"id":"sc_elias_arden","sport":"f1","name":"Elias Arden","team":"Sterling GP","country":"🇬🇧","rarity":"epic","basePrice":61,"rating":91,"pos":"Driver","icon":"🏎"},{"id":"sc_mateo_varela","sport":"f1","name":"Mateo Varela","team":"Crimson Corse","country":"🇪🇸","rarity":"rare","basePrice":29,"rating":87,"pos":"Driver","icon":"🏎"},{"id":"sc_adrian_navarro","sport":"soccer","name":"Adrian Navarro","team":"Madrid Royale","country":"🇪🇸","rarity":"epic","basePrice":64,"rating":91,"pos":"AM","icon":"⚽"},{"id":"sc_danylo_kovalen","sport":"soccer","name":"Danylo Kovalen","team":"Kyiv Dynamo Club","country":"🇺🇦","rarity":"rare","basePrice":25,"rating":85,"pos":"CM","icon":"⚽"},{"id":"sc_jalen_carteron","sport":"football","name":"Jalen Carteron","team":"Kansas City Kings","country":"🇺🇸","rarity":"epic","basePrice":58,"rating":90,"pos":"QB","icon":"🏈"},{"id":"sc_luis_moreno","sport":"baseball","name":"Luis Moreno","team":"Los Angeles Stars","country":"🇩🇴","rarity":"rare","basePrice":26,"rating":87,"pos":"OF","icon":"⚾"},{"id":"sc_darius_reed","sport":"basketball","name":"Darius Reed","team":"Los Angeles Gold","country":"🇺🇸","rarity":"epic","basePrice":62,"rating":91,"pos":"SG","icon":"🏀"},{"id":"sc_nikola_vukic","sport":"basketball","name":"Nikola Vukic","team":"Denver Peaks","country":"🇷🇸","rarity":"legendary","basePrice":158,"rating":96,"pos":"C","icon":"🏀"},{"id":"sc_marta_koval","sport":"volleyball","name":"Marta Koval","team":"Kyiv Volley","country":"🇺🇦","rarity":"epic","basePrice":49,"rating":89,"pos":"OH","icon":"🏐"},{"id":"sc_theo_laurent","sport":"tennis","name":"Theo Laurent","team":"French Select","country":"🇫🇷","rarity":"epic","basePrice":55,"rating":90,"pos":"Pro","icon":"🎾"},{"id":"sc_marcus_hayes","sport":"mma","name":"Marcus Hayes","team":"Global Combat League","country":"🇺🇸","rarity":"rare","basePrice":27,"rating":87,"pos":"MW","icon":"🥊"},{"id":"sc_cole_mason","sport":"nascar","name":"Cole Mason","team":"Pemberton Racing","country":"🇺🇸","rarity":"epic","basePrice":55,"rating":90,"pos":"Driver","icon":"🏁"},{"id":"sc_luca_rossi","sport":"imsa","name":"Luca Rossi","team":"Crimson Corse","country":"🇮🇹","rarity":"epic","basePrice":51,"rating":88,"pos":"Driver","icon":"🚗"},{"id":"sc_jonas_berger","sport":"sro","name":"Jonas Berger","team":"Bavarian Motorworks","country":"🇩🇪","rarity":"rare","basePrice":22,"rating":84,"pos":"Driver","icon":"🏆"},{"id":"sc_madrid_royale_club","sport":"soccer","name":"Madrid Royale Club","team":"Club Collection","country":"🇪🇸","rarity":"legendary","basePrice":150,"rating":96,"pos":"Club","icon":"🏟️"},{"id":"sc_mersey_athletic_club","sport":"soccer","name":"Mersey Athletic Club","team":"Club Collection","country":"🇬🇧","rarity":"epic","basePrice":69,"rating":92,"pos":"Club","icon":"🏟️"},{"id":"sc_sterling_gp_team","sport":"f1","name":"Sterling GP Team","team":"Team Collection","country":"🇬🇧","rarity":"legendary","basePrice":142,"rating":95,"pos":"Team","icon":"🏁"},{"id":"sc_redcrest_racing_team","sport":"f1","name":"Redcrest Racing Team","team":"Team Collection","country":"🇦🇹","rarity":"legendary","basePrice":146,"rating":96,"pos":"Team","icon":"🏁"},{"id":"sc_crimson_c26","sport":"f1","name":"Crimson C26","team":"Crimson Corse","country":"🇮🇹","rarity":"ultimate","basePrice":285,"rating":99,"pos":"Car","icon":"🏎️"},{"id":"sc_sterling_s26","sport":"f1","name":"Sterling S26","team":"Sterling GP","country":"🇬🇧","rarity":"legendary","basePrice":168,"rating":97,"pos":"Car","icon":"🏎️"},{"id":"sc_apex_arx_7","sport":"imsa","name":"Apex ARX-7","team":"Apex Performance","country":"🇺🇸","rarity":"epic","basePrice":71,"rating":92,"pos":"Car","icon":"🚘"},{"id":"sc_kyiv_volley_team","sport":"volleyball","name":"Kyiv Volley Team","team":"Team Collection","country":"🇺🇦","rarity":"rare","basePrice":30,"rating":87,"pos":"Team","icon":"🏐"},{"id":"sc_denver_peaks_team","sport":"basketball","name":"Denver Peaks Team","team":"Team Collection","country":"🇺🇸","rarity":"epic","basePrice":67,"rating":92,"pos":"Team","icon":"🏀"},{"id":"sc_los_angeles_gold_team","sport":"basketball","name":"Los Angeles Gold Team","team":"Team Collection","country":"🇺🇸","rarity":"legendary","basePrice":138,"rating":95,"pos":"Team","icon":"🏀"},{"id":"sc_miami_coast_fc","sport":"soccer","name":"Miami Coast FC","team":"Club Collection","country":"🇺🇸","rarity":"rare","basePrice":33,"rating":87,"pos":"Club","icon":"🛡️"},{"id":"sc_world_boxing_circuit","sport":"mma","name":"World Boxing Circuit","team":"Organization Collection","country":"🌐","rarity":"epic","basePrice":72,"rating":92,"pos":"League","icon":"🥊"}];
+CARDS.push(...EXTRA_CARDS);
 
 const CARD_BY_ID = Object.fromEntries(CARDS.map(c => [c.id, c]));
 
@@ -1390,8 +1402,8 @@ function getPacksForSport(sportId, season) {
     },
     {
       id:`${sportId}_${season}_legendary`,
-      name:`${sp.label} ${season} Hall of Legends`,
-      desc:`Гарантована Hall of Legendsary+`,
+      name:`${sp.label} ${season} Legendary`,
+      desc:`Гарантована Legendary+`,
       gradient:"linear-gradient(135deg,#2a1e00,#10141A)",
       glowColor:"#F0B429",
       basePrice: Math.round(6300 * ym),
@@ -1413,27 +1425,27 @@ function getPacksForSport(sportId, season) {
 
 // ── NEWS ───────────────────────────────────────────────────
 const SPORT_NEWS = [
-  { text:"🔥 Leo Merson scores a hat-trick — card price rising!", card:"s_messi",      effect:+0.12, sport:"soccer" },
-  { text:"⚡ Maxim Verden wins another race!", card:"r_verstappen", effect:+0.10, sport:"f1" },
-  { text:"👑 Leandro Jameston extends a team contract!", card:"b_lebron",     effect:+0.08, sport:"basketball" },
-  { text:"🎾 Carlos Alcaron wins the season final!", card:"t_alcaraz",    effect:+0.15, sport:"tennis" },
-  { text:"🥊 Oleks Usaren announces a comeback fight!", card:"m_mcgregor",   effect:+0.20, sport:"mma" },
-  { text:"😢 Cristian Roldan misses a match with an injury", card:"s_ronaldo",    effect:-0.08, sport:"soccer" },
-  { text:"🏆 Leon Hampton signs a new racing contract!", card:"r_hamilton",   effect:+0.18, sport:"f1" },
-  { text:"🏈 Pat Maher throws 5 touchdowns in the championship final!", card:"nfl_mahomes",  effect:+0.14, sport:"football" },
-  { text:"⚾ Sho Ohtaro delivers a perfect game!", card:"bb_ohtani",    effect:+0.16, sport:"baseball" },
-  { text:"🏁 Dale Jr Earnen Jr joins the Hall of Legends!", card:"nc_jr",        effect:+0.12, sport:"nascar" },
-  { text:"🏀 Nikola Jovek wins another MVP award!", card:"b_jokic",      effect:+0.10, sport:"basketball" },
-  { text:"🎾 Novak Djovan sets a new tour record!", card:"t_djokovic",   effect:+0.08, sport:"tennis" },
-  { text:"⚠️ Charles Leclair receives a race penalty — team files a review", card:"r_leclerc",    effect:-0.10, sport:"f1" },
-  { text:"🏀 Stephen Curran sets a new three-point record!", card:"b_curry",      effect:+0.09, sport:"basketball" },
-  { text:"⚽ Erik Halandor scores 50 goals this season!", card:"s_haaland",    effect:+0.13, sport:"soccer" },
-  { text:"🏐 Taras Kovalen wins tournament MVP!", card:"ua_plotnytskyi",effect:+0.18,sport:"volleyball" },
-  { text:"🥊 Maksym Savych successfully defends the world titles!", card:"ua_usyk",      effect:+0.16, sport:"mma" },
-  { text:"🚗 Earl Bamford wins a 24-hour endurance race!", card:"im_bamber",    effect:+0.13, sport:"imsa" },
-  { text:"🏆 Raffael Marcian wins a 12-hour endurance race!", card:"sro_marciello",effect:+0.12, sport:"sro" },
-  { text:"⚽ Mykhail Mudrenko scores the winning goal!", card:"ua_mudryk",    effect:+0.14, sport:"soccer" },
-  { text:"🥊 Artem Rudenko becomes undisputed champion!", card:"ua_lomachenko",effect:+0.18, sport:"mma" },
+  { text:"🔥 Leo Merson scores a hat-trick — card price rising!", card:"sc_leo_merson",      effect:+0.12, sport:"soccer" },
+  { text:"⚡ Maxim Verden wins another race!", card:"sc_maxim_verden", effect:+0.10, sport:"f1" },
+  { text:"👑 Leandro Jameston extends a team contract!", card:"sc_leandro_jameston",     effect:+0.08, sport:"basketball" },
+  { text:"🎾 Carlos Alcaron wins the season final!", card:"sc_carlos_alcaron",    effect:+0.15, sport:"tennis" },
+  { text:"🥊 Oleks Usaren announces a comeback fight!", card:"sc_oleks_usaren",   effect:+0.20, sport:"mma" },
+  { text:"😢 Cristian Roldan misses a match with an injury", card:"sc_cristian_roldan",    effect:-0.08, sport:"soccer" },
+  { text:"🏆 Leon Hampton signs a new racing contract!", card:"sc_leon_hampton",   effect:+0.18, sport:"f1" },
+  { text:"🏈 Pat Maher throws 5 touchdowns in the championship final!", card:"sc_pat_maher",  effect:+0.14, sport:"football" },
+  { text:"⚾ Sho Ohtaro delivers a perfect game!", card:"sc_sho_ohtaro",    effect:+0.16, sport:"baseball" },
+  { text:"🏁 Dale Jr Earnen Jr joins the Hall of Legends!", card:"sc_dale_jr_earnen_jr",        effect:+0.12, sport:"nascar" },
+  { text:"🏀 Nikola Jovek wins another MVP award!", card:"sc_nikola_jovek",      effect:+0.10, sport:"basketball" },
+  { text:"🎾 Novak Djovan sets a new tour record!", card:"sc_novak_djovan",   effect:+0.08, sport:"tennis" },
+  { text:"⚠️ Charles Leclair receives a race penalty — team files a review", card:"sc_charles_leclair",    effect:-0.10, sport:"f1" },
+  { text:"🏀 Stephen Curran sets a new three-point record!", card:"sc_stephen_curran",      effect:+0.09, sport:"basketball" },
+  { text:"⚽ Erik Halandor scores 50 goals this season!", card:"sc_erik_halandor",    effect:+0.13, sport:"soccer" },
+  { text:"🏐 Taras Kovalen wins tournament MVP!", card:"sc_taras_kovalen",effect:+0.18,sport:"volleyball" },
+  { text:"🥊 Maksym Savych successfully defends the world titles!", card:"sc_maksym_savych",      effect:+0.16, sport:"mma" },
+  { text:"🚗 Earl Bamford wins a 24-hour endurance race!", card:"sc_earl_bamford",    effect:+0.13, sport:"imsa" },
+  { text:"🏆 Raffael Marcian wins a 12-hour endurance race!", card:"sc_raffael_marcian",effect:+0.12, sport:"sro" },
+  { text:"⚽ Mykhail Mudrenko scores the winning goal!", card:"sc_mykhail_mudrenko",    effect:+0.14, sport:"soccer" },
+  { text:"🥊 Artem Rudenko becomes undisputed champion!", card:"sc_artem_rudenko",effect:+0.18, sport:"mma" },
 ];
 
 // ── STORAGE ────────────────────────────────────────────────
@@ -1454,15 +1466,16 @@ const Account = {
   update(f)   { const a={...this.get(),...f};Store.set(CX.ACC_KEY,a);return a; },
   delete()    { Store.remove(CX.ACC_KEY);Store.remove(CX.SAVE_KEY); },
   isLoggedIn(){ return !!this.get(); },
-  applyTheme(){ document.documentElement.setAttribute("data-theme",this.get()?.theme||"dark"); },
+  applyTheme(){ const t=this.get()?.theme||"dark"; if(window.SlidTheme)SlidTheme.apply(t); else document.documentElement.setAttribute("data-theme",t); },
   initials()  { const a=this.get();if(!a)return"SC";const f=(a.firstName||a.username||"S")[0]||"S";const l=(a.lastName||"")[0]||(a.username||"C")[1]||"C";return(f+l).toUpperCase(); },
   logout(){this.delete();},
-  setTheme(t){this.update({theme:t});},
+  setTheme(t){this.update({theme:t});if(window.SlidTheme)SlidTheme.apply(t);},
   register(d){if(!d.username||d.username.length<3)return{success:false,error:"Нікнейм мінімум 3 символи"};if(!d.email||!d.email.includes("@"))return{success:false,error:"Невірний email"};if(!d.password||d.password.length<6)return{success:false,error:"Пароль мінімум 6 символів"};const passHash=btoa(d.password);this.create({...d,passHash});const s=defaultSave();writeSave(s);return{success:true};},
   login(username,password){const acc=this.get();if(!acc)return{success:false,error:"Акаунт не знайдено"};if(acc.username!==username&&acc.email!==username)return{success:false,error:"Невірний нікнейм або email"};if(acc.passHash!==btoa(password))return{success:false,error:"Невірний пароль"};return{success:true};},
 };
 
 // ── SAVE ───────────────────────────────────────────────────
+
 function defaultSave() {
   return { coins:CX.INIT_COINS, owned:{}, packsOpened:0, totalSpent:0, totalEarned:0, tradesDone:0, cardsBought:0, cardsSold:0, cardPrices:{}, priceHistory:{}, log:[], tradedCards:{}, createdAt:new Date().toISOString() };
 }
@@ -1819,20 +1832,8 @@ function render(){
   if(!items.length){grid.innerHTML=`<div class="inventory-empty"><div class="inventory-empty-inner"><div class="inventory-empty-text">Немає карток</div><a class="btn btn-primary" href="packs.html">📦 Відкрити пак</a></div></div>`;return;}
   grid.innerHTML=items.map(({key,year,qty,card})=>{
     const price=getCardPrice(save,key);
-    return`<div onclick="openCard('${key}')" style="cursor:pointer">
-      <div class="sport-card rarity-${card.rarity}" style="width:140px;height:196px">
-        <div class="sc-bg"></div><div class="sc-rarity-glow"></div>
-        <div class="sc-cnt">x${qty}</div>
-        <div class="sc-rarity-badge">${RARITY[card.rarity].label}</div>
-        ${getYearBadge(year,card.rarity)}
-        <div class="sc-img" style="font-size:38px">${card.icon}</div>
-        <div class="sc-name">${card.name}</div>
-        <div class="sc-team">${card.country} ${card.team}</div>
-        <div class="sc-pos">${card.pos}</div>
-        <div class="sc-price">${fmtCoins(price)}</div>
-        <div class="sc-rating">${card.rating}</div>
-      </div>
-    </div>`;
+    const html=window.SlidCardCard?SlidCardCard.render(card,{year,qty,price}):"";
+    return`<div onclick="openCard('${key}')" style="cursor:pointer">${html}</div>`;
   }).join("");
 }
 
@@ -1854,7 +1855,7 @@ function openCard(key){
       <div class="modal-card-flip" id="mc-flip" onclick="document.getElementById('mc-flip').classList.toggle('flipped')">
         <div class="modal-card-inner">
           <div class="modal-card-face">
-            <div class="sport-card rarity-${card.rarity}" style="width:160px;height:224px">
+            <div class="sport-card rarity-${card.rarity}" style="width:140px;height:196px">
               <div class="sc-bg"></div><div class="sc-rarity-glow"></div>
               <div class="sc-cnt">x${qty}</div>
               <div class="sc-rarity-badge">${RARITY[card.rarity].label}</div>
@@ -1867,7 +1868,7 @@ function openCard(key){
               <div class="sc-rating">${card.rating}</div>
             </div>
           </div>
-          <div class="modal-card-face modal-card-back" onmouseenter="this.style.transform='rotateY(180deg) translateY(-4px) scale(1.03)'" onmouseleave="this.style.transform='rotateY(180deg)'" style="transition:transform .2s;background:${backBgMap[card.rarity]||backBgMap.common};border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)">
+          <div class="modal-card-face modal-card-back" style="background:${backBgMap[card.rarity]||backBgMap.common};border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)">
             <div class="back-title">${card.name}</div>
             <div class="back-grid">
               <div class="back-col">

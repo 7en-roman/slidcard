@@ -1,0 +1,326 @@
+/* SlidCard unified card system — based on the inventory card look */
+.sport-card{
+  width:140px!important;
+  height:196px!important;
+  min-width:140px!important;
+  min-height:196px!important;
+  max-width:140px!important;
+  max-height:196px!important;
+  box-sizing:border-box;
+  position:relative;
+  border-radius:14px;
+  overflow:hidden;
+  flex:0 0 140px!important;
+  cursor:pointer;
+  transition:transform .2s ease, box-shadow .2s ease;
+  display:inline-block;
+  box-shadow:0 8px 22px rgba(0,0,0,.28);
+}
+.sport-card:hover{transform:translateY(-4px) scale(1.03)}
+.sport-card .sc-bg{
+  position:absolute;
+  inset:0;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04), inset 0 -10px 24px rgba(0,0,0,.16);
+}
+.sport-card .sc-rarity-glow{
+  position:absolute;
+  inset:0;
+  border-radius:14px;
+  border:2px solid transparent;
+  pointer-events:none;
+}
+.sport-card .sc-cnt{
+  position:absolute!important;
+  top:8px!important;
+  left:8px!important;
+  right:auto!important;
+  min-width:32px;
+  font-size:9px!important;
+  font-weight:800;
+  background:rgba(11,9,13,.88)!important;
+  color:#fff!important;
+  border-radius:6px;
+  padding:4px 6px;
+  font-family:var(--font-mono);
+  z-index:4;
+  width:auto!important;
+  line-height:1.1;
+  border:1px solid rgba(255,255,255,.06);
+  text-align:center;
+}
+.sport-card .sc-rarity-badge,
+.sport-card .sc-year{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:18px;
+}
+.sport-card .sc-rarity-badge{
+  position:absolute!important;
+  top:8px!important;
+  right:8px!important;
+  left:auto!important;
+  font-size:8px!important;
+  font-weight:800;
+  padding:3px 10px!important;
+  border-radius:8px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  z-index:4;
+  border:1px solid rgba(255,255,255,.16);
+  width:auto!important;
+  max-width:92px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  backdrop-filter:blur(2px);
+}
+.sport-card .sc-year{
+  position:absolute!important;
+  top:38px!important;
+  right:8px!important;
+  font-size:8px!important;
+  font-weight:800;
+  border-radius:8px;
+  padding:3px 10px!important;
+  font-family:var(--font-mono);
+  z-index:4;
+  line-height:1.05;
+  border:1px solid currentColor!important;
+  width:auto!important;
+  backdrop-filter:blur(2px);
+}
+.sport-card .sc-img{
+  position:absolute!important;
+  top:47%!important;
+  left:50%!important;
+  transform:translate(-50%,-50%)!important;
+  font-size:46px!important;
+  line-height:1!important;
+  text-align:center;
+  filter:drop-shadow(0 8px 12px rgba(0,0,0,.22));
+}
+.sport-card .sc-name{
+  position:absolute!important;
+  bottom:42px!important;
+  left:8px!important;
+  right:8px!important;
+  text-align:center;
+  font-family:var(--font-disp);
+  font-size:13px!important;
+  font-weight:700;
+  line-height:1.18;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sport-card .sc-team{
+  position:absolute!important;
+  bottom:24px!important;
+  left:8px!important;
+  right:8px!important;
+  text-align:center;
+  font-size:10px!important;
+  color:var(--text3);
+  line-height:1.1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sport-card .sc-pos{
+  position:absolute!important;
+  bottom:9px!important;
+  left:10px!important;
+  font-size:9px!important;
+  font-family:var(--font-mono);
+  font-weight:600;
+  color:var(--text3);
+  max-width:44px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.sport-card .sc-price{
+  position:absolute!important;
+  bottom:9px!important;
+  left:32px!important;
+  right:32px!important;
+  text-align:center;
+  font-family:var(--font-mono);
+  font-size:10px!important;
+  font-weight:800;
+  color:var(--gold);
+  pointer-events:none;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sport-card .sc-rating{
+  position:absolute!important;
+  bottom:9px!important;
+  right:10px!important;
+  font-size:11px!important;
+  font-family:var(--font-mono);
+  font-weight:800;
+}
+
+.rarity-common .sc-bg{background:linear-gradient(145deg,#1a1f28 0%,#121723 58%,#10141A 100%)!important}
+.rarity-common .sc-rarity-glow{border-color:var(--c-common);box-shadow:0 0 14px rgba(122,133,149,.18)}
+.rarity-rare .sc-bg{background:linear-gradient(145deg,#0d1a2e 0%,#12223b 55%,#10141A 100%)!important}
+.rarity-rare .sc-rarity-glow{border-color:var(--c-rare);box-shadow:0 0 18px rgba(76,141,255,.24)}
+.rarity-epic .sc-bg{background:linear-gradient(145deg,#1a0d2e 0%,#241140 55%,#10141A 100%)!important}
+.rarity-epic .sc-rarity-glow{border-color:var(--c-epic);box-shadow:0 0 22px rgba(177,92,255,.28)}
+.rarity-legendary .sc-bg{background:linear-gradient(145deg,#2a1e00 0%,#332504 55%,#10141A 100%)!important}
+.rarity-legendary .sc-rarity-glow{border-color:var(--c-legendary);box-shadow:0 0 24px rgba(240,180,41,.33)}
+.rarity-ultimate .sc-bg{background:linear-gradient(145deg,#2a0008 0%,#3b0612 55%,#10141A 100%)!important}
+.rarity-ultimate .sc-rarity-glow{border-color:var(--c-ultimate);box-shadow:0 0 28px rgba(255,71,87,.38)}
+
+.rarity-common .sc-name,.rarity-common .sc-rating,.rarity-common .sc-year{color:var(--c-common)!important}
+.rarity-common .sc-rarity-badge{color:var(--c-common)!important;background:rgba(122,133,149,.20)!important}
+.rarity-common .sc-year{background:rgba(122,133,149,.16)!important;border-color:rgba(122,133,149,.42)!important}
+
+.rarity-rare .sc-name,.rarity-rare .sc-rating,.rarity-rare .sc-year{color:var(--c-rare)!important}
+.rarity-rare .sc-rarity-badge{color:var(--c-rare)!important;background:rgba(76,141,255,.18)!important}
+.rarity-rare .sc-year{background:rgba(76,141,255,.14)!important;border-color:rgba(76,141,255,.40)!important}
+
+.rarity-epic .sc-name,.rarity-epic .sc-rating,.rarity-epic .sc-year{color:var(--c-epic)!important}
+.rarity-epic .sc-rarity-badge{color:var(--c-epic)!important;background:rgba(177,92,255,.18)!important}
+.rarity-epic .sc-year{background:rgba(177,92,255,.14)!important;border-color:rgba(177,92,255,.40)!important}
+
+.rarity-legendary .sc-name,.rarity-legendary .sc-rating,.rarity-legendary .sc-year{color:var(--c-legendary)!important}
+.rarity-legendary .sc-rarity-badge{color:var(--c-legendary)!important;background:rgba(240,180,41,.18)!important}
+.rarity-legendary .sc-year{background:rgba(240,180,41,.14)!important;border-color:rgba(240,180,41,.44)!important}
+
+.rarity-ultimate .sc-name,.rarity-ultimate .sc-rating,.rarity-ultimate .sc-year{color:var(--c-ultimate)!important}
+.rarity-ultimate .sc-rarity-badge{color:var(--c-ultimate)!important;background:rgba(255,71,87,.18)!important}
+.rarity-ultimate .sc-year{background:rgba(255,71,87,.14)!important;border-color:rgba(255,71,87,.44)!important}
+
+.modal-card-flip,.modal-card-inner{width:140px!important;height:196px!important;min-width:140px!important;min-height:196px!important}
+.card-flip{width:140px!important;height:196px!important}
+
+@media(max-width:380px){
+  .sport-card{transform-origin:top left}
+}
+
+/* v13: fixed-proportion card scaling — never squash card internals */
+:root{
+  --sc-card-w:140px;
+  --sc-card-h:196px;
+}
+.sport-card{
+  width:var(--sc-card-w)!important;
+  height:var(--sc-card-h)!important;
+  min-width:var(--sc-card-w)!important;
+  min-height:var(--sc-card-h)!important;
+  max-width:var(--sc-card-w)!important;
+  max-height:var(--sc-card-h)!important;
+  flex:0 0 var(--sc-card-w)!important;
+  transform-origin:top left;
+}
+/* A wrapper can size the layout box while the card itself stays fixed. */
+.sc-card-slot{
+  --sc-scale:1;
+  position:relative;
+  width:calc(var(--sc-card-w) * var(--sc-scale));
+  height:calc(var(--sc-card-h) * var(--sc-scale));
+  flex:0 0 calc(var(--sc-card-w) * var(--sc-scale));
+  overflow:visible;
+}
+.sc-card-slot > .sport-card{
+  transform:scale(var(--sc-scale));
+  transform-origin:top left;
+}
+.sc-card-slot > .sport-card:hover{
+  transform:scale(var(--sc-scale)) translateY(-4px);
+}
+.sc-card-slot.sc-card-sm{--sc-scale:.86}
+.sc-card-slot.sc-card-xs{--sc-scale:.74}
+.sc-card-slot.sc-card-lg{--sc-scale:1.12}
+
+/* Defensive rules: never allow parent grid/flex layouts to compress cards. */
+.sport-card,
+.modal-card-inner .sport-card,
+.modal-card-flip .sport-card,
+.card-flip .sport-card{
+  flex-shrink:0!important;
+  aspect-ratio:5/7!important;
+}
+
+/* Phones: keep exact proportions and only scale whole cards where necessary. */
+@media(max-width:520px){
+  .sc-card-responsive{--sc-scale:.90}
+}
+@media(max-width:390px){
+  .sc-card-responsive{--sc-scale:.82}
+}
+@media(max-width:340px){
+  .sc-card-responsive{--sc-scale:.74}
+}
+
+/* v14: one canonical card everywhere. No alternate small-card geometry. */
+.sport-card,
+.sc-small.sport-card{
+  width:140px!important;
+  height:196px!important;
+  min-width:140px!important;
+  min-height:196px!important;
+  max-width:140px!important;
+  max-height:196px!important;
+  flex:0 0 140px!important;
+}
+.sc-small.sport-card .sc-cnt{top:8px!important;left:8px!important;font-size:9px!important;padding:4px 6px!important}
+.sc-small.sport-card .sc-rarity-badge{top:8px!important;right:8px!important;font-size:8px!important;padding:3px 10px!important}
+.sc-small.sport-card .sc-year{top:38px!important;right:8px!important;font-size:8px!important;padding:3px 10px!important}
+.sc-small.sport-card .sc-img{top:47%!important;left:50%!important;transform:translate(-50%,-50%)!important;font-size:46px!important}
+.sc-small.sport-card .sc-name{bottom:42px!important;left:8px!important;right:8px!important;font-size:13px!important;line-height:1.18!important}
+.sc-small.sport-card .sc-team{bottom:24px!important;left:8px!important;right:8px!important;font-size:10px!important}
+.sc-small.sport-card .sc-pos{bottom:9px!important;left:10px!important;font-size:9px!important}
+.sc-small.sport-card .sc-price{bottom:9px!important;left:32px!important;right:32px!important;font-size:10px!important}
+.sc-small.sport-card .sc-rating{bottom:9px!important;right:10px!important;font-size:11px!important}
+
+/* v15: tighter year placement + borderless card shell */
+.sport-card .sc-year,
+.sc-small.sport-card .sc-year{
+  top:29px!important;
+}
+.sport-card .sc-bg,
+.sc-small.sport-card .sc-bg{
+  border:none!important;
+  box-shadow:inset 0 -10px 24px rgba(0,0,0,.16)!important;
+}
+.sport-card .sc-rarity-glow,
+.sc-small.sport-card .sc-rarity-glow{
+  border:none!important;
+}
+
+/* v16: stable hover animation — preserve card scale, no jitter */
+.sport-card{
+  transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s ease!important;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  will-change:transform;
+}
+
+/* Default card: only lift it. Never resize on hover. */
+@media (hover:hover) and (pointer:fine){
+  .sport-card:hover{
+    transform:translate3d(0,-3px,0)!important;
+    box-shadow:0 12px 28px rgba(0,0,0,.34)!important;
+  }
+
+  /* Scaled cards keep exactly the same scale while lifting. */
+  .sc-card-slot > .sport-card{
+    transform:scale(var(--sc-scale))!important;
+  }
+  .sc-card-slot > .sport-card:hover{
+    transform:translate3d(0,-3px,0) scale(var(--sc-scale))!important;
+  }
+}
+
+/* Touch screens should not get a sticky hover state. */
+@media (hover:none), (pointer:coarse){
+  .sport-card:hover{box-shadow:0 8px 22px rgba(0,0,0,.28)!important}
+  .sc-card-slot > .sport-card:hover{transform:scale(var(--sc-scale))!important}
+}
