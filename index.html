@@ -810,10 +810,15 @@ input,select,textarea,button{max-width:100%}
       </div>
       <!-- Login -->
       <div id="frm-login">
+        <div class="input-group">
+          <label class="input-label">Файл акаунта</label>
+          <input class="input" id="l-file" type="file" accept=".slidcard,application/json,application/x-slidcard+json"/>
+          <div style="font-size:10px;color:var(--text3);margin-top:6px">Оберіть файл <b>.slidcard</b>, який ви експортували в ⚙️ Дії.</div>
+        </div>
         <div class="input-group"><label class="input-label">Ім'я користувача</label><input class="input" id="l-user" type="text" placeholder="username" autocomplete="username"/></div>
         <div class="input-group"><label class="input-label">Пароль</label><input class="input" id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password"/></div>
         <div class="auth-err" id="l-err"></div>
-        <button class="btn btn-primary btn-block btn-lg" onclick="doLogin()">Увійти →</button>
+        <button class="btn btn-primary btn-block btn-lg" onclick="doLogin()">Імпортувати та увійти →</button>
       </div>
       <!-- Register -->
       <div id="frm-reg" style="display:none">
@@ -1509,12 +1514,67 @@ function switchTab(t){
   document.getElementById("frm-login").style.display=t==="login"?"":"none";
   document.getElementById("frm-reg").style.display=t==="reg"?"":"none";
 }
-function doLogin(){
+function bytesToBase64(bytes){
+  let binary="";
+  const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk)binary+=String.fromCharCode(...bytes.subarray(i,i+chunk));
+  return btoa(binary);
+}
+function base64ToBytes(value){
+  const binary=atob(value);
+  const out=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)out[i]=binary.charCodeAt(i);
+  return out;
+}
+async function deriveAccountFileKey(password,salt,iterations){
+  const material=await crypto.subtle.importKey("raw",new TextEncoder().encode(password),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey(
+    {name:"PBKDF2",salt,iterations,hash:"SHA-256"},material,
+    {name:"AES-GCM",length:256},false,["encrypt","decrypt"]
+  );
+}
+async function importAccountFile(file,username,password){
+  if(!file)throw new Error("Оберіть файл акаунта .slidcard");
+  if(!username)throw new Error("Введіть ім'я користувача");
+  if(!password)throw new Error("Введіть пароль");
+  if(!window.crypto?.subtle)throw new Error("Цей браузер не підтримує захищений імпорт");
+  let envelope;
+  try{envelope=JSON.parse(await file.text());}catch(e){throw new Error("Файл акаунта пошкоджений або має невірний формат");}
+  if(envelope?.format!=="SlidCardAccountFile"||envelope?.version!==1)throw new Error("Це не файл акаунта SlidCard");
+  try{
+    const salt=base64ToBytes(envelope.salt);
+    const iv=base64ToBytes(envelope.iv);
+    const data=base64ToBytes(envelope.data);
+    const key=await deriveAccountFileKey(password,salt,Number(envelope.iterations)||150000);
+    const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv},key,data);
+    const payload=JSON.parse(new TextDecoder().decode(plain));
+    const acc=payload?.account;
+    const save=payload?.save;
+    if(!acc||!save||payload?.format!=="SlidCardAccountPayload")throw new Error("Файл акаунта не містить потрібних даних");
+    if(String(acc.username||"").trim()!==username)throw new Error("Username не відповідає цьому файлу акаунта");
+    let expected="";
+    try{expected=btoa(password);}catch(e){throw new Error("Пароль містить непідтримувані символи");}
+    if(acc.passHash!==expected)throw new Error("Невірний пароль");
+    Store.set(CX.ACC_KEY,acc);
+    Store.set(CX.SAVE_KEY,save);
+    return {success:true};
+  }catch(e){
+    if(e?.message&&e.message!=="The operation failed for an operation-specific reason")throw e;
+    throw new Error("Не вдалося відкрити файл: перевірте пароль і сам файл");
+  }
+}
+async function doLogin(){
+  const err=document.getElementById("l-err");
+  err.textContent="";
+  const file=document.getElementById("l-file").files[0];
   const u=document.getElementById("l-user").value.trim();
   const p=document.getElementById("l-pass").value;
-  const r=Account.login(u,p);
-  if(r.success)location.href="index_app.html";
-  else document.getElementById("l-err").textContent=r.error;
+  try{
+    await importAccountFile(file,u,p);
+    location.href="index_app.html";
+  }catch(e){
+    console.error(e);err.textContent=e.message||"Не вдалося увійти";
+  }
 }
 function doRegister(){
   const fn=document.getElementById("r-first").value.trim();

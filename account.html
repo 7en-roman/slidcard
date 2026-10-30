@@ -1834,20 +1834,105 @@ function saveSettings(){
   const ln=document.getElementById("set-last").value.trim();
   const em=document.getElementById("set-email").value.trim();
   const pw=document.getElementById("set-pass").value;
-  if(pw&&pw.length>0&&pw.length<6){
-    document.getElementById("set-msg").textContent="Пароль мінімум 6 символів";
-    document.getElementById("set-msg").style.color="var(--down)";return;
+  const msg=document.getElementById("set-msg");
+
+  if(em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){
+    msg.textContent="Введіть коректний email або залиште поле порожнім";
+    msg.style.color="var(--down)";
+    return;
   }
-  const update={};
-  if(fn)update.firstName=fn;
-  if(ln)update.lastName=ln;
-  if(em&&em.includes("@"))update.email=em;
+
+  if(pw&&pw.length>0&&pw.length<6){
+    msg.textContent="Пароль мінімум 6 символів";
+    msg.style.color="var(--down)";
+    return;
+  }
+
+  // Зберігаємо значення навіть якщо поле очищене.
+  // Порожній email означає, що користувач видалив email з акаунта.
+  const update={
+    firstName:fn,
+    lastName:ln,
+    email:em
+  };
   if(pw&&pw.length>=6)update.passHash=btoa(pw);
+
   Account.update(update);
-  document.getElementById("set-msg").textContent="✅ Збережено!";
-  document.getElementById("set-msg").style.color="var(--up)";
-  render();initSettingsModal();
-  setTimeout(()=>{document.getElementById("set-msg").textContent="";},3000);
+  msg.textContent="✅ Збережено!";
+  msg.style.color="var(--up)";
+  render();
+  initSettingsModal();
+  setTimeout(()=>{const el=document.getElementById("set-msg");if(el)el.textContent="";},3000);
+}
+
+function bytesToBase64(bytes){
+  let binary="";
+  const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk){
+    binary+=String.fromCharCode(...bytes.subarray(i,i+chunk));
+  }
+  return btoa(binary);
+}
+function base64ToBytes(value){
+  const binary=atob(value);
+  const out=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)out[i]=binary.charCodeAt(i);
+  return out;
+}
+async function deriveAccountFileKey(password,salt,iterations){
+  const material=await crypto.subtle.importKey(
+    "raw",new TextEncoder().encode(password),"PBKDF2",false,["deriveKey"]
+  );
+  return crypto.subtle.deriveKey(
+    {name:"PBKDF2",salt,iterations,hash:"SHA-256"},
+    material,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]
+  );
+}
+async function exportAccountFile(){
+  const acc=Account.get();
+  if(!acc){toast("Акаунт не знайдено","down");return;}
+  const password=prompt("Введіть пароль акаунта для експорту:");
+  if(password===null)return;
+  let passHash="";
+  try{passHash=btoa(password);}catch(e){toast("Пароль містить непідтримувані символи","down");return;}
+  if(passHash!==acc.passHash){toast("Невірний пароль","down");return;}
+  if(!window.crypto?.subtle){toast("Браузер не підтримує захищений експорт","down");return;}
+  try{
+    const salt=crypto.getRandomValues(new Uint8Array(16));
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const iterations=150000;
+    const key=await deriveAccountFileKey(password,salt,iterations);
+    const payload={
+      format:"SlidCardAccountPayload",
+      version:1,
+      appVersion:CX.VERSION,
+      exportedAt:new Date().toISOString(),
+      account:acc,
+      save:loadSave()
+    };
+    const plain=new TextEncoder().encode(JSON.stringify(payload));
+    const encrypted=new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv},key,plain));
+    const envelope={
+      format:"SlidCardAccountFile",
+      version:1,
+      cipher:"AES-GCM-256",
+      kdf:"PBKDF2-SHA256",
+      iterations,
+      salt:bytesToBase64(salt),
+      iv:bytesToBase64(iv),
+      data:bytesToBase64(encrypted)
+    };
+    const blob=new Blob([JSON.stringify(envelope,null,2)],{type:"application/x-slidcard+json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    const safe=(acc.username||"account").replace(/[^a-zA-Z0-9_-]+/g,"_");
+    a.href=url;a.download=`SlidCard_${safe}.slidcard`;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+    toast("📤 Файл акаунта експортовано","win");
+  }catch(e){
+    console.error(e);toast("Не вдалося експортувати акаунт","down");
+  }
 }
 
 function doDeleteAccount(){
@@ -1967,6 +2052,11 @@ render();
     <div class="modal-body" style="display:flex;flex-direction:column;gap:10px">
 
       <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Зберігає акаунт і весь прогрес у зашифрований файл <b>.slidcard</b>. Для експорту потрібно ввести пароль акаунта.</div>
+        <button class="btn btn-primary btn-block" onclick="exportAccountFile()">📤 Експортувати акаунт</button>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:10px">
         <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Скидає ціни карток до початкових значень. Картки і монети залишаються.</div>
         <button class="btn btn-surface btn-block" onclick="doResetPrices();closeModal('modal-actions')">🔄 Скинути ціни</button>
       </div>
