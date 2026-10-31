@@ -936,7 +936,7 @@ input, select, textarea { font-family: inherit; }
 <script src="card-system.js"></script>
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v1.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item active" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Транзакції</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item active" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Транзакції</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
 <div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Транзакції</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
@@ -1037,6 +1037,7 @@ input,select,textarea,button{max-width:100%}
   <button class="tx-tab active" data-pane="create">➕ Створити</button>
   <button class="tx-tab" data-pane="receive">📥 Отримати</button>
   <button class="tx-tab" data-pane="cancel">✕ Скасувати</button>
+  <button class="tx-tab" data-pane="claim">💰 Забрати</button>
 </div>
 
 <section class="tx-pane active" id="tx-create">
@@ -1047,6 +1048,7 @@ input,select,textarea,button{max-width:100%}
       <div class="tx-field"><label>Картка</label><select class="input" id="create-card"></select></div>
       <div class="tx-field"><label>Ціна</label><input class="input" id="create-price" type="number" min="1" step="1" placeholder="Наприклад 1000"></div>
       <div class="tx-field"><label>Опис (необов'язково)</label><textarea class="input" id="create-description" rows="3" maxlength="300" placeholder="Наприклад: картка сезону 2025, домовились особисто"></textarea></div>
+      <div class="tx-field"><label>Видимість</label><select class="input" id="create-visibility"><option value="public">👥 Публічно — Магазин користувачів</option><option value="private">🔒 Приватно — тільки за Transaction ID + PIN</option></select></div>
       <div class="tx-field"><label>PIN-код</label><input class="input" id="create-pin" type="password" minlength="4" maxlength="12" autocomplete="off" placeholder="4–12 символів"></div>
       <div class="tx-actions"><button class="btn btn-primary" id="create-btn">Створити транзакцію</button></div>
       <div class="tx-result" id="create-result"></div>
@@ -1095,6 +1097,22 @@ input,select,textarea,button{max-width:100%}
     </div>
   </div>
 </section>
+<section class="tx-pane" id="tx-claim">
+  <div class="tx-layout">
+    <div class="tx-box">
+      <h3>Забрати виплату</h3>
+      <div class="tx-help">Коли покупець завершить транзакцію, введи її Transaction ID. Система перевірить статус і нарахує тобі суму після комісії. Повторно забрати ту саму виплату неможливо.</div>
+      <div class="tx-field"><label>Transaction ID</label><input class="input" id="claim-id" autocomplete="off" placeholder="TRX-XXXXXXXXXX"></div>
+      <div class="tx-actions"><button class="btn btn-primary" id="claim-btn">Перевірити та забрати</button></div>
+      <div class="tx-result" id="claim-result"></div>
+    </div>
+    <div class="tx-box">
+      <h3>Як це працює</h3>
+      <div class="tx-help">1. Покупець завершує транзакцію.<br>2. Статус стає <b>completed</b>.<br>3. Відкрий вкладку «Забрати».<br>4. Введи Transaction ID.<br>5. Сума після комісії буде додана на твій баланс.</div>
+    </div>
+  </div>
+</section>
+
 </div>
 </div>
 </div>
@@ -1103,7 +1121,7 @@ input,select,textarea,button{max-width:100%}
 // SlidCard v2.0.0 — shared.js
 
 const CX = {
-  VERSION:    "1.0.0",
+  VERSION:    "2.0.0",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1773,7 +1791,7 @@ function updateCoinsDisplay(){
 }
 </script>
 <script>
-const TRANSACTION_API_URL = 'https://script.google.com/macros/s/AKfycbzJowGxl284sZf5XzYbRLGPV2lRnl0IgebzaAGA1Xt4Q-9AySX-_v8B1AvYo2F8BSKs/exec';
+const TRANSACTION_API_URL = 'https://script.google.com/macros/s/AKfycby25K1rtKsIwnYNBuaFK4svjG5RQTXa8Q7uNiMvS4VR0r7kJn-qBks4wKHWGuyoahsD/exec';
 
 if(!Account.isLoggedIn()){ location.href='index.html'; }
 (function initTransactionPage(){
@@ -1852,16 +1870,16 @@ document.querySelectorAll('.tx-tab').forEach(btn=>btn.addEventListener('click',(
 
 // CREATE
 document.getElementById('create-btn').addEventListener('click',async()=>{
-  const btn=document.getElementById('create-btn'), key=document.getElementById('create-card').value, price=Number(document.getElementById('create-price').value), description=document.getElementById('create-description').value.trim(), pin=document.getElementById('create-pin').value.trim(), out=document.getElementById('create-result'), acc=Account.get();
-  if(!key)return toast('Обери картку','warn'); if(!Number.isFinite(price)||price<1)return toast('Вкажи правильну ціну','warn'); if(pin.length<4||pin.length>12)return toast('PIN має містити 4–12 символів','warn');
+  const btn=document.getElementById('create-btn'), key=document.getElementById('create-card').value, price=Number(document.getElementById('create-price').value), description=document.getElementById('create-description').value.trim(), visibility=document.getElementById('create-visibility')?.value||'public', pin=document.getElementById('create-pin').value.trim(), out=document.getElementById('create-result'), acc=Account.get();
+  if(!key)return toast('Обери картку','warn'); if(!Number.isFinite(price)||price<0)return toast('Ціна не може бути від’ємною','warn'); if(pin.length<4||pin.length>12)return toast('PIN має містити 4–12 символів','warn');
   const save=loadSave();if((save.owned?.[key]||0)<1)return toast('Цієї картки вже немає в інвентарі','warn');const card=getCardTransferPayload(key);if(!card)return toast('Не вдалося прочитати картку','lose');
   setBusy(btn,true,'Створюємо…');out.classList.remove('show');
   try{
-    const r=await transactionApi('create',{sellerId:acc.id,card,price,description,pin});
+    const r=await transactionApi('create',{sellerId:acc.id,sellerUsername:acc.username||[acc.firstName,acc.lastName].filter(Boolean).join(' ')||'Player',card,price,description,pin,visibility});
     const tx=r.transaction;
     const latest=loadSave();if((latest.owned?.[key]||0)<1)throw new Error('Транзакцію створено на сервері, але локальної картки вже немає. Не створюй повторну транзакцію з цим ID.');
     latest.owned[key]-=1;if(latest.owned[key]<=0)delete latest.owned[key];latest.transactionEscrow=latest.transactionEscrow||{};latest.transactionEscrow[tx.id]={cardKey:key,createdAt:new Date().toISOString(),price:Number(tx.price||price)};addLog(latest,'trade',`Картку ${card.name} передано в транзакцію ${tx.id} за ${fmtCoins(price)}`);writeSave(latest);
-    out.innerHTML=`<div style="font-weight:800;margin-bottom:10px;color:var(--up)">✅ Транзакцію створено</div>${renderCardMini(card)}<div style="margin-top:12px" class="tx-kv"><span>Transaction ID</span><strong class="tx-code">${escapeHtml(tx.id)}</strong></div><div class="tx-kv"><span>PIN</span><strong class="tx-code">${escapeHtml(pin)}</strong></div><div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('pending')}</strong></div><div class="tx-actions"><button class="btn btn-ghost tx-copy" onclick="navigator.clipboard?.writeText('${escapeHtml(tx.id)}');toast('ID скопійовано','win')">Копіювати ID</button></div><div class="tx-note">Передай покупцю Transaction ID та PIN особисто. Картка вже вилучена з твого інвентарю й знаходиться в транзакції.</div>`;out.classList.add('show');
+    out.innerHTML=`<div style="font-weight:800;margin-bottom:10px;color:var(--up)">✅ Транзакцію створено</div>${renderCardMini(card)}<div style="margin-top:12px" class="tx-kv"><span>Transaction ID</span><strong class="tx-code">${escapeHtml(tx.id)}</strong></div><div class="tx-kv"><span>PIN</span><strong class="tx-code">${escapeHtml(pin)}</strong></div><div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(price)}</strong></div><div class="tx-kv"><span>Видимість</span><strong>${visibility==='public'?'👥 Public':'🔒 Private'}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('pending')}</strong></div><div class="tx-actions"><button class="btn btn-ghost tx-copy" onclick="navigator.clipboard?.writeText('${escapeHtml(tx.id)}');toast('ID скопійовано','win')">Копіювати ID</button></div><div class="tx-note">${visibility==='public'?'Транзакція опублікована в Магазині користувачів. PIN у магазині не показується.':'Передай покупцю Transaction ID та PIN особисто.'} Картка вже вилучена з твого інвентарю й знаходиться в транзакції.</div>`;out.classList.add('show');
     document.getElementById('create-pin').value='';renderCreateCards();updateTransactionHeader();toast('Транзакцію створено','win');
   }catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');toast(e.message,'lose');}
   finally{setBusy(btn,false);}
@@ -1871,7 +1889,7 @@ document.getElementById('create-btn').addEventListener('click',async()=>{
 let receiveTx=null;
 document.getElementById('receive-find-btn').addEventListener('click',async()=>{
   const btn=document.getElementById('receive-find-btn'),id=normalizeTxId(document.getElementById('receive-id').value),out=document.getElementById('receive-result');if(!id)return toast('Введи Transaction ID','warn');setBusy(btn,true,'Шукаємо…');out.classList.remove('show');receiveTx=null;
-  try{const r=await transactionApi('lookup',{transactionId:id});receiveTx=r.transaction;const t=r.transaction;const can=t.status==='pending';out.innerHTML=`${renderCardMini(t.card)}<div style="margin-top:12px"><div class="tx-kv"><span>Transaction ID</span><strong>${escapeHtml(t.id)}</strong></div><div class="tx-kv"><span>Продавець</span><strong>${escapeHtml(t.sellerId)}</strong></div><div class="tx-kv"><span>Ціна</span><strong style="color:var(--gold)">${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Опис</span><strong>${escapeHtml(t.description||'—')}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div></div>${can?`<div class="tx-actions"><button class="btn btn-primary" id="receive-continue-btn">Продовжити</button></div><div class="tx-pin-step" id="receive-pin-step"><div class="tx-field"><label>PIN-код</label><input class="input" id="receive-pin" type="password" autocomplete="off" placeholder="PIN від продавця"></div><div class="tx-actions"><button class="btn btn-primary" id="receive-complete-btn">Придбати за ${fmtCoins(t.price)}</button></div></div>`:'<div class="tx-note">Ця транзакція вже не доступна для отримання.</div>'}`;out.classList.add('show');if(can){document.getElementById('receive-continue-btn').onclick=()=>document.getElementById('receive-pin-step').classList.add('show');document.getElementById('receive-complete-btn').onclick=completeReceive;}}catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');}finally{setBusy(btn,false);}
+  try{const r=await transactionApi('lookup',{transactionId:id});receiveTx=r.transaction;const t=r.transaction;const can=t.status==='pending';out.innerHTML=`${renderCardMini(t.card)}<div style="margin-top:12px"><div class="tx-kv"><span>Transaction ID</span><strong>${escapeHtml(t.id)}</strong></div><div class="tx-kv"><span>Продавець</span><strong>${escapeHtml(t.sellerUsername||'—')} · ${escapeHtml(t.sellerId)}</strong></div><div class="tx-kv"><span>Ціна</span><strong style="color:var(--gold)">${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Опис</span><strong>${escapeHtml(t.description||'—')}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div></div>${can?`<div class="tx-actions"><button class="btn btn-primary" id="receive-continue-btn">Продовжити</button></div><div class="tx-pin-step" id="receive-pin-step"><div class="tx-field"><label>PIN-код</label><input class="input" id="receive-pin" type="password" autocomplete="off" placeholder="PIN від продавця"></div><div class="tx-actions"><button class="btn btn-primary" id="receive-complete-btn">Придбати за ${fmtCoins(t.price)}</button></div></div>`:'<div class="tx-note">Ця транзакція вже не доступна для отримання.</div>'}`;out.classList.add('show');if(can){document.getElementById('receive-continue-btn').onclick=()=>document.getElementById('receive-pin-step').classList.add('show');document.getElementById('receive-complete-btn').onclick=completeReceive;}}catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');}finally{setBusy(btn,false);}
 });
 
 async function applyCompletedTransaction(t, cardOverride=null){
@@ -1880,7 +1898,7 @@ async function applyCompletedTransaction(t, cardOverride=null){
 
 async function completeReceive(){
   if(!receiveTx)return;const btn=document.getElementById('receive-complete-btn'),pin=document.getElementById('receive-pin').value.trim(),acc=Account.get();if(!pin)return toast('Введи PIN','warn');const before=loadSave();if(before.coins<Number(receiveTx.price))return toast('Недостатньо коштів','lose');if(String(receiveTx.sellerId)===String(acc.id))return toast('Не можна отримати власну транзакцію','warn');setBusy(btn,true,'Підтверджуємо…');
-  try{const r=await transactionApi('complete',{transactionId:receiveTx.id,buyerId:acc.id,pin});const t={...receiveTx,status:'completed',buyerId:acc.id,price:r.price??receiveTx.price,card:r.card||receiveTx.card};await applyCompletedTransaction(t,r.card||receiveTx.card);receiveTx=t;document.getElementById('receive-result').innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію завершено</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Сплачено</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('completed')}</strong></div><div class="tx-note">Картку додано у твій інвентар.</div>`;renderCreateCards();toast('Картку отримано','win');}
+  try{const r=await transactionApi('complete',{transactionId:receiveTx.id,buyerId:acc.id,buyerUsername:acc.username||[acc.firstName,acc.lastName].filter(Boolean).join(' ')||'Player',pin});const t={...receiveTx,status:'completed',buyerId:acc.id,price:r.price??receiveTx.price,card:r.card||receiveTx.card};await applyCompletedTransaction(t,r.card||receiveTx.card);receiveTx=t;document.getElementById('receive-result').innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію завершено</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Сплачено</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('completed')}</strong></div><div class="tx-note">Картку додано у твій інвентар.</div>`;renderCreateCards();toast('Картку отримано','win');}
   catch(e){
     // Recovery: server may have completed before the browser lost the response.
     try{const look=await transactionApi('lookup',{transactionId:receiveTx.id});const t=look.transaction;if(t.status==='completed'&&String(t.buyerId)===String(acc.id)){const applied=await applyCompletedTransaction(t,t.card);document.getElementById('receive-result').innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію завершено</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Сплачено</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('completed')}</strong></div><div class="tx-note">${applied?'Картку додано у твій інвентар.':'Ця транзакція вже була зарахована раніше.'}</div>`;receiveTx=t;renderCreateCards();toast('Транзакцію синхронізовано','win');return;}}catch(_){}
@@ -1899,22 +1917,32 @@ document.getElementById('cancel-btn').addEventListener('click',async()=>{
   }finally{setBusy(btn,false);}
 });
 
-// SELLER STATUS + CLAIM
+// SELLER STATUS
 document.getElementById('seller-status-btn').addEventListener('click',async()=>{
   const btn=document.getElementById('seller-status-btn'),id=normalizeTxId(document.getElementById('seller-status-id').value),out=document.getElementById('seller-status-result'),acc=Account.get();if(!id)return toast('Введи Transaction ID','warn');setBusy(btn,true,'Перевіряємо…');out.classList.remove('show');
   try{
-    let t=(await transactionApi('lookup',{transactionId:id})).transaction;if(String(t.sellerId)!==String(acc.id))throw new Error('Ця транзакція належить іншому продавцю');
-    let payMsg='';
-    if(t.status==='completed'){
-      const save=loadSave(),claims=txClaims(save);
-      if(!claims[id]){
-        if(!t.sellerClaimed){try{const claim=await transactionApi('claim',{transactionId:id,sellerId:acc.id});const latest=loadSave();txClaims(latest)[id]={at:new Date().toISOString(),amount:Number(claim.amount)};latest.coins+=Number(claim.amount||0);latest.totalEarned=(latest.totalEarned||0)+Number(claim.amount||0);latest.cardsSold=(latest.cardsSold||0)+1;if(latest.transactionEscrow)delete latest.transactionEscrow[id];addLog(latest,'sell',`Виплата за ${id}: ${fmtCoins(claim.amount)} після комісії`);writeSave(latest);payMsg=`✅ Нараховано ${fmtCoins(claim.amount)} після комісії.`;}catch(claimErr){if(!claimErr.payload?.alreadyClaimed)throw claimErr;}}
-        // Recovery if server says already claimed but local browser has not applied it.
-        const verify=(await transactionApi('lookup',{transactionId:id})).transaction;if(verify.sellerClaimed&&!txClaims(loadSave())[id]){const latest=loadSave();const amount=Number(verify.sellerAmount||0);txClaims(latest)[id]={at:new Date().toISOString(),amount,recovered:true};latest.coins+=amount;latest.totalEarned=(latest.totalEarned||0)+amount;latest.cardsSold=(latest.cardsSold||0)+1;if(latest.transactionEscrow)delete latest.transactionEscrow[id];addLog(latest,'sell',`Відновлено виплату за ${id}: ${fmtCoins(amount)}`);writeSave(latest);payMsg=`✅ Відновлено виплату ${fmtCoins(amount)}.`;}
-      }else payMsg='ℹ️ Виплату за цю транзакцію вже було зараховано.';
-      t=(await transactionApi('lookup',{transactionId:id})).transaction;
+    const t=(await transactionApi('lookup',{transactionId:id})).transaction;if(String(t.sellerId)!==String(acc.id))throw new Error('Ця транзакція належить іншому продавцю');
+    const claimState=t.status==='completed'?(t.sellerClaimed?'✅ Виплату вже забрано':'💰 Виплата готова — відкрий вкладку «Забрати»'):'—';
+    out.innerHTML=`${renderCardMini(t.card)}<div style="margin-top:12px"><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div><div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Комісія</span><strong>${escapeHtml(t.feePercent)}% (${fmtCoins(t.feeAmount)})</strong></div><div class="tx-kv"><span>Продавцю</span><strong style="color:var(--up)">${fmtCoins(t.sellerAmount)}</strong></div><div class="tx-kv"><span>Покупець</span><strong>${escapeHtml(t.buyerId||'—')}</strong></div><div class="tx-kv"><span>Виплата</span><strong>${claimState}</strong></div></div>`;out.classList.add('show');updateTransactionHeader();
+  }catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');toast(e.message,'lose');}finally{setBusy(btn,false);}
+});
+
+// CLAIM SELLER PAYOUT
+document.getElementById('claim-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('claim-btn'),id=normalizeTxId(document.getElementById('claim-id').value),out=document.getElementById('claim-result'),acc=Account.get();if(!id)return toast('Введи Transaction ID','warn');setBusy(btn,true,'Перевіряємо…');out.classList.remove('show');
+  try{
+    let t=(await transactionApi('lookup',{transactionId:id})).transaction;if(String(t.sellerId)!==String(acc.id))throw new Error('Ця транзакція належить іншому продавцю');if(t.status!=='completed')throw new Error('Виплату можна забрати тільки після завершення транзакції');
+    const save=loadSave(),claims=txClaims(save);
+    if(claims[id]){out.innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Виплату вже було зараховано</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Нараховано</span><strong>${fmtCoins(claims[id].amount||t.sellerAmount||0)}</strong></div>`;out.classList.add('show');return;}
+    let amount=0;
+    if(!t.sellerClaimed){
+      const claim=await transactionApi('claim',{transactionId:id,sellerId:acc.id});amount=Number(claim.amount||0);
+    }else{
+      amount=Number(t.sellerAmount||0);
     }
-    out.innerHTML=`${renderCardMini(t.card)}<div style="margin-top:12px"><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div><div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Комісія</span><strong>${escapeHtml(t.feePercent)}% (${fmtCoins(t.feeAmount)})</strong></div><div class="tx-kv"><span>Продавцю</span><strong style="color:var(--up)">${fmtCoins(t.sellerAmount)}</strong></div><div class="tx-kv"><span>Покупець</span><strong>${escapeHtml(t.buyerId||'—')}</strong></div></div>${payMsg?`<div class="tx-note" style="color:var(--up);font-weight:700">${escapeHtml(payMsg)}</div>`:''}`;out.classList.add('show');updateTransactionHeader();renderCreateCards();
+    const latest=loadSave();if(!txClaims(latest)[id]){txClaims(latest)[id]={at:new Date().toISOString(),amount,recovered:!!t.sellerClaimed};latest.coins+=amount;latest.totalEarned=(latest.totalEarned||0)+amount;latest.cardsSold=(latest.cardsSold||0)+1;if(latest.transactionEscrow)delete latest.transactionEscrow[id];addLog(latest,'sell',`${t.sellerClaimed?'Відновлено':'Отримано'} виплату за ${id}: ${fmtCoins(amount)}`);writeSave(latest);}
+    t=(await transactionApi('lookup',{transactionId:id})).transaction;
+    out.innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Виплату отримано</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Комісія</span><strong>${escapeHtml(t.feePercent)}% (${fmtCoins(t.feeAmount)})</strong></div><div class="tx-kv"><span>Нараховано</span><strong style="color:var(--up)">${fmtCoins(amount)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div>`;out.classList.add('show');updateTransactionHeader();renderCreateCards();toast('Виплату зараховано','win');
   }catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');toast(e.message,'lose');}finally{setBusy(btn,false);}
 });
 

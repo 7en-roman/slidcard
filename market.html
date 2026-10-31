@@ -1148,42 +1148,55 @@ input,select,textarea,button{max-width:100%}
   .market-main-layout .data-table td:nth-child(5){width:100px!important;min-width:100px!important;max-width:100px!important;}
   .market-main-layout .data-table td:first-child>div>span:first-child{display:inline-flex!important;}
 }
+
+/* v2 marketplace */
+.tx-kv{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}.tx-kv span:first-child{color:var(--text3)}.tx-kv strong{text-align:right;word-break:break-word}.tx-kv:last-child{border-bottom:0}
+
+.market-tabs{display:flex;gap:8px;margin-bottom:16px;background:var(--surface);padding:5px;border:1px solid var(--border);border-radius:16px;max-width:560px}
+.market-tab{flex:1;padding:10px 14px;border-radius:11px;color:var(--text3);font-weight:800;transition:.18s}.market-tab.active{background:var(--surface3);color:var(--cyan);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.market-section{display:none}.market-section.active{display:block}.market-refresh{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;color:var(--text3);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:7px 12px}
+.market-toolbar{display:flex;gap:10px;padding:12px;margin-bottom:12px;align-items:center}.market-search-wrap{flex:1;min-width:180px}.market-sort{width:180px}.filter-label{font-size:9px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin:8px 0 6px}.market-summary{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:10px 0 14px;font-size:11px;color:var(--text3)}.muted{color:var(--dim)}
+.user-market-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}.user-listing{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;overflow:visible}.user-listing:hover{transform:translateY(-3px);border-color:var(--border2);box-shadow:0 14px 34px rgba(0,0,0,.26)}.user-listing-card{display:flex;justify-content:center;margin:4px 0 12px}.user-listing-meta{border-top:1px solid var(--border);padding-top:10px}.user-listing-user{font-weight:800;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-listing-id{font-family:var(--font-mono);font-size:9px;color:var(--dim);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-listing-price{font-family:var(--font-mono);font-size:15px;font-weight:800;color:var(--gold);margin-top:7px}.status-ribbon{position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(-2deg);z-index:20;padding:5px 12px;border-radius:7px;font-family:var(--font-disp);font-size:10px;font-weight:900;letter-spacing:.12em;color:#fff;box-shadow:0 5px 16px rgba(0,0,0,.35)}.status-ribbon.sold{background:var(--up)}.status-ribbon.canceled{background:var(--down)}.market-loading,.market-empty{grid-column:1/-1;text-align:center;padding:44px 16px;color:var(--text3);background:var(--surface);border:1px solid var(--border);border-radius:18px}.public-buy-note{font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5}
+@media(max-width:760px){.market-tabs{max-width:none}.market-toolbar{flex-wrap:wrap}.market-search-wrap{flex:1 1 100%}.market-sort{flex:1 1 150px;width:auto}.user-market-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.user-listing{padding:10px}.user-listing .sport-card{transform:scale(.9);transform-origin:center}.market-summary{align-items:flex-start;flex-direction:column}.market-filter-panel.open{display:block!important}}
+@media(max-width:390px){.user-market-grid{grid-template-columns:1fr 1fr}.user-listing .sport-card{transform:scale(.82)}}
 </style>
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v1.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item active" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Транзакції</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item active" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Транзакції</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
 <div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Ринок</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
 <div class="page-header row-between">
-  <div><div class="page-title">Ринок</div><div class="page-sub">Купуй та продавай картки в реальному часі</div></div>
-  <div class="row"><button class="mobile-filter-toggle" type="button" onclick="toggleMobileFilters('market-filters',this)"><span class="hamb">☰</span> Категорії та роки</button></div>
+  <div><div class="page-title">Ринок</div><div class="page-sub">Публічні пропозиції гравців та бот-магазин</div></div>
+  <div class="row"><div class="market-refresh"><span class="live-dot"></span><span id="market-refresh-text">Оновлення через 02:00</span></div></div>
 </div>
-<div id="market-filters" class="mobile-filter-panel market-filter-panel" style="display:block">
-  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px" id="year-btns"></div>
-  <div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;scrollbar-width:none" id="mkt-sport-f"></div>
-</div>
-<div class="market-main-layout" style="display:grid;grid-template-columns:1fr 300px;gap:16px;height:calc(100vh - 220px)">
-  <!-- Table -->
-  <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
-    <div class="card-header">
-      <div class="card-title">Каталог карток</div>
-      <div id="mkt-count" style="font-size:11px;color:var(--text3)">0 позицій</div>
-    </div>
-    <div class="data-table-wrap" style="overflow:auto;flex:1">
-      <table class="data-table">
-        <thead><tr><th>Картка</th><th>Рідкість</th><th>Ціна</th><th>Зміна</th><th>Моїх</th></tr></thead>
-        <tbody id="mkt-tbody"></tbody>
-      </table>
+<div class="market-tabs"><button class="market-tab active" data-market="users">👥 Магазин користувачів</button><button class="market-tab" data-market="bot">🤖 Бот-магазин</button></div>
+<section id="market-users" class="market-section active">
+  <div class="market-toolbar card">
+    <div class="market-search-wrap"><input class="input" id="user-market-search" placeholder="Transaction ID, username або User ID"></div>
+    <select class="input market-sort" id="user-market-sort"><option value="newest">Новіші</option><option value="priceAsc">Ціна ↑</option><option value="priceDesc">Ціна ↓</option><option value="rarity">Рідкість</option><option value="rating">Рейтинг</option></select>
+    <button class="mobile-filter-toggle" type="button" onclick="toggleMobileFilters('user-market-filters',this)"><span class="hamb">☰</span> Фільтри</button>
+  </div>
+  <div id="user-market-filters" class="mobile-filter-panel market-filter-panel" style="display:block">
+    <div class="filter-label">Рік</div><div class="chip-row" id="user-year-f"></div>
+    <div class="filter-label">Категорія</div><div class="chip-row" id="user-sport-f"></div>
+    <div class="filter-label">Рідкість</div><div class="chip-row" id="user-rarity-f"></div>
+  </div>
+  <div class="market-summary"><span id="user-market-count">0 пропозицій</span><span class="muted">Комісія продавця: 5%</span></div>
+  <div id="user-market-grid" class="user-market-grid"><div class="market-loading">Завантаження транзакцій…</div></div>
+</section>
+<section id="market-bot" class="market-section">
+  <div id="bot-market-filters" class="mobile-filter-panel market-filter-panel" style="display:block">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px" id="year-btns"></div>
+    <div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;scrollbar-width:none" id="mkt-sport-f"></div>
+  </div>
+  <div class="market-main-layout" style="display:grid;grid-template-columns:1fr;gap:16px">
+    <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+      <div class="card-header"><div class="card-title">🤖 Бот-магазин · ціна ×1.75</div><div id="mkt-count" style="font-size:11px;color:var(--text3)">0 позицій</div></div>
+      <div class="data-table-wrap" style="overflow:auto;flex:1"><table class="data-table"><thead><tr><th>Картка</th><th>Рідкість</th><th>Ціна бота</th><th>Ринкова</th><th>Моїх</th></tr></thead><tbody id="mkt-tbody"></tbody></table></div>
     </div>
   </div>
-  <!-- Panel -->
-  <div id="mkt-panel" style="display:flex;flex-direction:column;gap:12px">
-    <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:24px;gap:14px;min-height:280px;justify-content:center">
-      <div style="font-size:40px">📈</div>
-      <div style="color:var(--text3);font-size:13px;text-align:center">Обери картку<br>щоб переглянути деталі</div>
-    </div>
-  </div>
+</section>
 </div>
 </div>
 </div>
@@ -1191,11 +1204,14 @@ input,select,textarea,button{max-width:100%}
 <div id="toast-root"></div>
 <div class="modal-overlay" id="modal-market-card"><div class="modal market-card-modal"><div class="modal-header"><div class="modal-title" id="market-modal-title">Картка</div><button class="modal-close" onclick="closeModal('modal-market-card')">×</button></div><div class="modal-body" id="market-modal-body"></div></div></div>
 
+
+<div class="modal-overlay" id="modal-user-tx"><div class="modal market-card-modal"><div class="modal-header"><div class="modal-title" id="user-tx-title">Транзакція</div><button class="modal-close" onclick="closeModal('modal-user-tx')">×</button></div><div class="modal-body" id="user-tx-body"></div></div></div>
+
 <script>
 // SlidCard v2.0.0 — shared.js
 
 const CX = {
-  VERSION:    "1.0.0",
+  VERSION:    "2.0.0",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1865,102 +1881,43 @@ function updateCoinsDisplay(){
 }
 </script>
 <script>
-function getYearBadge(year,rarity){const rarBg={common:"rgba(122,133,149,.2)",rare:"rgba(76,141,255,.2)",epic:"rgba(177,92,255,.2)",legendary:"rgba(240,180,41,.2)",ultimate:"rgba(255,71,87,.2)"};const rarColor={common:"#7A8595",rare:"#4C8DFF",epic:"#B15CFF",legendary:"#F0B429",ultimate:"#FF4757"};const bg=rarBg[rarity]||rarBg.common;const color=rarColor[rarity]||rarColor.common;return`<div class="sc-year" style="background:${bg};color:${color};border-color:${color}40">${year}</div>`;}
-if(!Account.isLoggedIn()){location.href="index.html";}
-(function(){const acc=Account.get()||{};const av=document.getElementById("sb-av");const nm=document.getElementById("sb-name");const id=document.getElementById("sb-id");if(av)av.textContent=Account.initials();if(nm)nm.textContent=[acc.firstName,acc.lastName].filter(Boolean).join(" ")||acc.username||"Гравець";if(id)id.textContent="ID: "+(acc.id||"—");Account.applyTheme();})();
-function updateCoinsDisplay(){const s=loadSave();const el=document.getElementById("tb-coins");if(el)el.textContent=fmtCoins(s.coins);}updateCoinsDisplay();
-(function(){function tick(){const el=document.getElementById("tb-clock");if(el)el.textContent=new Date().toLocaleTimeString("uk-UA");}tick();setInterval(tick,1000);})();
-(function(){const t=document.getElementById("ticker-track");if(!t)return;const s=loadSave();const items=CARDS.slice(0,30).map(c=>{const p=getCardPrice(s,c.id);const h=s.priceHistory[c.id]||[p,p];const o=h[h.length-2]||p;const u=p>=o;return`<span class="ticker-item"><span class="nm">${c.name}</span><span class="${u?"up":"dn"}">${u?"▲":"▼"} ${fmtCoins(p)}</span></span>`;}).join("");t.innerHTML=items+items;})();
+function getYearBadge(year,rarity){const rarBg={common:"rgba(122,133,149,.2)",rare:"rgba(76,141,255,.2)",epic:"rgba(177,92,255,.2)",legendary:"rgba(240,180,41,.2)",ultimate:"rgba(255,71,87,.2)"};const rarColor={common:"#7A8595",rare:"#4C8DFF",epic:"#B15CFF",legendary:"#F0B429",ultimate:"#FF4757"};const color=rarColor[rarity]||rarColor.common;return`<div class="sc-year" style="background:${rarBg[rarity]||rarBg.common};color:${color};border-color:${color}40">${year}</div>`;}
+const TRANSACTION_API_URL='https://script.google.com/macros/s/AKfycby25K1rtKsIwnYNBuaFK4svjG5RQTXa8Q7uNiMvS4VR0r7kJn-qBks4wKHWGuyoahsD/exec';
+const BOT_PRICE_MULT=1.75, USER_MARKET_FEE=5, MARKET_REFRESH_MS=120000;
+if(!Account.isLoggedIn()){location.href='index.html';}
+(function(){const acc=Account.get()||{};const av=document.getElementById('sb-av'),nm=document.getElementById('sb-name'),id=document.getElementById('sb-id');if(av)av.textContent=Account.initials();if(nm)nm.textContent=[acc.firstName,acc.lastName].filter(Boolean).join(' ')||acc.username||'Гравець';if(id)id.textContent='ID: '+(acc.id||'—');Account.applyTheme();initNav('market.html');initTicker();})();
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function initTicker(){const t=document.getElementById('ticker-track');if(!t)return;const s=loadSave();const items=CARDS.slice(0,30).map(c=>{const p=getCardPrice(s,c.id),h=s.priceHistory[c.id]||[p,p],o=h[h.length-2]||p,u=p>=o;return`<span class="ticker-item"><span class="nm">${escapeHtml(c.name)}</span><span class="${u?'up':'dn'}">${u?'▲':'▼'} ${fmtCoins(p)}</span></span>`}).join('');t.innerHTML=items+items;}
+async function transactionApi(action,data={}){let response;try{response=await fetch(TRANSACTION_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,data}),redirect:'follow'});}catch(e){throw new Error('Немає зв’язку з сервером');}if(!response.ok)throw new Error('HTTP '+response.status);let r;try{r=await response.json()}catch(e){throw new Error('Неправильна відповідь сервера')}if(!r.success)throw new Error(r.error||'Операцію не виконано');return r;}
+function parseServerCard(card){const key=String(card?.key||card?.id||''),p=parseCardKey(key),base=CARD_BY_ID[card?.baseId||p.id]||CARD_BY_ID[p.id]||card||{};return{key,year:Number(card?.year||card?.season||p.year||2026),base:{...base,rarity:base.rarity||card?.rarity||'common'}};}
 
-let mktSportF="all", mktShowYear=2026, selCard=null, selCardKey=null;
+// tabs
+for(const b of document.querySelectorAll('.market-tab'))b.onclick=()=>{document.querySelectorAll('.market-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.market-section').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('market-'+b.dataset.market)?.classList.add('active');};
 
-// Sport filter
-const msfEl=document.getElementById("mkt-sport-f");
-[["all","Всі"],...Object.entries(SPORTS).map(([id,s])=>[id,s.icon+" "+s.label])].forEach(([id,lbl])=>{
-  const b=document.createElement("button");b.className="chip"+(id==="all"?" active":"");b.textContent=lbl;
-  b.onclick=()=>{document.querySelectorAll("#mkt-sport-f .chip").forEach(x=>x.classList.remove("active"));b.classList.add("active");mktSportF=id;renderTable();};
-  msfEl.appendChild(b);
-});
-// Year buttons
-document.getElementById("year-btns").innerHTML=SEASONS.map(y=>`<button class="chip${y===mktShowYear?" active":""}" onclick="mktShowYear=${y};document.querySelectorAll('#year-btns .chip').forEach(x=>x.classList.remove('active'));this.classList.add('active');renderTable()">${y}</button>`).join("");
+// user marketplace filters
+let publicTx=[], uf={sport:'all',year:'all',rarity:'all',search:'',sort:'newest'}, nextRefresh=Date.now()+MARKET_REFRESH_MS;
+function makeChips(id,items,key){const el=document.getElementById(id);el.innerHTML=items.map(([v,l],i)=>`<button class="chip${i===0?' active':''}" data-v="${escapeHtml(v)}">${escapeHtml(l)}</button>`).join('');el.querySelectorAll('.chip').forEach(btn=>btn.onclick=()=>{el.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));btn.classList.add('active');uf[key]=btn.dataset.v;renderPublicMarket();});}
+makeChips('user-year-f',[['all','Всі роки'],...SEASONS.slice().reverse().map(y=>[String(y),String(y)])],'year');
+makeChips('user-sport-f',[['all','Всі'],...Object.entries(SPORTS).map(([id,x])=>[id,x.icon+' '+x.label])],'sport');
+makeChips('user-rarity-f',[['all','Всі'],...Object.entries(RARITY).map(([id,x])=>[id,x.label])],'rarity');
+document.getElementById('user-market-search').addEventListener('input',e=>{uf.search=e.target.value.trim().toLowerCase();renderPublicMarket();});
+document.getElementById('user-market-sort').addEventListener('change',e=>{uf.sort=e.target.value;renderPublicMarket();});
+function renderPublicMarket(){let arr=publicTx.slice();arr=arr.filter(t=>{const pc=parseServerCard(t.card),b=pc.base; if(uf.sport!=='all'&&b.sport!==uf.sport)return false;if(uf.rarity!=='all'&&b.rarity!==uf.rarity)return false;if(uf.year!=='all'&&String(pc.year)!==uf.year)return false;if(uf.search){const hay=[t.id,t.sellerUsername,t.sellerId].join(' ').toLowerCase();if(!hay.includes(uf.search))return false;}return true;});
+ const rank={ultimate:5,legendary:4,epic:3,rare:2,common:1};arr.sort((a,b)=>uf.sort==='priceAsc'?Number(a.price)-Number(b.price):uf.sort==='priceDesc'?Number(b.price)-Number(a.price):uf.sort==='rarity'?rank[parseServerCard(b.card).base.rarity]-rank[parseServerCard(a.card).base.rarity]:uf.sort==='rating'?Number(parseServerCard(b.card).base.rating||0)-Number(parseServerCard(a.card).base.rating||0):new Date(b.createdAt||0)-new Date(a.createdAt||0));
+ document.getElementById('user-market-count').textContent=arr.length+' пропозицій';const g=document.getElementById('user-market-grid');if(!arr.length){g.innerHTML='<div class="market-empty">Немає транзакцій за цими фільтрами.</div>';return;}g.innerHTML=arr.map(t=>{const pc=parseServerCard(t.card),status=String(t.status||'pending').toLowerCase(),ribbon=status==='completed'?'<div class="status-ribbon sold">SOLD</div>':status==='canceled'?'<div class="status-ribbon canceled">CANCELED</div>':'';const cardHtml=window.SlidCardCard?SlidCardCard.render(pc.base,{year:pc.year,showPrice:false}):'';return`<div class="user-listing" onclick="openPublicTx('${escapeHtml(t.id)}')">${ribbon}<div class="user-listing-card">${cardHtml}</div><div class="user-listing-meta"><div class="user-listing-user">👤 ${escapeHtml(t.sellerUsername||'Player')}</div><div class="user-listing-id">${escapeHtml(t.sellerId||'—')}</div><div class="user-listing-id">TX: ${escapeHtml(t.id)}</div><div class="user-listing-price">${Number(t.price)===0?'FREE':fmtCoins(t.price)}</div></div></div>`}).join('');}
+async function loadPublicMarket(){const g=document.getElementById('user-market-grid');try{const r=await transactionApi('listMarket',{});publicTx=Array.isArray(r.transactions)?r.transactions:[];renderPublicMarket();nextRefresh=Date.now()+MARKET_REFRESH_MS;}catch(e){g.innerHTML=`<div class="market-empty">Не вдалося завантажити магазин.<br><small>${escapeHtml(e.message)}. Потрібно оновити Apps Script до v2.</small></div>`;nextRefresh=Date.now()+MARKET_REFRESH_MS;}}
+window.openPublicTx=function(id){const t=publicTx.find(x=>String(x.id)===String(id));if(!t)return;const pc=parseServerCard(t.card),status=String(t.status||'pending').toLowerCase(),can=status==='pending',self=String(t.sellerId)===String(Account.get()?.id);document.getElementById('user-tx-title').textContent=pc.base.name||'Транзакція';const cardHtml=window.SlidCardCard?SlidCardCard.render(pc.base,{year:pc.year,showPrice:false}):'';document.getElementById('user-tx-body').innerHTML=`<div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap"><div>${cardHtml}</div><div style="flex:1;min-width:210px"><div class="tx-kv"><span>Transaction ID</span><strong>${escapeHtml(t.id)}</strong></div><div class="tx-kv"><span>Продавець</span><strong>${escapeHtml(t.sellerUsername||'Player')}</strong></div><div class="tx-kv"><span>User ID</span><strong>${escapeHtml(t.sellerId||'—')}</strong></div><div class="tx-kv"><span>Ціна</span><strong style="color:var(--gold)">${Number(t.price)===0?'FREE':fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Опис</span><strong>${escapeHtml(t.description||'—')}</strong></div><div class="tx-kv"><span>Статус</span><strong>${status==='completed'?'SOLD':status==='canceled'?'CANCELED':'PENDING'}</strong></div><div class="tx-kv"><span>Створено</span><strong>${t.createdAt?new Date(t.createdAt).toLocaleString('uk-UA'):'—'}</strong></div>${can&&!self?`<button class="btn btn-primary btn-block" style="margin-top:14px" onclick="buyPublicTx('${escapeHtml(t.id)}')">${Number(t.price)===0?'🎁 Отримати безкоштовно':'🛒 Купити за '+fmtCoins(t.price)}</button>`:can&&self?'<div class="public-buy-note">Це твоя транзакція. Купити власну картку неможливо.</div>':'<div class="public-buy-note">Ця пропозиція вже не активна.</div>'}<div class="public-buy-note">PIN-код у публічному магазині не показується і для покупки не потрібний.</div></div></div>`;openModal('modal-user-tx');}
+window.buyPublicTx=async function(id){const t=publicTx.find(x=>String(x.id)===String(id));if(!t)return;const acc=Account.get(),save=loadSave(),price=Number(t.price||0);if(save.coins<price)return toast('Недостатньо коштів','lose');try{const r=await transactionApi('completePublic',{transactionId:id,buyerId:acc.id,buyerUsername:acc.username||'Player'});const latest=loadSave();latest.transactionApplied=latest.transactionApplied||{};if(!latest.transactionApplied[id]){const card=r.card||t.card,key=String(card?.key||card?.id||'');if(!key)throw new Error('Сервер не повернув картку');latest.owned=latest.owned||{};latest.owned[key]=(latest.owned[key]||0)+1;latest.coins-=price;latest.totalSpent=(latest.totalSpent||0)+price;latest.cardsBought=(latest.cardsBought||0)+1;latest.transactionApplied[id]={at:new Date().toISOString(),cardKey:key,price};addLog(latest,'buy',`Куплено через магазин користувачів ${id} за ${fmtCoins(price)}`);writeSave(latest);}closeModal('modal-user-tx');updateCoinsDisplay();toast(price===0?'Картку отримано безкоштовно':'Покупку завершено','win');await loadPublicMarket();}catch(e){toast(e.message,'lose');await loadPublicMarket();}}
+setInterval(()=>{const left=Math.max(0,nextRefresh-Date.now()),sec=Math.ceil(left/1000),mm=String(Math.floor(sec/60)).padStart(2,'0'),ss=String(sec%60).padStart(2,'0');const el=document.getElementById('market-refresh-text');if(el)el.textContent='Оновлення через '+mm+':'+ss;if(left<=0)loadPublicMarket();},1000);
 
-function renderTable(){
-  const save=loadSave();
-  document.getElementById("tb-coins").textContent=fmtCoins(save.coins);
-  let cards=mktSportF==="all"?CARDS.slice():CARDS.filter(c=>c.sport===mktSportF);
-  cards.sort((a,b)=>{
-    const ak=mktShowYear<2026?a.id+"_"+mktShowYear:a.id,bk=mktShowYear<2026?b.id+"_"+mktShowYear:b.id;
-    const ao=save.owned[ak]||0,bo=save.owned[bk]||0;
-    if((bo>0)!==(ao>0))return bo>0?1:-1;
-    if(bo!==ao)return bo-ao;
-    return a.name.localeCompare(b.name);
-  });
-  document.getElementById("mkt-count").textContent=cards.length+" позицій · спочатку твої";
-  const body=document.getElementById("mkt-tbody");
-  body.innerHTML=cards.map(c=>{
-    const key=mktShowYear<2026?c.id+"_"+mktShowYear:c.id;
-    const price=getCardPrice(save,key);
-    const hist=save.priceHistory[c.id]||[price,price];
-    const oldP=hist[hist.length-2]||price;
-    const chg=(price-oldP)/oldP*100;const up=chg>=0;
-    const owned=save.owned[key]||0;
-    const isSel=selCardKey===key;
-    return`<tr onclick="showPanel('${c.id}','${key}')" style="cursor:pointer;${isSel?"background:var(--surface2)!important;":""}">
-      <td><div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">${c.icon}</span><span style="font-weight:600">${c.name}</span></div></td>
-      <td><span class="badge badge-${c.rarity}">${RARITY[c.rarity].label}</span></td>
-      <td><span style="font-family:var(--font-mono);font-weight:700;color:var(--gold)">${fmtCoins(price)}</span></td>
-      <td><span style="font-family:var(--font-mono);font-size:12px;color:${up?"var(--up)":"var(--down)"}">${up?"▲":"▼"} ${Math.abs(chg).toFixed(1)}%</span></td>
-      <td style="text-align:center;font-family:var(--font-mono);color:${owned>0?"var(--cyan)":"var(--dim)"}">${owned}</td>
-    </tr>`;
-  }).join("");
-}
-
-function showPanel(cardId,key){
-  const save=loadSave();selCard=CARD_BY_ID[cardId];selCardKey=key;if(!selCard)return;
-  const price=getCardPrice(save,key),owned=save.owned[key]||0;
-  const hist=save.priceHistory[cardId]||[price,price],prev=hist[hist.length-2]||price,chg=(price-prev)/prev*100,up=chg>=0;
-  document.getElementById("market-modal-title").textContent=selCard.name;
-  const cardHtml=window.SlidCardCard?SlidCardCard.render(selCard,{year:mktShowYear,qty:owned,price}):'';
-  document.getElementById("market-modal-body").innerHTML=`
-    <div class="market-modal-top">
-      <div>${cardHtml}</div>
-      <div class="market-modal-info" style="flex:1;min-width:0">
-        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px">
-          <div class="stat-card"><div class="k">Рідкість</div><div class="v" style="font-size:14px;color:${RARITY[selCard.rarity].hex}">${RARITY[selCard.rarity].label}</div></div>
-          <div class="stat-card"><div class="k">Рейтинг</div><div class="v">${selCard.rating}/99</div></div>
-          <div class="stat-card"><div class="k">У тебе</div><div class="v" style="color:var(--cyan)">x${owned}</div></div>
-          <div class="stat-card"><div class="k">Рік</div><div class="v">${mktShowYear}</div></div>
-        </div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:4px">${SPORTS[selCard.sport]?.label||selCard.sport} · ${selCard.pos}</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px">${selCard.country} ${selCard.team}</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px"><span style="font-family:var(--font-mono);font-size:24px;font-weight:800;color:var(--gold)">${fmtCoins(price)}</span><span style="font-family:var(--font-mono);font-weight:700;color:${up?'var(--up)':'var(--down)'}">${up?'▲':'▼'} ${Math.abs(chg).toFixed(1)}%</span></div>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><input type="number" class="input" id="mkt-qty" value="1" min="1" style="width:86px;text-align:center"/><span style="color:var(--text3);font-size:12px">шт.</span></div>
-        <div class="market-modal-actions"><button class="btn btn-up" onclick="doBuy()">🛒 Купити</button><button class="btn btn-down" onclick="doSell()" ${owned<1?'disabled':''}>💸 Продати</button></div>
-      </div>
-    </div>
-    <div style="border-top:1px solid var(--border);margin-top:18px;padding-top:14px"><div style="font-family:var(--font-disp);font-weight:700;margin-bottom:10px">📊 Історія ціни</div>${hist.slice(-10).map((p,i,arr)=>{const pp=arr[i-1]||p,u=p>=pp;return`<div style="display:flex;align-items:center;gap:8px;margin:5px 0"><div style="flex:1;height:5px;border-radius:4px;background:var(--surface2)"><div style="height:100%;border-radius:4px;background:${u?'var(--up)':'var(--down)'};width:${Math.max(4,Math.min(100,(p/Math.max(...hist))*100))}%"></div></div><span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);min-width:68px;text-align:right">${fmtCoins(p)}</span></div>`}).join('')}</div>`;
-  openModal("modal-market-card");renderTable();
-}
-
-function doBuy(){
-  const save=loadSave();const qty=parseInt(document.getElementById("mkt-qty")?.value)||1;
-  if(!selCardKey)return;
-  if(buyCard(save,selCardKey,qty)){toast("🛒 Куплено "+qty+"x "+selCard?.name,"win");showPanel(selCard.id,selCardKey);renderTable();}
-  else toast("❌ Недостатньо коштів!","lose");
-}
-function doSell(){
-  const save=loadSave();const qty=parseInt(document.getElementById("mkt-qty")?.value)||1;
-  if(!selCardKey)return;const owned=save.owned[selCardKey]||0;
-  if(owned<qty){toast("❌ У тебе лише x"+owned,"lose");return;}
-  if(sellCard(save,selCardKey,qty)){toast("💸 Продано "+qty+"x "+selCard?.name,"info");showPanel(selCard.id,selCardKey);renderTable();}
-  else toast("❌ Помилка!","lose");
-}
-function quickBuy(cardId,key){selCard=CARD_BY_ID[cardId];selCardKey=key;doBuy();}
-function quickSell(cardId,key){selCard=CARD_BY_ID[cardId];selCardKey=key;doSell();}
-
-renderTable();
-setInterval(()=>{const s=tickMarket(loadSave());writeSave(s);renderTable();if(selCardKey)showPanel(selCard?.id,selCardKey);},120000);
-
+// bot market
+let mktSportF='all',mktShowYear=2026,selCard=null,selCardKey=null;
+const msfEl=document.getElementById('mkt-sport-f');[['all','Всі'],...Object.entries(SPORTS).map(([id,x])=>[id,x.icon+' '+x.label])].forEach(([id,lbl])=>{const b=document.createElement('button');b.className='chip'+(id==='all'?' active':'');b.textContent=lbl;b.onclick=()=>{document.querySelectorAll('#mkt-sport-f .chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');mktSportF=id;renderTable()};msfEl.appendChild(b)});
+document.getElementById('year-btns').innerHTML=SEASONS.map(y=>`<button class="chip${y===mktShowYear?' active':''}" onclick="mktShowYear=${y};document.querySelectorAll('#year-btns .chip').forEach(x=>x.classList.remove('active'));this.classList.add('active');renderTable()">${y}</button>`).join('');
+function renderTable(){const save=loadSave();updateCoinsDisplay();let cards=mktSportF==='all'?CARDS.slice():CARDS.filter(c=>c.sport===mktSportF);cards.sort((a,b)=>a.name.localeCompare(b.name));document.getElementById('mkt-count').textContent=cards.length+' позицій';document.getElementById('mkt-tbody').innerHTML=cards.map(c=>{const key=mktShowYear<2026?c.id+'_'+mktShowYear:c.id,market=getCardPrice(save,key),bot=Math.round(market*BOT_PRICE_MULT),owned=save.owned[key]||0;return`<tr onclick="showBotCard('${c.id}','${key}')" style="cursor:pointer"><td><div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">${c.icon}</span><span style="font-weight:600">${escapeHtml(c.name)}</span></div></td><td><span class="badge badge-${c.rarity}">${RARITY[c.rarity].label}</span></td><td><span style="font-family:var(--font-mono);font-weight:800;color:var(--gold)">${fmtCoins(bot)}</span></td><td><span style="font-family:var(--font-mono);color:var(--text3)">${fmtCoins(market)}</span></td><td style="text-align:center;font-family:var(--font-mono);color:${owned?'var(--cyan)':'var(--dim)'}">${owned}</td></tr>`}).join('')}
+window.showBotCard=function(cardId,key){const save=loadSave();selCard=CARD_BY_ID[cardId];selCardKey=key;const market=getCardPrice(save,key),price=Math.round(market*BOT_PRICE_MULT),owned=save.owned[key]||0,cardHtml=SlidCardCard.render(selCard,{year:mktShowYear,qty:owned,price});document.getElementById('market-modal-title').textContent=selCard.name;document.getElementById('market-modal-body').innerHTML=`<div class="market-modal-top"><div>${cardHtml}</div><div class="market-modal-info" style="flex:1;min-width:0"><div class="stat-card"><div class="k">Ринкова ціна</div><div class="v">${fmtCoins(market)}</div></div><div class="stat-card" style="margin-top:8px"><div class="k">Ціна бота ×1.75</div><div class="v" style="color:var(--gold)">${fmtCoins(price)}</div></div><div style="display:flex;gap:8px;align-items:center;margin-top:12px"><input type="number" class="input" id="bot-qty" value="1" min="1" style="width:86px"><button class="btn btn-up" onclick="buyFromBot()">🛒 Купити</button></div><div class="public-buy-note">Продаж карток боту залишається через звичайний ринковий механізм на інших екранах; бот-магазин тут призначений для гарантованої покупки за підвищеною ціною.</div></div></div>`;openModal('modal-market-card')}
+window.buyFromBot=function(){if(!selCardKey)return;const save=loadSave(),qty=Math.max(1,parseInt(document.getElementById('bot-qty')?.value)||1),unit=Math.round(getCardPrice(save,selCardKey)*BOT_PRICE_MULT),total=unit*qty;if(save.coins<total)return toast('Недостатньо коштів','lose');save.coins-=total;save.owned[selCardKey]=(save.owned[selCardKey]||0)+qty;save.totalSpent=(save.totalSpent||0)+total;save.cardsBought=(save.cardsBought||0)+qty;addLog(save,'buy',`Куплено у бота ${qty}x ${selCard.name} за ${fmtCoins(total)}`);writeSave(save);updateCoinsDisplay();renderTable();toast('Куплено у бот-магазині','win');showBotCard(selCard.id,selCardKey)};
+renderTable();loadPublicMarket();
 </script>
 <script>
 
