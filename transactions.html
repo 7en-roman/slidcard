@@ -934,11 +934,20 @@ input, select, textarea { font-family: inherit; }
 <link rel="stylesheet" href="card-system.css">
 <script src="theme-system.js"></script>
 <script src="card-system.js"></script>
+<style>
+/* v2.1 mobile sidebar reliability */
+@media (max-width:760px){
+  .sidebar{overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  .sidebar>div:nth-child(2){flex:0 0 auto!important;}
+  .sidebar-spacer{min-height:8px!important;flex:1 0 8px!important;}
+  .sidebar-bottom{position:relative!important;bottom:auto!important;flex:0 0 auto!important;background:inherit;z-index:2;}
+}
+</style>
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item active" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Транзакції</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item active" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
-<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Транзакції</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Продаж карток</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
 <style>
 .tx-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}.tx-tab{appearance:none;border:1px solid var(--border);background:var(--panel);color:var(--text2);border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;transition:.18s}.tx-tab:hover{border-color:var(--border3);color:var(--text)}.tx-tab.active{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
@@ -1030,8 +1039,8 @@ input,select,textarea,button{max-width:100%}
 .main-content [style*="display:grid"]>* ,.main-content [style*="display:flex"]>*{min-width:0;max-width:100%}
 </style>
 <div class="page-header">
-  <div class="page-title">Транзакції</div>
-  <div class="page-sub">Безпечна передача карток між акаунтами через Transaction ID + PIN</div>
+  <div class="page-title">Продаж карток</div>
+  <div class="page-sub">Публічний продаж у магазині або приватний продаж картки іншому користувачу</div>
 </div>
 <div class="tx-tabs">
   <button class="tx-tab active" data-pane="create">➕ Створити</button>
@@ -1043,20 +1052,20 @@ input,select,textarea,button{max-width:100%}
 <section class="tx-pane active" id="tx-create">
   <div class="tx-layout">
     <div class="tx-box">
-      <h3>Створити транзакцію</h3>
-      <div class="tx-help">Вибери одну картку, встанови ціну, опис та власний PIN. Після успішного запису на сервер картка одразу зникне з твого інвентарю й залишатиметься в транзакції до отримання або скасування.</div>
+      <h3>Створити продаж</h3>
+      <div class="tx-help">Вибери картку, ціну та видимість. Публічний продаж отримає ID MKT і не потребує PIN. Приватний продаж отримає ID TRX і захищається PIN-кодом.</div>
       <div class="tx-field"><label>Картка</label><select class="input" id="create-card"></select></div>
-      <div class="tx-field"><label>Ціна</label><input class="input" id="create-price" type="number" min="1" step="1" placeholder="Наприклад 1000"></div>
+      <div class="tx-field"><label>Ціна</label><input class="input" id="create-price" type="number" min="0" step="1" placeholder="Наприклад 1000"></div>
       <div class="tx-field"><label>Опис (необов'язково)</label><textarea class="input" id="create-description" rows="3" maxlength="300" placeholder="Наприклад: картка сезону 2025, домовились особисто"></textarea></div>
       <div class="tx-field"><label>Видимість</label><select class="input" id="create-visibility"><option value="public">👥 Публічно — Магазин користувачів</option><option value="private">🔒 Приватно — тільки за Transaction ID + PIN</option></select></div>
-      <div class="tx-field"><label>PIN-код</label><input class="input" id="create-pin" type="password" minlength="4" maxlength="12" autocomplete="off" placeholder="4–12 символів"></div>
-      <div class="tx-actions"><button class="btn btn-primary" id="create-btn">Створити транзакцію</button></div>
+      <div class="tx-field" id="create-pin-field" style="display:none"><label>PIN-код для приватного продажу</label><input class="input" id="create-pin" type="password" minlength="4" maxlength="12" autocomplete="off" placeholder="4–12 символів"></div>
+      <div class="tx-actions"><button class="btn btn-primary" id="create-btn">Створити продаж</button></div>
       <div class="tx-result" id="create-result"></div>
     </div>
     <div class="tx-box">
       <h3>Перевірити продаж</h3>
       <div class="tx-help">Введи ID своєї транзакції. Якщо покупець уже завершив її, гра забере виплату із сервера та нарахує суму після комісії.</div>
-      <div class="tx-field"><label>Transaction ID</label><input class="input" id="seller-status-id" autocomplete="off" placeholder="TRX-XXXXXXXXXX"></div>
+      <div class="tx-field"><label>ID продажу</label><input class="input" id="seller-status-id" autocomplete="off" placeholder="MKT-... або TRX-..."></div>
       <div class="tx-actions"><button class="btn btn-ghost" id="seller-status-btn">Перевірити статус</button></div>
       <div class="tx-result" id="seller-status-result"></div>
     </div>
@@ -1067,14 +1076,15 @@ input,select,textarea,button{max-width:100%}
   <div class="tx-layout">
     <div class="tx-box">
       <h3>Отримати картку</h3>
-      <div class="tx-help">Спочатку введи лише Transaction ID. Ми покажемо повну інформацію про картку, продавця, ціну й опис. PIN вводиться тільки після перевірки деталей.</div>
-      <div class="tx-field"><label>Transaction ID</label><input class="input" id="receive-id" autocomplete="off" placeholder="TRX-XXXXXXXXXX"></div>
+      <div class="tx-help">Вибери тип продажу. <b>MKT</b> — публічна пропозиція з ринку без PIN. <b>TRX</b> — приватний продаж, для завершення потрібен PIN.</div>
+      <div class="tx-field"><label>Тип ID</label><select class="input" id="receive-type"><option value="private">🔒 Приватний продаж · TRX</option><option value="public">👥 Публічний ринок · MKT</option></select></div>
+      <div class="tx-field"><label>ID продажу</label><input class="input" id="receive-id" autocomplete="off" placeholder="TRX-XXXXXXXXXX"></div>
       <div class="tx-actions"><button class="btn btn-primary" id="receive-find-btn">Знайти транзакцію</button></div>
       <div class="tx-result" id="receive-result"></div>
     </div>
     <div class="tx-box">
       <h3>Як це працює</h3>
-      <div class="tx-help">1. Отримай Transaction ID від продавця.<br>2. Перевір інформацію та ціну.<br>3. Натисни «Продовжити».<br>4. Введи PIN, який продавець передав тобі особисто.<br>5. Після підтвердження гроші списуються, а картка додається в інвентар.</div>
+      <div class="tx-help">Для MKT достатньо ID — PIN не потрібний. Для TRX після перевірки деталей введи PIN від продавця. Після успішної відповіді сервера баланс та інвентар оновлюються одразу.</div>
       <div class="tx-kv"><span>Твій Account ID</span><strong id="buyer-account-id">—</strong></div>
       <div class="tx-kv"><span>Баланс</span><strong id="buyer-balance">$0</strong></div>
     </div>
@@ -1085,9 +1095,9 @@ input,select,textarea,button{max-width:100%}
   <div class="tx-layout">
     <div class="tx-box">
       <h3>Скасувати транзакцію</h3>
-      <div class="tx-help">Скасувати можна тільки власну транзакцію зі статусом <b>pending</b>. Потрібні Transaction ID та той самий PIN, який ти створив. Після успіху картка повернеться в інвентар.</div>
-      <div class="tx-field"><label>Transaction ID</label><input class="input" id="cancel-id" autocomplete="off" placeholder="TRX-XXXXXXXXXX"></div>
-      <div class="tx-field"><label>PIN-код</label><input class="input" id="cancel-pin" type="password" autocomplete="off" placeholder="Твій PIN"></div>
+      <div class="tx-help">Скасувати можна тільки власну транзакцію зі статусом <b>pending</b>. Для приватного TRX потрібен PIN. Публічний MKT можна скасувати власником без PIN. Після успіху картка повернеться в інвентар.</div>
+      <div class="tx-field"><label>ID продажу</label><input class="input" id="cancel-id" autocomplete="off" placeholder="MKT-... або TRX-..."></div>
+      <div class="tx-field" id="cancel-pin-field"><label>PIN-код</label><input class="input" id="cancel-pin" type="password" autocomplete="off" placeholder="Потрібен тільки для TRX"></div>
       <div class="tx-actions"><button class="btn btn-down" id="cancel-btn">Скасувати транзакцію</button></div>
       <div class="tx-result" id="cancel-result"></div>
     </div>
@@ -1102,7 +1112,7 @@ input,select,textarea,button{max-width:100%}
     <div class="tx-box">
       <h3>Забрати виплату</h3>
       <div class="tx-help">Коли покупець завершить транзакцію, введи її Transaction ID. Система перевірить статус і нарахує тобі суму після комісії. Повторно забрати ту саму виплату неможливо.</div>
-      <div class="tx-field"><label>Transaction ID</label><input class="input" id="claim-id" autocomplete="off" placeholder="TRX-XXXXXXXXXX"></div>
+      <div class="tx-field"><label>ID продажу</label><input class="input" id="claim-id" autocomplete="off" placeholder="MKT-... або TRX-..."></div>
       <div class="tx-actions"><button class="btn btn-primary" id="claim-btn">Перевірити та забрати</button></div>
       <div class="tx-result" id="claim-result"></div>
     </div>
@@ -1869,18 +1879,29 @@ function renderCardMini(card){
 document.querySelectorAll('.tx-tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tx-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tx-pane').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('tx-'+btn.dataset.pane)?.classList.add('active');updateTransactionHeader();}));
 
 // CREATE
+const createVisibility=document.getElementById('create-visibility'),createPinField=document.getElementById('create-pin-field');
+function syncCreateVisibility(){const priv=createVisibility?.value==='private';if(createPinField)createPinField.style.display=priv?'block':'none';if(!priv&&document.getElementById('create-pin'))document.getElementById('create-pin').value='';}
+createVisibility?.addEventListener('change',syncCreateVisibility);syncCreateVisibility();
+
+const receiveType=document.getElementById('receive-type'),receiveId=document.getElementById('receive-id');
+function syncReceiveType(){if(receiveId)receiveId.placeholder=receiveType?.value==='public'?'MKT-XXXXXXXXXX':'TRX-XXXXXXXXXX';}
+receiveType?.addEventListener('change',syncReceiveType);syncReceiveType();
+const cancelIdInput=document.getElementById('cancel-id'),cancelPinField=document.getElementById('cancel-pin-field');
+function syncCancelPin(){const id=String(cancelIdInput?.value||'').trim().toUpperCase();if(cancelPinField)cancelPinField.style.display=id.startsWith('MKT-')?'none':'block';if(id.startsWith('MKT-')&&document.getElementById('cancel-pin'))document.getElementById('cancel-pin').value='';}
+cancelIdInput?.addEventListener('input',syncCancelPin);syncCancelPin();
+
 document.getElementById('create-btn').addEventListener('click',async()=>{
   const btn=document.getElementById('create-btn'), key=document.getElementById('create-card').value, price=Number(document.getElementById('create-price').value), description=document.getElementById('create-description').value.trim(), visibility=document.getElementById('create-visibility')?.value||'public', pin=document.getElementById('create-pin').value.trim(), out=document.getElementById('create-result'), acc=Account.get();
-  if(!key)return toast('Обери картку','warn'); if(!Number.isFinite(price)||price<0)return toast('Ціна не може бути від’ємною','warn'); if(pin.length<4||pin.length>12)return toast('PIN має містити 4–12 символів','warn');
+  if(!key)return toast('Обери картку','warn'); if(!Number.isFinite(price)||price<0)return toast('Ціна не може бути від’ємною','warn'); if(visibility==='private'&&(pin.length<4||pin.length>12))return toast('Для приватного продажу PIN має містити 4–12 символів','warn');
   const save=loadSave();if((save.owned?.[key]||0)<1)return toast('Цієї картки вже немає в інвентарі','warn');const card=getCardTransferPayload(key);if(!card)return toast('Не вдалося прочитати картку','lose');
   setBusy(btn,true,'Створюємо…');out.classList.remove('show');
   try{
     const r=await transactionApi('create',{sellerId:acc.id,sellerUsername:acc.username||[acc.firstName,acc.lastName].filter(Boolean).join(' ')||'Player',card,price,description,pin,visibility});
     const tx=r.transaction;
-    const latest=loadSave();if((latest.owned?.[key]||0)<1)throw new Error('Транзакцію створено на сервері, але локальної картки вже немає. Не створюй повторну транзакцію з цим ID.');
+    const latest=loadSave();if((latest.owned?.[key]||0)<1)throw new Error('Продаж створено на сервері, але локальної картки вже немає. Не створюй повторну транзакцію з цим ID.');
     latest.owned[key]-=1;if(latest.owned[key]<=0)delete latest.owned[key];latest.transactionEscrow=latest.transactionEscrow||{};latest.transactionEscrow[tx.id]={cardKey:key,createdAt:new Date().toISOString(),price:Number(tx.price||price)};addLog(latest,'trade',`Картку ${card.name} передано в транзакцію ${tx.id} за ${fmtCoins(price)}`);writeSave(latest);
-    out.innerHTML=`<div style="font-weight:800;margin-bottom:10px;color:var(--up)">✅ Транзакцію створено</div>${renderCardMini(card)}<div style="margin-top:12px" class="tx-kv"><span>Transaction ID</span><strong class="tx-code">${escapeHtml(tx.id)}</strong></div><div class="tx-kv"><span>PIN</span><strong class="tx-code">${escapeHtml(pin)}</strong></div><div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(price)}</strong></div><div class="tx-kv"><span>Видимість</span><strong>${visibility==='public'?'👥 Public':'🔒 Private'}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('pending')}</strong></div><div class="tx-actions"><button class="btn btn-ghost tx-copy" onclick="navigator.clipboard?.writeText('${escapeHtml(tx.id)}');toast('ID скопійовано','win')">Копіювати ID</button></div><div class="tx-note">${visibility==='public'?'Транзакція опублікована в Магазині користувачів. PIN у магазині не показується.':'Передай покупцю Transaction ID та PIN особисто.'} Картка вже вилучена з твого інвентарю й знаходиться в транзакції.</div>`;out.classList.add('show');
-    document.getElementById('create-pin').value='';renderCreateCards();updateTransactionHeader();toast('Транзакцію створено','win');
+    out.innerHTML=`<div style="font-weight:800;margin-bottom:10px;color:var(--up)">✅ Продаж створено</div>${renderCardMini(card)}<div style="margin-top:12px" class="tx-kv"><span>ID продажу</span><strong class="tx-code">${escapeHtml(tx.id)}</strong></div>${visibility==='private'?`<div class="tx-kv"><span>PIN</span><strong class="tx-code">${escapeHtml(pin)}</strong></div>`:''}<div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(price)}</strong></div><div class="tx-kv"><span>Видимість</span><strong>${visibility==='public'?'👥 Public':'🔒 Private'}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('pending')}</strong></div><div class="tx-actions"><button class="btn btn-ghost tx-copy" onclick="navigator.clipboard?.writeText('${escapeHtml(tx.id)}');toast('ID скопійовано','win')">Копіювати ID</button></div><div class="tx-note">${visibility==='public'?'Транзакція опублікована в Магазині користувачів. PIN у магазині не показується.':'Передай покупцю Transaction ID та PIN особисто.'} Картка вже вилучена з твого інвентарю й знаходиться в транзакції.</div>`;out.classList.add('show');
+    document.getElementById('create-pin').value='';renderCreateCards();updateTransactionHeader();toast('Продаж створено','win');
   }catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');toast(e.message,'lose');}
   finally{setBusy(btn,false);}
 });
@@ -1889,16 +1910,16 @@ document.getElementById('create-btn').addEventListener('click',async()=>{
 let receiveTx=null;
 document.getElementById('receive-find-btn').addEventListener('click',async()=>{
   const btn=document.getElementById('receive-find-btn'),id=normalizeTxId(document.getElementById('receive-id').value),out=document.getElementById('receive-result');if(!id)return toast('Введи Transaction ID','warn');setBusy(btn,true,'Шукаємо…');out.classList.remove('show');receiveTx=null;
-  try{const r=await transactionApi('lookup',{transactionId:id});receiveTx=r.transaction;const t=r.transaction;const can=t.status==='pending';out.innerHTML=`${renderCardMini(t.card)}<div style="margin-top:12px"><div class="tx-kv"><span>Transaction ID</span><strong>${escapeHtml(t.id)}</strong></div><div class="tx-kv"><span>Продавець</span><strong>${escapeHtml(t.sellerUsername||'—')} · ${escapeHtml(t.sellerId)}</strong></div><div class="tx-kv"><span>Ціна</span><strong style="color:var(--gold)">${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Опис</span><strong>${escapeHtml(t.description||'—')}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div></div>${can?`<div class="tx-actions"><button class="btn btn-primary" id="receive-continue-btn">Продовжити</button></div><div class="tx-pin-step" id="receive-pin-step"><div class="tx-field"><label>PIN-код</label><input class="input" id="receive-pin" type="password" autocomplete="off" placeholder="PIN від продавця"></div><div class="tx-actions"><button class="btn btn-primary" id="receive-complete-btn">Придбати за ${fmtCoins(t.price)}</button></div></div>`:'<div class="tx-note">Ця транзакція вже не доступна для отримання.</div>'}`;out.classList.add('show');if(can){document.getElementById('receive-continue-btn').onclick=()=>document.getElementById('receive-pin-step').classList.add('show');document.getElementById('receive-complete-btn').onclick=completeReceive;}}catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');}finally{setBusy(btn,false);}
+  try{const r=await transactionApi('lookup',{transactionId:id});receiveTx=r.transaction;const t=r.transaction;const can=t.status==='pending';const expected=receiveType?.value||'private',actual=t.visibility==='public'?'public':'private';if(expected!==actual)throw new Error(actual==='public'?'Це MKT-публічний продаж. Обери тип «Публічний ринок».':'Це приватний TRX-продаж. Обери тип «Приватний продаж».');const publicSale=actual==='public';out.innerHTML=`${renderCardMini(t.card)}<div style="margin-top:12px"><div class="tx-kv"><span>ID продажу</span><strong>${escapeHtml(t.id)}</strong></div><div class="tx-kv"><span>Тип</span><strong>${publicSale?'👥 MKT · Public':'🔒 TRX · Private'}</strong></div><div class="tx-kv"><span>Продавець</span><strong>${escapeHtml(t.sellerUsername||'—')} · ${escapeHtml(t.sellerId)}</strong></div><div class="tx-kv"><span>Ціна</span><strong style="color:var(--gold)">${Number(t.price)===0?'FREE':fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Опис</span><strong>${escapeHtml(t.description||'—')}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div></div>${can?publicSale?`<div class="tx-actions"><button class="btn btn-primary" id="receive-complete-btn">${Number(t.price)===0?'Отримати безкоштовно':'Придбати за '+fmtCoins(t.price)}</button></div><div class="tx-note">Для MKT-продажу PIN не потрібний.</div>`:`<div class="tx-actions"><button class="btn btn-primary" id="receive-continue-btn">Продовжити</button></div><div class="tx-pin-step" id="receive-pin-step"><div class="tx-field"><label>PIN-код</label><input class="input" id="receive-pin" type="password" autocomplete="off" placeholder="PIN від продавця"></div><div class="tx-actions"><button class="btn btn-primary" id="receive-complete-btn">${Number(t.price)===0?'Отримати безкоштовно':'Придбати за '+fmtCoins(t.price)}</button></div></div>`:'<div class="tx-note">Цей продаж уже не доступний для отримання.</div>'}`;out.classList.add('show');if(can){if(publicSale){document.getElementById('receive-complete-btn').onclick=completeReceive;}else{document.getElementById('receive-continue-btn').onclick=()=>document.getElementById('receive-pin-step').classList.add('show');document.getElementById('receive-complete-btn').onclick=completeReceive;}}}catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');}finally{setBusy(btn,false);}
 });
 
 async function applyCompletedTransaction(t, cardOverride=null){
-  const acc=Account.get(),save=loadSave(),applied=txApplied(save);if(applied[t.id])return false;if(String(t.buyerId||acc.id)!==String(acc.id))throw new Error('Ця транзакція завершена іншим покупцем');const price=Number(t.price||0);if(save.coins<price)throw new Error('Недостатньо коштів для цієї транзакції');const card=cardOverride||t.card;const key=addTransferredCard(save,card);save.coins-=price;save.totalSpent=(save.totalSpent||0)+price;save.cardsBought=(save.cardsBought||0)+1;applied[t.id]={at:new Date().toISOString(),cardKey:key,price};addLog(save,'buy',`Отримано картку ${card?.name||key} через ${t.id} за ${fmtCoins(price)}`);writeSave(save);updateTransactionHeader();return true;
+  const acc=Account.get(),save=loadSave(),applied=txApplied(save);if(applied[t.id])return false;if(String(t.buyerId||acc.id)!==String(acc.id))throw new Error('Ця транзакція завершена іншим покупцем');const price=Number(t.price||0);if(save.coins<price)throw new Error('Недостатньо коштів для цієї транзакції');const card=cardOverride||t.card;const key=addTransferredCard(save,card);save.coins-=price;save.totalSpent=(save.totalSpent||0)+price;save.cardsBought=(save.cardsBought||0)+1;applied[t.id]={at:new Date().toISOString(),cardKey:key,price};addLog(save,'buy',`Отримано картку ${card?.name||key} через ${t.id} за ${fmtCoins(price)}`);writeSave(save);updateTransactionHeader();updateCoinsDisplay();return true;
 }
 
 async function completeReceive(){
-  if(!receiveTx)return;const btn=document.getElementById('receive-complete-btn'),pin=document.getElementById('receive-pin').value.trim(),acc=Account.get();if(!pin)return toast('Введи PIN','warn');const before=loadSave();if(before.coins<Number(receiveTx.price))return toast('Недостатньо коштів','lose');if(String(receiveTx.sellerId)===String(acc.id))return toast('Не можна отримати власну транзакцію','warn');setBusy(btn,true,'Підтверджуємо…');
-  try{const r=await transactionApi('complete',{transactionId:receiveTx.id,buyerId:acc.id,buyerUsername:acc.username||[acc.firstName,acc.lastName].filter(Boolean).join(' ')||'Player',pin});const t={...receiveTx,status:'completed',buyerId:acc.id,price:r.price??receiveTx.price,card:r.card||receiveTx.card};await applyCompletedTransaction(t,r.card||receiveTx.card);receiveTx=t;document.getElementById('receive-result').innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію завершено</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Сплачено</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('completed')}</strong></div><div class="tx-note">Картку додано у твій інвентар.</div>`;renderCreateCards();toast('Картку отримано','win');}
+  if(!receiveTx)return;const btn=document.getElementById('receive-complete-btn'),publicSale=receiveTx.visibility==='public',pin=document.getElementById('receive-pin')?.value.trim()||'',acc=Account.get();if(!publicSale&&!pin)return toast('Введи PIN','warn');const before=loadSave();if(before.coins<Number(receiveTx.price))return toast('Недостатньо коштів','lose');if(String(receiveTx.sellerId)===String(acc.id))return toast('Не можна отримати власну транзакцію','warn');setBusy(btn,true,'Підтверджуємо…');
+  try{const r=await transactionApi(publicSale?'completePublic':'complete',{transactionId:receiveTx.id,buyerId:acc.id,buyerUsername:acc.username||[acc.firstName,acc.lastName].filter(Boolean).join(' ')||'Player',...(publicSale?{}:{pin})});const t={...receiveTx,status:'completed',buyerId:acc.id,price:r.price??receiveTx.price,card:r.card||receiveTx.card};await applyCompletedTransaction(t,r.card||receiveTx.card);receiveTx=t;document.getElementById('receive-result').innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію завершено</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Сплачено</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('completed')}</strong></div><div class="tx-note">Картку додано у твій інвентар.</div>`;renderCreateCards();toast('Картку отримано','win');}
   catch(e){
     // Recovery: server may have completed before the browser lost the response.
     try{const look=await transactionApi('lookup',{transactionId:receiveTx.id});const t=look.transaction;if(t.status==='completed'&&String(t.buyerId)===String(acc.id)){const applied=await applyCompletedTransaction(t,t.card);document.getElementById('receive-result').innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію завершено</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Сплачено</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge('completed')}</strong></div><div class="tx-note">${applied?'Картку додано у твій інвентар.':'Ця транзакція вже була зарахована раніше.'}</div>`;receiveTx=t;renderCreateCards();toast('Транзакцію синхронізовано','win');return;}}catch(_){}
@@ -1908,11 +1929,11 @@ async function completeReceive(){
 
 // CANCEL
 document.getElementById('cancel-btn').addEventListener('click',async()=>{
-  const btn=document.getElementById('cancel-btn'),id=normalizeTxId(document.getElementById('cancel-id').value),pin=document.getElementById('cancel-pin').value.trim(),out=document.getElementById('cancel-result'),acc=Account.get();if(!id)return toast('Введи Transaction ID','warn');if(!pin)return toast('Введи PIN','warn');setBusy(btn,true,'Скасовуємо…');out.classList.remove('show');
+  const btn=document.getElementById('cancel-btn'),id=normalizeTxId(document.getElementById('cancel-id').value),pin=document.getElementById('cancel-pin').value.trim(),out=document.getElementById('cancel-result'),acc=Account.get();if(!id)return toast('Введи ID продажу','warn');if(id.startsWith('TRX-')&&!pin)return toast('Для приватного TRX введи PIN','warn');setBusy(btn,true,'Скасовуємо…');out.classList.remove('show');
   const applyCancel=(t,card)=>{const save=loadSave(),done=txCanceled(save);if(done[id])return false;const key=addTransferredCard(save,card||t.card);done[id]={at:new Date().toISOString(),cardKey:key};if(save.transactionEscrow)delete save.transactionEscrow[id];addLog(save,'trade',`Транзакцію ${id} скасовано — картку повернено`);writeSave(save);return true;};
-  try{const r=await transactionApi('cancel',{transactionId:id,sellerId:acc.id,pin});applyCancel({id},r.card);out.innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакцію скасовано</div>${renderCardMini(r.card)}<div class="tx-kv"><span>Статус</span><strong>${statusBadge('canceled')}</strong></div><div class="tx-note">Картку повернено у твій інвентар.</div>`;out.classList.add('show');document.getElementById('cancel-pin').value='';renderCreateCards();updateTransactionHeader();toast('Картку повернено','win');}
+  try{const r=await transactionApi('cancel',{transactionId:id,sellerId:acc.id,pin});applyCancel({id},r.card);out.innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Продаж скасовано</div>${renderCardMini(r.card)}<div class="tx-kv"><span>Статус</span><strong>${statusBadge('canceled')}</strong></div><div class="tx-note">Картку повернено у твій інвентар.</div>`;out.classList.add('show');document.getElementById('cancel-pin').value='';renderCreateCards();updateTransactionHeader();toast('Картку повернено','win');}
   catch(e){
-    try{const look=await transactionApi('lookup',{transactionId:id});const t=look.transaction;if(t.status==='canceled'&&String(t.sellerId)===String(acc.id)){const was=applyCancel(t,t.card);out.innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Транзакція скасована</div>${renderCardMini(t.card)}<div class="tx-note">${was?'Картку повернено у твій інвентар.':'Повернення вже було зараховано раніше.'}</div>`;out.classList.add('show');renderCreateCards();updateTransactionHeader();return;}}catch(_){}
+    try{const look=await transactionApi('lookup',{transactionId:id});const t=look.transaction;if(t.status==='canceled'&&String(t.sellerId)===String(acc.id)){const was=applyCancel(t,t.card);out.innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Продаж скасовано</div>${renderCardMini(t.card)}<div class="tx-note">${was?'Картку повернено у твій інвентар.':'Повернення вже було зараховано раніше.'}</div>`;out.classList.add('show');renderCreateCards();updateTransactionHeader();return;}}catch(_){}
     out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');toast(e.message,'lose');
   }finally{setBusy(btn,false);}
 });
@@ -1940,7 +1961,7 @@ document.getElementById('claim-btn').addEventListener('click',async()=>{
     }else{
       amount=Number(t.sellerAmount||0);
     }
-    const latest=loadSave();if(!txClaims(latest)[id]){txClaims(latest)[id]={at:new Date().toISOString(),amount,recovered:!!t.sellerClaimed};latest.coins+=amount;latest.totalEarned=(latest.totalEarned||0)+amount;latest.cardsSold=(latest.cardsSold||0)+1;if(latest.transactionEscrow)delete latest.transactionEscrow[id];addLog(latest,'sell',`${t.sellerClaimed?'Відновлено':'Отримано'} виплату за ${id}: ${fmtCoins(amount)}`);writeSave(latest);}
+    const latest=loadSave();if(!txClaims(latest)[id]){txClaims(latest)[id]={at:new Date().toISOString(),amount,recovered:!!t.sellerClaimed};latest.coins+=amount;latest.totalEarned=(latest.totalEarned||0)+amount;latest.cardsSold=(latest.cardsSold||0)+1;if(latest.transactionEscrow)delete latest.transactionEscrow[id];addLog(latest,'sell',`${t.sellerClaimed?'Відновлено':'Отримано'} виплату за ${id}: ${fmtCoins(amount)}`);writeSave(latest);updateCoinsDisplay();}
     t=(await transactionApi('lookup',{transactionId:id})).transaction;
     out.innerHTML=`<div style="font-weight:800;color:var(--up);margin-bottom:10px">✅ Виплату отримано</div>${renderCardMini(t.card)}<div class="tx-kv"><span>Ціна</span><strong>${fmtCoins(t.price)}</strong></div><div class="tx-kv"><span>Комісія</span><strong>${escapeHtml(t.feePercent)}% (${fmtCoins(t.feeAmount)})</strong></div><div class="tx-kv"><span>Нараховано</span><strong style="color:var(--up)">${fmtCoins(amount)}</strong></div><div class="tx-kv"><span>Статус</span><strong>${statusBadge(t.status)}</strong></div>`;out.classList.add('show');updateTransactionHeader();renderCreateCards();toast('Виплату зараховано','win');
   }catch(e){out.innerHTML=`<div style="color:var(--down);font-weight:700">❌ ${escapeHtml(e.message)}</div>`;out.classList.add('show');toast(e.message,'lose');}finally{setBusy(btn,false);}
