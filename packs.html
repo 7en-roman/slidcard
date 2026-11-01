@@ -574,7 +574,7 @@ input, select, textarea { font-family: inherit; }
   font-weight: 700;
 }
 .currency::before {
-  content: '$';
+  content: 'S$';
   font-size: .8em;
   opacity: .7;
 }
@@ -829,7 +829,32 @@ input, select, textarea { font-family: inherit; }
 .pack-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
 .pack-modal-balance{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);font-family:var(--font-mono);font-size:11px;font-weight:800;color:var(--gold);white-space:nowrap}
 .pack-modal-balance-label{font-family:var(--font-ui);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
-.pack-reveal-area{min-height:250px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;padding:14px;border-radius:var(--r-xl);background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--border);}
+.pack-reveal-area{
+  --reveal-cell-w:140px;
+  --reveal-gap:12px;
+  min-height:250px;
+  max-height:min(48dvh,440px);
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(var(--reveal-cell-w),var(--reveal-cell-w)));
+  gap:var(--reveal-gap);
+  justify-content:center;
+  align-content:start;
+  align-items:start;
+  padding:14px;
+  border-radius:var(--r-xl);
+  background:linear-gradient(180deg,var(--surface2),var(--surface));
+  border:1px solid var(--border);
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable both-edges;
+}
+.pack-reveal-area:has(.pack-open-placeholder){align-content:center;}
+.pack-open-placeholder{grid-column:1/-1;}
+.pack-reveal-cell{position:relative;display:block;justify-self:center;align-self:start;overflow:visible;}
+.pack-reveal-cell>.pack-reveal-wrap{margin:0!important;transform-origin:top left;}
+.pack-reveal-area::-webkit-scrollbar{width:7px;}
+.pack-reveal-area::-webkit-scrollbar-thumb{background:var(--border2);border-radius:999px;}
 .pack-open-placeholder{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--text3);font-size:12px;text-align:center;padding:24px;}
 .pack-open-placeholder-icon{font-size:54px;filter:drop-shadow(0 4px 24px rgba(0,212,255,.2));}
 .pack-open-summary{min-height:0;display:flex;gap:5px;flex-wrap:wrap;justify-content:center;align-items:center}.pack-open-summary:empty{display:none}
@@ -839,7 +864,7 @@ input, select, textarea { font-family: inherit; }
   .pack-open-modal{width:100%!important;max-width:100%!important;}
   .pack-size-panel{align-items:flex-start;flex-direction:column}
   .pack-title-row{align-items:flex-start}.pack-modal-balance{justify-content:flex-start}
-  .pack-reveal-area{min-height:220px;padding:10px;}
+  .pack-reveal-area{min-height:220px;max-height:min(46dvh,390px);padding:10px;--reveal-gap:8px;}
   .pack-open-actions{display:flex!important;justify-content:center!important;flex-wrap:wrap;}
   .pack-open-actions .btn{width:min(100%,280px);}
 }
@@ -1122,7 +1147,7 @@ input,select,textarea,button{max-width:100%}
 <script src="theme-system.js"></script>
 <script src="card-system.js"></script>
 <style>
-/* v2.1 mobile sidebar reliability */
+/* v3.0 mobile sidebar reliability */
 @media (max-width:760px){
   .sidebar{overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
   .sidebar>div:nth-child(2){flex:0 0 auto!important;}
@@ -1130,11 +1155,12 @@ input,select,textarea,button{max-width:100%}
   .sidebar-bottom{position:relative!important;bottom:auto!important;flex:0 0 auto!important;background:inherit;z-index:2;}
 }
 </style>
+<link rel="stylesheet" href="slidcard-v3.css">
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.1.1</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item active" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v3.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item active" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
-<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Паки</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Паки</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">S$</div><span class="balance-amount" id="tb-coins">S$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
 <div class="page-header"><div class="page-title">Паки карток</div><div class="page-sub">Обери вид спорту, сезон і пак. Кількість карток обирається перед відкриттям.</div></div>
 <button class="mobile-filter-toggle" type="button" onclick="toggleMobileFilters('packs-filters',this)"><span class="hamb">☰</span> Категорії та роки</button>
@@ -1153,7 +1179,7 @@ input,select,textarea,button{max-width:100%}
       <div>
         <div class="pack-title-row">
           <div class="modal-title" id="op-title">Відкрити пак</div>
-          <div class="pack-modal-balance"><span class="pack-modal-balance-label">Доступний баланс</span><span id="pack-modal-balance">$0.00</span></div>
+          <div class="pack-modal-balance"><span class="pack-modal-balance-label">Доступний баланс</span><span id="pack-modal-balance">S$0.00</span></div>
         </div>
         <div id="op-desc" style="font-size:11px;color:var(--text3);margin-top:3px"></div>
       </div>
@@ -1180,10 +1206,10 @@ input,select,textarea,button{max-width:100%}
 </div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.1.1 — shared.js
+// SlidCard v3.0 — shared.js
 
 const CX = {
-  VERSION:    "2.1.1",
+  VERSION:    "3.0",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1828,7 +1854,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "S$"+(v/1000000).toFixed(2)+"M";return "S$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};
@@ -1906,6 +1932,9 @@ function renderPacks(){
 function renderAll(){renderSeasons();renderPacks();if(selectedPack&&document.getElementById("modal-pack-open")?.classList.contains("open")){renderSizes();refreshOpenBtn();}}
 function resetPackReveal(){
   const reveal=document.getElementById("cards-reveal");if(!reveal)return;
+  reveal.style.removeProperty("--reveal-cell-w");
+  reveal.style.removeProperty("--reveal-gap");
+  delete reveal.dataset.count;
   reveal.innerHTML=`<div class="pack-open-placeholder"><div class="pack-open-placeholder-icon">📦</div><div>Обрано ${curSize} карт. Натисни «Відкрити пак».</div></div>`;
   document.getElementById("op-summary").innerHTML="";
   document.getElementById("btn-again").style.display="none";
@@ -1925,15 +1954,39 @@ function refreshOpenBtn(){
   const btn=document.getElementById("btn-open");btn.disabled=!canAfford;
   btn.textContent=selectedPack?(canAfford?`📦 Відкрити ${curSize} карт. — ${fmtCoins(price)}`:"❌ Недостатньо коштів"):"Обери пак";
 }
+function getPackRevealLayout(count,reveal){
+  const baseW=140,baseH=196;
+  const viewport=window.innerWidth||1024;
+  const available=Math.max(220,(reveal?.clientWidth||760)-20);
+  let targetCols;
+  if(count<=2)targetCols=count;
+  else if(count<=4)targetCols=Math.min(count,viewport<=520?2:4);
+  else targetCols=viewport<=520?3:(viewport<=760?4:5);
+  const gap=viewport<=640?8:12;
+  const fitted=(available-gap*Math.max(0,targetCols-1))/(baseW*Math.max(1,targetCols));
+  const minScale=viewport<=360?0.60:0.66;
+  const scale=Math.max(minScale,Math.min(1,fitted));
+  return{baseW,baseH,scale,cellW:Math.round(baseW*scale),cellH:Math.round(baseH*scale),gap};
+}
+
 document.getElementById("btn-open").addEventListener("click",async()=>{
   if(!selectedPack||isOpening)return;const save=loadSave();const results=openPack(selectedPack,save,curSize);
   if(!results){toast("❌ Недостатньо коштів!","lose");return;}
   isOpening=true;document.getElementById("btn-open").disabled=true;document.getElementById("btn-again").style.display="none";
   const reveal=document.getElementById("cards-reveal");reveal.innerHTML="";updateCoinsDisplay();
+  const layout=getPackRevealLayout(results.length,reveal);
+  reveal.style.setProperty("--reveal-cell-w",`${layout.cellW}px`);
+  reveal.style.setProperty("--reveal-gap",`${layout.gap}px`);
+  reveal.dataset.count=String(results.length);
   const save2=loadSave();
   for(const{card,isNew}of results){
-    const W=140,H=196;const wrap=document.createElement("div");
-    wrap.className="modal-card-flip pack-reveal-wrap";wrap.style.cssText=`width:${W}px;height:${H}px`;
+    const cell=document.createElement("div");
+    cell.className="pack-reveal-cell";
+    cell.style.width=`${layout.cellW}px`;
+    cell.style.height=`${layout.cellH}px`;
+    const wrap=document.createElement("div");
+    wrap.className="modal-card-flip pack-reveal-wrap";
+    wrap.style.cssText=`width:${layout.baseW}px;height:${layout.baseH}px;transform:scale(${layout.scale})`;
     wrap.innerHTML=`${isNew?'<div class="pack-new-badge">NEW</div>':''}<div class="modal-card-inner" style="width:140px;height:196px">
       <div class="modal-card-face" style="width:140px;height:196px">
         <div class="sport-card rarity-${card.rarity}" style="width:140px;height:196px">
@@ -1952,7 +2005,8 @@ document.getElementById("btn-open").addEventListener("click",async()=>{
       </div>
       <div class="modal-card-face" style="transform:rotateY(180deg);border-radius:12px;background:repeating-linear-gradient(135deg,#0C0F14 0 8px,#111520 8px 16px)"></div>
     </div>`;
-    reveal.appendChild(wrap);
+    cell.appendChild(wrap);
+    reveal.appendChild(cell);
     const inner=wrap.querySelector(".modal-card-inner");
     inner.style.transform="rotateY(180deg)";
     inner.style.transition="none";
@@ -1996,4 +2050,5 @@ renderAll();
 
 </script>
 <script>function toggleMobileFilters(id,btn){const p=document.getElementById(id);if(!p)return;p.classList.toggle('open');if(btn)btn.setAttribute('aria-expanded',p.classList.contains('open')?'true':'false');}</script>
+<script src="slidcard-v3.js"></script>
 </body></html>

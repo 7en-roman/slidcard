@@ -574,7 +574,7 @@ input, select, textarea { font-family: inherit; }
   font-weight: 700;
 }
 .currency::before {
-  content: '$';
+  content: 'S$';
   font-size: .8em;
   opacity: .7;
 }
@@ -1030,7 +1030,7 @@ input,select,textarea,button{max-width:100%}
 <script src="theme-system.js"></script>
 <script src="card-system.js"></script>
 <style>
-/* v2.1 mobile sidebar reliability */
+/* v3.0 mobile sidebar reliability */
 @media (max-width:760px){
   .sidebar{overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
   .sidebar>div:nth-child(2){flex:0 0 auto!important;}
@@ -1038,11 +1038,12 @@ input,select,textarea,button{max-width:100%}
   .sidebar-bottom{position:relative!important;bottom:auto!important;flex:0 0 auto!important;background:inherit;z-index:2;}
 }
 </style>
+<link rel="stylesheet" href="slidcard-v3.css">
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.1.1</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v3.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
-<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Акаунт</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Акаунт</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">S$</div><span class="balance-amount" id="tb-coins">S$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
 
 <div class="page-header row-between">
@@ -1071,7 +1072,7 @@ input,select,textarea,button{max-width:100%}
 <!-- Main grid -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
   <div class="card">
-    <div class="card-header"><div class="card-title">🏆 Найкращі картки</div><div id="coll-val" style="font-size:11px;color:var(--gold)">$0.00</div></div>
+    <div class="card-header"><div class="card-title">🏆 Найкращі картки</div><div id="coll-val" style="font-size:11px;color:var(--gold)">S$0.00</div></div>
     <div style="padding:16px;display:flex;flex-wrap:wrap;gap:10px;min-height:80px" id="best-cards"></div>
   </div>
   <div class="card">
@@ -1146,10 +1147,10 @@ input,select,textarea,button{max-width:100%}
 </div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.1.1 — shared.js
+// SlidCard v3.0 — shared.js
 
 const CX = {
-  VERSION:    "2.1.1",
+  VERSION:    "3.0",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1794,7 +1795,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "S$"+(v/1000000).toFixed(2)+"M";return "S$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};
@@ -1965,9 +1966,31 @@ async function exportAccountFile(){
   }
 }
 
-function doDeleteAccount(){
-  if(!confirm("Видалити акаунт назавжди?"))return;
-  Account.delete();Store.remove(CX.SAVE_KEY);location.href="index.html";
+async function doDeleteAccount(){
+  const acc=Account.get();
+  if(!acc){toast("Акаунт не знайдено","down");return;}
+  if(!confirm("ВИДАЛИТИ АКАУНТ НАЗАВЖДИ?\n\nБуде видалено акаунт із Google Sheets, усі пов’язані приватні/ринкові транзакції, обміни, отримані нагороди, локальні S$ та всі картки. Відновити це буде неможливо."))return;
+  const password=prompt("Для підтвердження введіть пароль акаунта:");
+  if(password===null)return;
+  if(!password){toast("Введіть пароль","down");return;}
+  const phrase=prompt('Останнє підтвердження. Введіть слово ВИДАЛИТИ:');
+  if(String(phrase||'').trim().toUpperCase()!=="ВИДАЛИТИ"){toast("Видалення скасовано","down");return;}
+
+  try{
+    const api=window.SlidV3?.api;
+    if(typeof api!=="function")throw new Error("Серверний модуль ще не завантажився");
+    await api("deleteAccount",{username:acc.username,password});
+
+    Account.delete();
+    Store.remove(CX.SAVE_KEY);
+    try{sessionStorage.removeItem("slidcard_v3_authenticated");}catch(e){}
+    try{sessionStorage.removeItem("slidcard_admin_token");}catch(e){}
+    alert("Акаунт і всі пов’язані дані видалено назавжди.");
+    location.href="index.html";
+  }catch(e){
+    console.error(e);
+    toast(e.message||"Не вдалося видалити акаунт","down");
+  }
 }
 function doResetGame(){
   if(!confirm("Почати з початку? Всі картки і монети буде скинуто!"))return;
@@ -2047,7 +2070,7 @@ render();
       </div>
 
       <div style="border-top:1px solid var(--border);padding-top:10px">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Видаляє акаунт і всі дані назавжди. Цю дію неможливо скасувати.</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Повне видалення: акаунт із Google Sheets, пов’язані транзакції/обміни/нагороди, локальні S$ і всі картки. Експортовані раніше .slidcard-файли на вашому пристрої сайт фізично видалити не може.</div>
         <button class="btn btn-block" style="background:rgba(255,40,40,.1);color:#FF3232;border:1px solid rgba(255,40,40,.2)" onclick="doDeleteAccount()">🗑️ Видалити акаунт</button>
       </div>
 
@@ -2079,4 +2102,5 @@ render();
 })();
 
 </script>
+<script src="slidcard-v3.js"></script>
 </body></html>

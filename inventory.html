@@ -574,7 +574,7 @@ input, select, textarea { font-family: inherit; }
   font-weight: 700;
 }
 .currency::before {
-  content: '$';
+  content: 'S$';
   font-size: .8em;
   opacity: .7;
 }
@@ -1070,7 +1070,7 @@ input,select,textarea,button{max-width:100%}
 <script src="theme-system.js"></script>
 <script src="card-system.js"></script>
 <style>
-/* v2.1 mobile sidebar reliability */
+/* v3.0 mobile sidebar reliability */
 @media (max-width:760px){
   .sidebar{overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
   .sidebar>div:nth-child(2){flex:0 0 auto!important;}
@@ -1087,11 +1087,12 @@ input,select,textarea,button{max-width:100%}
 #modal-market-listing .tx-kv span{color:var(--text3)}
 #modal-market-listing .tx-kv strong{text-align:right}
 </style>
+<link rel="stylesheet" href="slidcard-v3.css">
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.1.1</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item active" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v3.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item active" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
-<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Інвентар</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Інвентар</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">S$</div><span class="balance-amount" id="tb-coins">S$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
 <div class="page-header row-between">
   <div>
@@ -1145,12 +1146,12 @@ input,select,textarea,button{max-width:100%}
       <div class="modal-close" onclick="closeModal('modal-market-listing')">✕</div>
     </div>
     <div class="modal-body">
-      <div class="tx-kv"><span>Оригінальна ринкова ціна</span><strong id="ml-market-price" style="color:var(--cyan)">$0.00</strong></div>
+      <div class="tx-kv"><span>Оригінальна ринкова ціна</span><strong id="ml-market-price" style="color:var(--cyan)">S$0.00</strong></div>
       <div style="margin-top:14px"><label style="display:block;font-size:10px;font-weight:800;color:var(--text3);margin-bottom:6px">ЦІНА ЗАЯВКИ</label><input class="input" id="ml-price" type="number" min="0" step="0.01"></div>
       <div style="margin-top:12px"><label style="display:block;font-size:10px;font-weight:800;color:var(--text3);margin-bottom:6px">ОПИС (НЕОБОВ'ЯЗКОВО)</label><textarea class="input" id="ml-description" rows="3" maxlength="300" placeholder="Короткий опис для покупця"></textarea></div>
       <div style="margin-top:14px;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface2)">
         <div class="tx-kv"><span>Комісія User Market</span><strong>5%</strong></div>
-        <div class="tx-kv"><span>Отримаєш після продажу</span><strong id="ml-net" style="color:var(--up)">$0.00</strong></div>
+        <div class="tx-kv"><span>Отримаєш після продажу</span><strong id="ml-net" style="color:var(--up)">S$0.00</strong></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -1161,10 +1162,10 @@ input,select,textarea,button{max-width:100%}
 </div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.1.1 — shared.js
+// SlidCard v3.0 — shared.js
 
 const CX = {
-  VERSION:    "2.1.1",
+  VERSION:    "3.0",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1809,7 +1810,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "S$"+(v/1000000).toFixed(2)+"M";return "S$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};
@@ -1909,7 +1910,7 @@ function instantSellFromInventory(key){const save=loadSave();if((save.owned?.[ke
 function updateListingNet(){const price=Math.max(0,Number(document.getElementById('ml-price')?.value||0)),fee=Math.round(price*.05*100)/100,net=Math.max(0,Math.round((price-fee)*100)/100);const el=document.getElementById('ml-net');if(el)el.textContent=fmtCoins(net);}
 function openMarketListing(key){const save=loadSave(),parsed=parseCardKey(key),card=CARD_BY_ID[parsed.id]||CARD_BY_ID[key];if(!card||!(save.owned?.[key]>0))return toast('Цієї картки немає в інвентарі','warn');marketListingKey=key;const market=getCardPrice(save,key);document.getElementById('ml-title').textContent='User Market · '+card.name;document.getElementById('ml-market-price').textContent=fmtCoins(market);document.getElementById('ml-price').value=Number(market).toFixed(2);document.getElementById('ml-description').value='';updateListingNet();openModal('modal-market-listing');}
 document.getElementById('ml-price')?.addEventListener('input',updateListingNet);
-document.getElementById('ml-create')?.addEventListener('click',async()=>{const btn=document.getElementById('ml-create'),key=marketListingKey,acc=Account.get(),save=loadSave();if(!key||!acc)return;if((save.owned?.[key]||0)<1)return toast('Цієї картки вже немає в інвентарі','warn');const price=Math.round(Number(document.getElementById('ml-price').value)*100)/100,description=document.getElementById('ml-description').value.trim(),marketPrice=getCardPrice(save,key);if(!Number.isFinite(price)||price<0)return toast('Вкажи коректну ціну','warn');const card=inventoryTransferPayload(key,marketPrice);if(!card)return toast('Не вдалося прочитати картку','lose');const old=btn.textContent;btn.disabled=true;btn.textContent='Створюємо…';try{const r=await inventoryTxApi('create',{sellerId:acc.id,sellerUsername:acc.username||[acc.firstName,acc.lastName].filter(Boolean).join(' ')||'Player',card,price,description,pin:'',visibility:'public'}),tx=r.transaction,latest=loadSave();if((latest.owned?.[key]||0)<1)throw new Error('Заявку створено на сервері, але локальної картки вже немає');latest.owned[key]-=1;if(latest.owned[key]<=0)delete latest.owned[key];latest.transactionEscrow=latest.transactionEscrow||{};latest.transactionEscrow[tx.id]={cardKey:key,createdAt:new Date().toISOString(),price:Number(tx.price||price),marketPrice};addLog(latest,'trade',`Картку ${card.name} розміщено в User Market: ${tx.id} за ${fmtCoins(price)}`);writeSave(latest);closeModal('modal-market-listing');closeModal('modal-card');render();toast('✅ Заявку '+tx.id+' створено без ручного введення ID','win');}catch(e){toast(e.message,'lose');}finally{btn.disabled=false;btn.textContent=old;}});
+document.getElementById('ml-create')?.addEventListener('click',async()=>{const btn=document.getElementById('ml-create'),key=marketListingKey,acc=Account.get(),save=loadSave();if(!key||!acc)return;if((save.owned?.[key]||0)<1)return toast('Цієї картки вже немає в інвентарі','warn');const price=Math.round(Number(document.getElementById('ml-price').value)*100)/100,description=document.getElementById('ml-description').value.trim(),marketPrice=getCardPrice(save,key);if(!Number.isFinite(price)||price<0)return toast('Вкажи коректну ціну','warn');const card=inventoryTransferPayload(key,marketPrice);if(!card)return toast('Не вдалося прочитати картку','lose');const old=btn.textContent;btn.disabled=true;btn.textContent='Створюємо…';try{const r=await inventoryTxApi('create',{sellerId:acc.id,sellerUsername:acc.username||[acc.firstName,acc.lastName].filter(Boolean).join(' ')||'Player',card,price,description,pin:'',visibility:'public'}),tx=r.transaction,latest=loadSave();if((latest.owned?.[key]||0)<1)throw new Error('Заявку створено на сервері, але локальної картки вже немає');latest.owned[key]-=1;if(latest.owned[key]<=0)delete latest.owned[key];latest.transactionEscrow=latest.transactionEscrow||{};latest.transactionEscrow[tx.id]={cardKey:key,createdAt:new Date().toISOString(),price:Number(tx.price||price),marketPrice};addLog(latest,'trade',`Картку ${card.name} розміщено в User Market за ${fmtCoins(price)}`);writeSave(latest);closeModal('modal-market-listing');closeModal('modal-card');render();toast('✅ Заявку створено в User Market','win');}catch(e){toast(e.message,'lose');}finally{btn.disabled=false;btn.textContent=old;}});
 
 function openCard(key){
   selId=key;
@@ -1998,4 +1999,5 @@ setInterval(()=>{const s=tickMarket(loadSave());writeSave(s);render();},120000);
 
 </script>
 <script>function toggleMobileFilters(id,btn){const p=document.getElementById(id);if(!p)return;p.classList.toggle('open');if(btn)btn.setAttribute('aria-expanded',p.classList.contains('open')?'true':'false');}</script>
+<script src="slidcard-v3.js"></script>
 </body></html>

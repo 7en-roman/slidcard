@@ -578,7 +578,7 @@ input, select, textarea { font-family: inherit; }
   font-weight: 700;
 }
 .currency::before {
-  content: '$';
+  content: 'S$';
   font-size: .8em;
   opacity: .7;
 }
@@ -808,7 +808,7 @@ input,select,textarea,button{max-width:100%}
 <script src="theme-system.js"></script>
 <script src="card-system.js"></script>
 <style>
-/* v2.1 mobile sidebar reliability */
+/* v3.0 mobile sidebar reliability */
 @media (max-width:760px){
   .sidebar{overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
   .sidebar>div:nth-child(2){flex:0 0 auto!important;}
@@ -816,12 +816,13 @@ input,select,textarea,button{max-width:100%}
   .sidebar-bottom{position:relative!important;bottom:auto!important;flex:0 0 auto!important;background:inherit;z-index:2;}
 }
 </style>
+<link rel="stylesheet" href="slidcard-v3.css">
 </head><body>
 <div class="auth-bg">
   <div class="auth-card">
     <div class="auth-logo">
       <div class="logo-text">Slid<span>Card</span></div>
-      <div class="logo-sub">SPORTS CARD PLATFORM v2.1.1</div>
+      <div class="logo-sub">SPORTS CARD PLATFORM v3.0</div>
     </div>
     <div class="auth-box">
       <div class="auth-tabs">
@@ -858,10 +859,10 @@ input,select,textarea,button{max-width:100%}
 </div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.1.1 — shared.js
+// SlidCard v3.0 — shared.js
 
 const CX = {
-  VERSION:    "2.1.1",
+  VERSION:    "3.0",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1506,7 +1507,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "S$"+(v/1000000).toFixed(2)+"M";return "S$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};
@@ -1531,7 +1532,7 @@ function updateCoinsDisplay(){
 }
 </script>
 <script>
-if(Account.isLoggedIn())location.href="index_app.html";
+if(Account.isLoggedIn()&&sessionStorage.getItem("slidcard_v3_authenticated")==="1")location.href="index_app.html";
 function switchTab(t){
   document.querySelectorAll(".auth-tab").forEach(x=>x.classList.remove("on"));
   document.getElementById("tab-"+t).classList.add("on");
@@ -1633,4 +1634,5 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"){const frm=document.g
 })();
 
 </script>
+<script src="slidcard-v3.js"></script>
 </body></html>
