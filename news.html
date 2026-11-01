@@ -60,6 +60,13 @@
   --r-xl:   20px;
   --r-2xl:  28px;
 
+  /* Legacy component aliases — keep old component CSS valid */
+  --panel:       var(--surface);
+  --panel2:      var(--surface2);
+  --radius:      var(--r-sm);
+  --radius-lg:   var(--r-lg);
+  --radius-xl:   var(--r-xl);
+
   /* Sidebar */
   --sidebar-w: 220px;
   --topbar-h:  56px;
@@ -1025,9 +1032,9 @@ input,select,textarea,button{max-width:100%}
 </style>
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item active" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.1.1</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item active" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
-<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Новини</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Новини</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
 <div class="page-header"><div class="page-title">Новини</div><div class="page-sub">Ринкові події впливають на ціни карток</div></div>
 <div style="overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 16px;margin-bottom:16px">
@@ -1040,10 +1047,10 @@ input,select,textarea,button{max-width:100%}
 </div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.0.0 — shared.js
+// SlidCard v2.1.1 — shared.js
 
 const CX = {
-  VERSION:    "2.0.0",
+  VERSION:    "2.1.1",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1428,7 +1435,7 @@ function getCardPrice(save,k) {
   const card=CARD_BY_ID[id]||CARD_BY_ID[k];
   if(!card)return 0;
   const ym=YEAR_PRICE_MULT[year]||1.0;
-  const vintageBase=Math.round(cardPrice(card)*ym);
+  const vintageBase=Math.round(cardPrice(card)*ym*100)/100;
   return save.cardPrices[k]||vintageBase;
 }
 
@@ -1440,7 +1447,7 @@ function initPrices(save) {
       const ym=YEAR_PRICE_MULT[year]||1.0;
       if(!save.cardPrices[k]){
         const base=cardPrice(card);
-        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16));
+        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16)*100)/100;
       }
       if(!save.priceHistory[k])save.priceHistory[k]=[save.cardPrices[k]];
     }
@@ -1455,12 +1462,12 @@ function tickMarket(save) {
     for(const k of keys){
       const {year}=parseCardKey(k);
       const ym=YEAR_PRICE_MULT[year]||1.0;
-      const base=Math.round(cardPrice(card)*ym);
+      const base=Math.round(cardPrice(card)*ym*100)/100;
       const cur=save.cardPrices[k]||base;
       const v=vol[card.rarity]||0.05;
       const change=(Math.random()-.5)*2*v;
       const drift=(base-cur)/base*0.025;
-      const newP=Math.max(Math.round(cur*(1+change+drift)),Math.round(base*0.3));
+      const newP=Math.max(Math.round(cur*(1+change+drift)*100)/100,Math.round(base*0.3*100)/100);
       save.cardPrices[k]=newP;
       const hist=save.priceHistory[k]||[base];
       hist.push(newP);if(hist.length>60)hist.shift();
@@ -1473,7 +1480,7 @@ function tickMarket(save) {
 // ── OPEN PACK ──────────────────────────────────────────────
 function openPack(pack,save,count=1) {
   const sz=PACK_SIZES.find(p=>p.cards===count)||PACK_SIZES[0];
-  const totalPrice=Math.round(pack.basePrice*sz.mult);
+  const totalPrice=Math.round(pack.basePrice*sz.mult*100)/100;
   if(save.coins<totalPrice)return null;
   save.coins-=totalPrice;save.packsOpened++;save.totalSpent+=totalPrice;
   const results=[];
@@ -1688,7 +1695,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US");}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};

@@ -3,7 +3,7 @@ window.SlidCardCard={
     if(!card)return '';
     const r=card.rarity||'common', label=(window.RARITY&&RARITY[r]?.label)||r;
     const year=opts.year??2026, qty=opts.qty, price=opts.price, showPrice=opts.showPrice!==false;
-    const fmt=window.fmtCoins||((n)=>'$'+Number(n||0).toLocaleString('en-US'));
+    const fmt=window.fmtCoins||((n)=>'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}));
     const yearHtml=(typeof window.getYearBadge==='function')?getYearBadge(year,r):`<div class="sc-year">${year}</div>`;
     const html=`<div class="sport-card rarity-${r}"><div class="sc-bg"></div><div class="sc-rarity-glow"></div>${qty!=null?`<div class="sc-cnt">x${qty}</div>`:''}<div class="sc-rarity-badge">${label}</div>${yearHtml}<div class="sc-img">${card.icon||'🏅'}</div><div class="sc-name">${card.name||''}</div><div class="sc-team">${card.country||''} ${card.team||''}</div><div class="sc-pos">${card.pos||''}</div>${showPrice&&price!=null?`<div class="sc-price">${fmt(price)}</div>`:''}<div class="sc-rating">${card.rating??''}</div></div>`;
     const slotClass=opts.slotClass||'';

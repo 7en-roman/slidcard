@@ -60,6 +60,13 @@
   --r-xl:   20px;
   --r-2xl:  28px;
 
+  /* Legacy component aliases — keep old component CSS valid */
+  --panel:       var(--surface);
+  --panel2:      var(--surface2);
+  --radius:      var(--r-sm);
+  --radius-lg:   var(--r-lg);
+  --radius-xl:   var(--r-xl);
+
   /* Sidebar */
   --sidebar-w: 220px;
   --topbar-h:  56px;
@@ -813,6 +820,30 @@ input, select, textarea { font-family: inherit; }
   .packs-main-layout>div:last-child{padding:16px!important;min-height:300px!important;}
 }
 
+/* Pack opening dialog — pack count and reveal live here instead of in the page layout. */
+.pack-open-modal{width:min(920px,calc(100vw - 28px));}
+.pack-open-body{display:flex;flex-direction:column;gap:14px;overflow-y:auto;}
+.pack-size-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.pack-size-label{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+.pack-size-options{display:flex;gap:7px;flex-wrap:wrap;min-width:0}
+.pack-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.pack-modal-balance{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);font-family:var(--font-mono);font-size:11px;font-weight:800;color:var(--gold);white-space:nowrap}
+.pack-modal-balance-label{font-family:var(--font-ui);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.pack-reveal-area{min-height:250px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;padding:14px;border-radius:var(--r-xl);background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--border);}
+.pack-open-placeholder{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--text3);font-size:12px;text-align:center;padding:24px;}
+.pack-open-placeholder-icon{font-size:54px;filter:drop-shadow(0 4px 24px rgba(0,212,255,.2));}
+.pack-open-summary{min-height:0;display:flex;gap:5px;flex-wrap:wrap;justify-content:center;align-items:center}.pack-open-summary:empty{display:none}
+.pack-open-actions{justify-content:center;gap:8px;border-top:0!important;}
+.pack-open-actions .btn{min-width:150px;}
+@media(max-width:640px){
+  .pack-open-modal{width:100%!important;max-width:100%!important;}
+  .pack-size-panel{align-items:flex-start;flex-direction:column}
+  .pack-title-row{align-items:flex-start}.pack-modal-balance{justify-content:flex-start}
+  .pack-reveal-area{min-height:220px;padding:10px;}
+  .pack-open-actions{display:flex!important;justify-content:center!important;flex-wrap:wrap;}
+  .pack-open-actions .btn{width:min(100%,280px);}
+}
+
 /* Pack card overflow-safe footer */
 .pack-card{min-width:0}
 .pack-name,.pack-desc{max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -1101,46 +1132,58 @@ input,select,textarea,button{max-width:100%}
 </style>
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item active" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.1.1</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item active" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
-<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Паки</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Паки</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
-<div class="page-header"><div class="page-title">Паки карток</div><div class="page-sub">Обери вид спорту, сезон і кількість карток у паку</div></div>
+<div class="page-header"><div class="page-title">Паки карток</div><div class="page-sub">Обери вид спорту, сезон і пак. Кількість карток обирається перед відкриттям.</div></div>
 <button class="mobile-filter-toggle" type="button" onclick="toggleMobileFilters('packs-filters',this)"><span class="hamb">☰</span> Категорії та роки</button>
 <div id="packs-filters" class="mobile-filter-panel packs-filter-panel" style="display:block">
   <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:16px;scrollbar-width:none" id="sport-tabs"></div>
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px" id="season-tabs"></div>
 </div>
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-  <span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Карток у паку:</span>
-  <div id="size-btns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+<div id="packs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;align-content:start"></div>
 </div>
-<div class="packs-main-layout" style="display:grid;grid-template-columns:1fr 320px;gap:16px">
-  <div id="packs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;align-content:start"></div>
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;position:sticky;top:0;min-height:380px;justify-content:space-between">
-    <div id="op-title" style="font-family:var(--font-disp);font-size:15px;font-weight:700;color:var(--text3);text-align:center;width:100%">Обери пак</div>
-    <div id="cards-reveal" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;flex:1;padding:8px;width:100%">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 0">
-        <div style="font-size:56px;filter:drop-shadow(0 4px 24px rgba(0,212,255,.2))">📦</div>
-        <div style="font-size:12px;color:var(--text3)">Обери пак зліва</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-pack-open">
+  <div class="modal pack-open-modal" style="max-width:920px">
+    <div class="modal-header">
+      <div>
+        <div class="pack-title-row">
+          <div class="modal-title" id="op-title">Відкрити пак</div>
+          <div class="pack-modal-balance"><span class="pack-modal-balance-label">Доступний баланс</span><span id="pack-modal-balance">$0.00</span></div>
+        </div>
+        <div id="op-desc" style="font-size:11px;color:var(--text3);margin-top:3px"></div>
       </div>
+      <div class="modal-close" onclick="closeModal('modal-pack-open')">✕</div>
     </div>
-    <div id="op-summary" style="text-align:center;font-size:12px;color:var(--dim);min-height:20px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center"></div>
-    <div style="width:100%;display:flex;flex-direction:column;gap:8px">
-      <button class="btn btn-primary btn-block" id="btn-open" style="padding:13px;font-size:14px" disabled>Обери пак</button>
-      <button class="btn btn-ghost btn-block" id="btn-again" style="display:none">🔁 Ще раз</button>
+    <div class="modal-body pack-open-body">
+      <div class="pack-size-panel">
+        <div class="pack-size-label">Карток у паку</div>
+        <div id="size-btns" class="pack-size-options"></div>
+      </div>
+      <div id="cards-reveal" class="pack-reveal-area">
+        <div class="pack-open-placeholder">
+          <div class="pack-open-placeholder-icon">📦</div>
+          <div>Обери кількість карток і відкрий пак</div>
+        </div>
+      </div>
+      <div id="op-summary" class="pack-open-summary"></div>
+    </div>
+    <div class="modal-footer pack-open-actions">
+      <button class="btn btn-ghost" id="btn-again" style="display:none">🔁 Ще раз</button>
+      <button class="btn btn-primary" id="btn-open" disabled>📦 Відкрити пак</button>
     </div>
   </div>
 </div>
-</div>
-</div>
-</div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.0.0 — shared.js
+// SlidCard v2.1.1 — shared.js
 
 const CX = {
-  VERSION:    "2.0.0",
+  VERSION:    "2.1.1",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1525,7 +1568,7 @@ function getCardPrice(save,k) {
   const card=CARD_BY_ID[id]||CARD_BY_ID[k];
   if(!card)return 0;
   const ym=YEAR_PRICE_MULT[year]||1.0;
-  const vintageBase=Math.round(cardPrice(card)*ym);
+  const vintageBase=Math.round(cardPrice(card)*ym*100)/100;
   return save.cardPrices[k]||vintageBase;
 }
 
@@ -1537,7 +1580,7 @@ function initPrices(save) {
       const ym=YEAR_PRICE_MULT[year]||1.0;
       if(!save.cardPrices[k]){
         const base=cardPrice(card);
-        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16));
+        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16)*100)/100;
       }
       if(!save.priceHistory[k])save.priceHistory[k]=[save.cardPrices[k]];
     }
@@ -1552,12 +1595,12 @@ function tickMarket(save) {
     for(const k of keys){
       const {year}=parseCardKey(k);
       const ym=YEAR_PRICE_MULT[year]||1.0;
-      const base=Math.round(cardPrice(card)*ym);
+      const base=Math.round(cardPrice(card)*ym*100)/100;
       const cur=save.cardPrices[k]||base;
       const v=vol[card.rarity]||0.05;
       const change=(Math.random()-.5)*2*v;
       const drift=(base-cur)/base*0.025;
-      const newP=Math.max(Math.round(cur*(1+change+drift)),Math.round(base*0.3));
+      const newP=Math.max(Math.round(cur*(1+change+drift)*100)/100,Math.round(base*0.3*100)/100);
       save.cardPrices[k]=newP;
       const hist=save.priceHistory[k]||[base];
       hist.push(newP);if(hist.length>60)hist.shift();
@@ -1570,7 +1613,7 @@ function tickMarket(save) {
 // ── OPEN PACK ──────────────────────────────────────────────
 function openPack(pack,save,count=1) {
   const sz=PACK_SIZES.find(p=>p.cards===count)||PACK_SIZES[0];
-  const totalPrice=Math.round(pack.basePrice*sz.mult);
+  const totalPrice=Math.round(pack.basePrice*sz.mult*100)/100;
   if(save.coins<totalPrice)return null;
   save.coins-=totalPrice;save.packsOpened++;save.totalSpent+=totalPrice;
   const results=[];
@@ -1785,7 +1828,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US");}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};
@@ -1796,6 +1839,7 @@ function toast(msg,type="info"){
 }
 function openModal(id){document.getElementById(id)?.classList.add("open");}
 function closeModal(id){document.getElementById(id)?.classList.remove("open");}
+document.querySelectorAll(".modal-overlay").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)o.classList.remove("open");}));
 function initNav(activePage){
   document.querySelectorAll(".nav-item[href]").forEach(a=>a.classList.toggle("active",a.getAttribute("href")===activePage));
   const av=document.getElementById("tb-avatar");
@@ -1825,55 +1869,61 @@ for(const[id,sp]of Object.entries(SPORTS)){
   const b=document.createElement("button");
   b.className="chip"+(id===curSport?" active":"");
   b.innerHTML=`${sp.icon} ${sp.label}`;
-  b.onclick=()=>{curSport=id;selectedPack=null;renderAll();};
+  b.onclick=()=>{curSport=id;selectedPack=null;closeModal("modal-pack-open");renderAll();};
   stEl.appendChild(b);
 }
 function renderSeasons(){
-  document.getElementById("season-tabs").innerHTML=SEASONS.map(y=>`<button class="chip${y===curSeason?" active":""}" onclick="curSeason=${y};selectedPack=null;renderAll()">${y}${y===2026?" ⚡":""}</button>`).join("");
+  document.getElementById("season-tabs").innerHTML=SEASONS.map(y=>`<button class="chip${y===curSeason?" active":""}" onclick="curSeason=${y};selectedPack=null;closeModal('modal-pack-open');renderAll()">${y}${y===2026?" ⚡":""}</button>`).join("");
 }
 function renderSizes(){
-  const save=loadSave();
-  const packs=getPacksForSport(curSport,curSeason);
-  const basePack=packs[0];
-  document.getElementById("size-btns").innerHTML=PACK_SIZES.map(ps=>`<button class="chip${ps.cards===curSize?" active":""}" onclick="curSize=${ps.cards};renderAll()">${ps.cards} карт. <span style="color:var(--text3);font-size:9px">${fmtCoins(Math.round(basePack.basePrice*ps.mult))}</span></button>`).join("");
+  const el=document.getElementById("size-btns");if(!el||!selectedPack)return;
+  el.innerHTML=PACK_SIZES.map(ps=>{
+    const price=Math.round(selectedPack.basePrice*ps.mult*100)/100;
+    return`<button class="chip${ps.cards===curSize?" active":""}" onclick="curSize=${ps.cards};renderSizes();resetPackReveal();refreshOpenBtn()"><b>${ps.cards}</b> карт. <span style="color:var(--text3);font-size:9px">${fmtCoins(price)}</span></button>`;
+  }).join("");
 }
 function renderPacks(){
   const save=loadSave();
   document.getElementById("tb-coins").textContent=fmtCoins(save.coins);
   const packs=getPacksForSport(curSport,curSeason);
-  const sizeEntry=PACK_SIZES.find(p=>p.cards===curSize)||PACK_SIZES[0];
+  const minSize=PACK_SIZES[0];
   document.querySelectorAll("#sport-tabs .chip").forEach((b,i)=>{b.classList.toggle("active",Object.keys(SPORTS)[i]===curSport);});
   document.getElementById("packs-grid").innerHTML=packs.map(pack=>{
-    const price=Math.round(pack.basePrice*sizeEntry.mult);
-    const canAfford=save.coins>=price;
-    const isSelected=selectedPack?.id===pack.id;
-    return`<div class="pack-card${canAfford?"":" cant-afford"}${isSelected?" selected":""}" style="background:${pack.gradient};${isSelected?`border-color:${pack.glowColor};box-shadow:0 0 20px ${pack.glowColor}20`:""}" onclick="selectPack('${pack.id}')">
-      <div style="font-size:28px;margin-bottom:8px">${SPORTS[curSport]?.icon||"📦"}</div>
+    const fromPrice=Math.round(pack.basePrice*minSize.mult*100)/100;
+    const canAffordAny=save.coins>=fromPrice;
+    return`<div class="pack-card${canAffordAny?"":" cant-afford"}" style="background:${pack.gradient}" onclick="selectPack('${pack.id}')">
+      <div style="font-size:30px;margin-bottom:9px">${SPORTS[curSport]?.icon||"📦"}</div>
       <div class="pack-name" style="color:${pack.glowColor}">${pack.name}</div>
-      <div class="pack-desc">${pack.desc} · ${curSize} карт${curSize>1?"ки/ок":""}</div>
+      <div class="pack-desc">${pack.desc}</div>
       <div class="pack-odds">${Object.entries(pack.odds).filter(([,v])=>v>0).map(([r,v])=>`<span class="badge badge-${r}">${RARITY[r].label} ${(v*100).toFixed(0)}%</span>`).join("")}</div>
       <div class="pack-footer">
-        <div class="pack-price" style="color:${pack.glowColor}">${fmtCoins(price)}</div>
+        <div class="pack-price" style="color:${pack.glowColor}"><span style="font-size:9px;color:var(--text3);font-family:var(--font-ui);font-weight:700">від </span>${fmtCoins(fromPrice)}</div>
         ${pack.guaranteed?`<span class="badge pack-guarantee badge-${pack.guaranteed}">гарант. ${RARITY[pack.guaranteed]?.label}</span>`:""}
       </div>
     </div>`;
   }).join("");
 }
-function renderAll(){renderSeasons();renderSizes();renderPacks();if(selectedPack)refreshOpenBtn();}
+function renderAll(){renderSeasons();renderPacks();if(selectedPack&&document.getElementById("modal-pack-open")?.classList.contains("open")){renderSizes();refreshOpenBtn();}}
+function resetPackReveal(){
+  const reveal=document.getElementById("cards-reveal");if(!reveal)return;
+  reveal.innerHTML=`<div class="pack-open-placeholder"><div class="pack-open-placeholder-icon">📦</div><div>Обрано ${curSize} карт. Натисни «Відкрити пак».</div></div>`;
+  document.getElementById("op-summary").innerHTML="";
+  document.getElementById("btn-again").style.display="none";
+}
 function selectPack(id){
   const packs=getPacksForSport(curSport,curSeason);selectedPack=packs.find(p=>p.id===id);if(!selectedPack)return;
-  const save=loadSave();const price=Math.round(selectedPack.basePrice*(PACK_SIZES.find(p=>p.cards===curSize)||PACK_SIZES[0]).mult);
+  const save=loadSave(),minSize=PACK_SIZES[0],minPrice=Math.round(selectedPack.basePrice*minSize.mult*100)/100;
+  if(Number(save.coins||0)<minPrice){selectedPack=null;toast(`Недостатньо коштів. Мінімальна ціна пака — ${fmtCoins(minPrice)}`,'warn');return;}
   document.getElementById("op-title").textContent=selectedPack.name;
   document.getElementById("op-title").style.color=selectedPack.glowColor;
-  document.getElementById("cards-reveal").innerHTML=`<div style="font-size:48px">📦</div><div style="font-size:12px;color:var(--text3);text-align:center;margin-top:8px">${selectedPack.desc}</div>`;
-  document.getElementById("op-summary").textContent="";document.getElementById("btn-again").style.display="none";
-  refreshOpenBtn();renderPacks();
+  document.getElementById("op-desc").textContent=selectedPack.desc+` · сезон ${curSeason}`;
+  renderSizes();resetPackReveal();refreshOpenBtn();openModal("modal-pack-open");
 }
 function refreshOpenBtn(){
-  const save=loadSave();const se=PACK_SIZES.find(p=>p.cards===curSize)||PACK_SIZES[0];
-  const price=selectedPack?Math.round(selectedPack.basePrice*se.mult):0;const canAfford=selectedPack&&save.coins>=price;
+  const save=loadSave();const modalBalance=document.getElementById("pack-modal-balance");if(modalBalance)modalBalance.textContent=fmtCoins(save.coins);const se=PACK_SIZES.find(p=>p.cards===curSize)||PACK_SIZES[0];
+  const price=selectedPack?Math.round(selectedPack.basePrice*se.mult*100)/100:0;const canAfford=selectedPack&&save.coins>=price;
   const btn=document.getElementById("btn-open");btn.disabled=!canAfford;
-  btn.textContent=selectedPack?(canAfford?`📦 Відкрити — ${fmtCoins(price)}`:"❌ Недостатньо коштів"):"Обери пак";
+  btn.textContent=selectedPack?(canAfford?`📦 Відкрити ${curSize} карт. — ${fmtCoins(price)}`:"❌ Недостатньо коштів"):"Обери пак";
 }
 document.getElementById("btn-open").addEventListener("click",async()=>{
   if(!selectedPack||isOpening)return;const save=loadSave();const results=openPack(selectedPack,save,curSize);
@@ -1914,7 +1964,7 @@ document.getElementById("btn-open").addEventListener("click",async()=>{
   }
   const counts={};results.forEach(({card})=>{counts[card.rarity]=(counts[card.rarity]||0)+1;});
   document.getElementById("op-summary").innerHTML=Object.entries(counts).map(([r,n])=>`<span class="badge badge-${r}">${n}x ${RARITY[r].label}</span>`).join(" ");
-  const se=PACK_SIZES.find(p=>p.cards===curSize)||PACK_SIZES[0];const price=Math.round(selectedPack.basePrice*se.mult);
+  const se=PACK_SIZES.find(p=>p.cards===curSize)||PACK_SIZES[0];const price=Math.round(selectedPack.basePrice*se.mult*100)/100;
   const save3=loadSave();document.getElementById("btn-again").style.display="";
   document.getElementById("btn-again").disabled=save3.coins<price;
   refreshOpenBtn();isOpening=false;renderPacks();updateCoinsDisplay();

@@ -60,6 +60,13 @@
   --r-xl:   20px;
   --r-2xl:  28px;
 
+  /* Legacy component aliases — keep old component CSS valid */
+  --panel:       var(--surface);
+  --panel2:      var(--surface2);
+  --radius:      var(--r-sm);
+  --radius-lg:   var(--r-lg);
+  --radius-xl:   var(--r-xl);
+
   /* Sidebar */
   --sidebar-w: 220px;
   --topbar-h:  56px;
@@ -1033,22 +1040,22 @@ input,select,textarea,button{max-width:100%}
 </style>
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item active" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.1.1</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item active" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
-<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Інвентар</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Гаманець</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content"><div class="page-header row-between">
   <div><div class="page-title">Гаманець</div><div class="page-sub">Фінансовий огляд та поповнення</div></div>
   <div class="row"><a class="btn btn-primary btn-sm" href="packs.html">📦 Пак</a><a class="btn btn-ghost btn-sm" href="market.html">📈 Ринок</a></div>
 </div>
 <div style="background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border2);border-radius:var(--r-2xl);padding:24px;margin-bottom:16px">
   <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--cyan);margin-bottom:8px">Загальний баланс</div>
-  <div style="font-family:var(--font-disp);font-size:36px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px" id="w-total">$0</div>
-  <div style="font-size:12px;color:var(--text3);margin-bottom:18px" id="w-breakdown">Монети: $0 · Картки: $0</div>
+  <div style="font-family:var(--font-disp);font-size:36px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px" id="w-total">$0.00</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:18px" id="w-breakdown">Монети: $0.00 · Картки: $0.00</div>
   <div class="wallet-stats-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-    <div class="stat-block"><div class="stat-label">Монети</div><div class="stat-value gold" id="w-coins">$0</div></div>
+    <div class="stat-block"><div class="stat-label">Монети</div><div class="stat-value gold" id="w-coins">$0.00</div></div>
     <div class="stat-block"><div class="stat-label">Карток</div><div class="stat-value" id="w-cards">0</div></div>
-    <div class="stat-block"><div class="stat-label">Витрачено</div><div class="stat-value down" id="w-spent">$0</div></div>
-    <div class="stat-block"><div class="stat-label">Зароблено</div><div class="stat-value up" id="w-earned">$0</div></div>
+    <div class="stat-block"><div class="stat-label">Витрачено</div><div class="stat-value down" id="w-spent">$0.00</div></div>
+    <div class="stat-block"><div class="stat-label">Зароблено</div><div class="stat-value up" id="w-earned">$0.00</div></div>
   </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 260px;gap:16px;margin-bottom:16px">
@@ -1058,7 +1065,7 @@ input,select,textarea,button{max-width:100%}
   </div>
   <div style="display:flex;flex-direction:column;gap:12px">
     <div class="card" style="flex:1">
-      <div class="card-header"><div class="card-title">🎴 По рідкостям</div><div style="font-family:var(--font-mono);font-size:11px;color:var(--gold)" id="w-coll-total">$0</div></div>
+      <div class="card-header"><div class="card-title">🎴 По рідкостям</div><div style="font-family:var(--font-mono);font-size:11px;color:var(--gold)" id="w-coll-total">$0.00</div></div>
       <div style="padding:12px 14px" id="coll-breakdown"></div>
     </div>
     <div class="card">
@@ -1080,10 +1087,10 @@ input,select,textarea,button{max-width:100%}
 </div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.0.0 — shared.js
+// SlidCard v2.1.1 — shared.js
 
 const CX = {
-  VERSION:    "2.0.0",
+  VERSION:    "2.1.1",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1468,7 +1475,7 @@ function getCardPrice(save,k) {
   const card=CARD_BY_ID[id]||CARD_BY_ID[k];
   if(!card)return 0;
   const ym=YEAR_PRICE_MULT[year]||1.0;
-  const vintageBase=Math.round(cardPrice(card)*ym);
+  const vintageBase=Math.round(cardPrice(card)*ym*100)/100;
   return save.cardPrices[k]||vintageBase;
 }
 
@@ -1480,7 +1487,7 @@ function initPrices(save) {
       const ym=YEAR_PRICE_MULT[year]||1.0;
       if(!save.cardPrices[k]){
         const base=cardPrice(card);
-        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16));
+        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16)*100)/100;
       }
       if(!save.priceHistory[k])save.priceHistory[k]=[save.cardPrices[k]];
     }
@@ -1495,12 +1502,12 @@ function tickMarket(save) {
     for(const k of keys){
       const {year}=parseCardKey(k);
       const ym=YEAR_PRICE_MULT[year]||1.0;
-      const base=Math.round(cardPrice(card)*ym);
+      const base=Math.round(cardPrice(card)*ym*100)/100;
       const cur=save.cardPrices[k]||base;
       const v=vol[card.rarity]||0.05;
       const change=(Math.random()-.5)*2*v;
       const drift=(base-cur)/base*0.025;
-      const newP=Math.max(Math.round(cur*(1+change+drift)),Math.round(base*0.3));
+      const newP=Math.max(Math.round(cur*(1+change+drift)*100)/100,Math.round(base*0.3*100)/100);
       save.cardPrices[k]=newP;
       const hist=save.priceHistory[k]||[base];
       hist.push(newP);if(hist.length>60)hist.shift();
@@ -1513,7 +1520,7 @@ function tickMarket(save) {
 // ── OPEN PACK ──────────────────────────────────────────────
 function openPack(pack,save,count=1) {
   const sz=PACK_SIZES.find(p=>p.cards===count)||PACK_SIZES[0];
-  const totalPrice=Math.round(pack.basePrice*sz.mult);
+  const totalPrice=Math.round(pack.basePrice*sz.mult*100)/100;
   if(save.coins<totalPrice)return null;
   save.coins-=totalPrice;save.packsOpened++;save.totalSpent+=totalPrice;
   const results=[];
@@ -1728,7 +1735,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US");}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};
@@ -1759,7 +1766,7 @@ if(!Account.isLoggedIn()){location.href="index.html";}
 function updateCoinsDisplay(){const s=loadSave();const el=document.getElementById("tb-coins");if(el)el.textContent=fmtCoins(s.coins);}updateCoinsDisplay();
 (function(){function tick(){const el=document.getElementById("tb-clock");if(el)el.textContent=new Date().toLocaleTimeString("uk-UA");}tick();setInterval(tick,1000);})();
 (function(){const t=document.getElementById("ticker-track");if(!t)return;const s=loadSave();const items=CARDS.slice(0,30).map(c=>{const p=getCardPrice(s,c.id);const h=s.priceHistory[c.id]||[p,p];const o=h[h.length-2]||p;const u=p>=o;return`<span class="ticker-item"><span class="nm">${c.name}</span><span class="${u?"up":"dn"}">${u?"▲":"▼"} ${fmtCoins(p)}</span></span>`;}).join("");t.innerHTML=items+items;})();
-const LOANS = [{"amt": 100, "cd": 60, "daily": 3, "label": "+$100", "time": "1 хв", "icon": "💵"}, {"amt": 200, "cd": 120, "daily": 3, "label": "+$200", "time": "2 хв", "icon": "💴"}, {"amt": 300, "cd": 180, "daily": 3, "label": "+$300", "time": "3 хв", "icon": "💶"}, {"amt": 400, "cd": 240, "daily": 3, "label": "+$400", "time": "4 хв", "icon": "💷"}, {"amt": 500, "cd": 300, "daily": 3, "label": "+$500", "time": "5 хв", "icon": "💰"}, {"amt": 600, "cd": 360, "daily": 3, "label": "+$600", "time": "6 хв", "icon": "🏦"}, {"amt": 700, "cd": 420, "daily": 3, "label": "+$700", "time": "7 хв", "icon": "💎"}, {"amt": 800, "cd": 480, "daily": 3, "label": "+$800", "time": "8 хв", "icon": "👑"}, {"amt": 900, "cd": 540, "daily": 3, "label": "+$900", "time": "9 хв", "icon": "🔥"}, {"amt": 1000, "cd": 600, "daily": 3, "label": "+$1,000", "time": "10 хв", "icon": "⚡"}];
+const LOANS = [{"amt": 100, "cd": 60, "daily": 3, "label": "+$100.00", "time": "1 хв", "icon": "💵"}, {"amt": 200, "cd": 120, "daily": 3, "label": "+$200.00", "time": "2 хв", "icon": "💴"}, {"amt": 300, "cd": 180, "daily": 3, "label": "+$300.00", "time": "3 хв", "icon": "💶"}, {"amt": 400, "cd": 240, "daily": 3, "label": "+$400.00", "time": "4 хв", "icon": "💷"}, {"amt": 500, "cd": 300, "daily": 3, "label": "+$500.00", "time": "5 хв", "icon": "💰"}, {"amt": 600, "cd": 360, "daily": 3, "label": "+$600.00", "time": "6 хв", "icon": "🏦"}];
 function render(){
   const save=loadSave();
   const allOwned=Object.entries(save.owned||{}).filter(([,q])=>q>0);

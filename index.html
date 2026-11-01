@@ -64,6 +64,13 @@ html,body { height: 100%; background: #080A0F; color: #F0F4FF; font-family: 'Int
   --r-xl:   20px;
   --r-2xl:  28px;
 
+  /* Legacy component aliases — keep old component CSS valid */
+  --panel:       var(--surface);
+  --panel2:      var(--surface2);
+  --radius:      var(--r-sm);
+  --radius-lg:   var(--r-lg);
+  --radius-xl:   var(--r-xl);
+
   /* Sidebar */
   --sidebar-w: 220px;
   --topbar-h:  56px;
@@ -814,7 +821,7 @@ input,select,textarea,button{max-width:100%}
   <div class="auth-card">
     <div class="auth-logo">
       <div class="logo-text">Slid<span>Card</span></div>
-      <div class="logo-sub">SPORTS CARD PLATFORM v2.0.0</div>
+      <div class="logo-sub">SPORTS CARD PLATFORM v2.1.1</div>
     </div>
     <div class="auth-box">
       <div class="auth-tabs">
@@ -851,10 +858,10 @@ input,select,textarea,button{max-width:100%}
 </div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.0.0 — shared.js
+// SlidCard v2.1.1 — shared.js
 
 const CX = {
-  VERSION:    "2.0.0",
+  VERSION:    "2.1.1",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1239,7 +1246,7 @@ function getCardPrice(save,k) {
   const card=CARD_BY_ID[id]||CARD_BY_ID[k];
   if(!card)return 0;
   const ym=YEAR_PRICE_MULT[year]||1.0;
-  const vintageBase=Math.round(cardPrice(card)*ym);
+  const vintageBase=Math.round(cardPrice(card)*ym*100)/100;
   return save.cardPrices[k]||vintageBase;
 }
 
@@ -1251,7 +1258,7 @@ function initPrices(save) {
       const ym=YEAR_PRICE_MULT[year]||1.0;
       if(!save.cardPrices[k]){
         const base=cardPrice(card);
-        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16));
+        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16)*100)/100;
       }
       if(!save.priceHistory[k])save.priceHistory[k]=[save.cardPrices[k]];
     }
@@ -1266,12 +1273,12 @@ function tickMarket(save) {
     for(const k of keys){
       const {year}=parseCardKey(k);
       const ym=YEAR_PRICE_MULT[year]||1.0;
-      const base=Math.round(cardPrice(card)*ym);
+      const base=Math.round(cardPrice(card)*ym*100)/100;
       const cur=save.cardPrices[k]||base;
       const v=vol[card.rarity]||0.05;
       const change=(Math.random()-.5)*2*v;
       const drift=(base-cur)/base*0.025;
-      const newP=Math.max(Math.round(cur*(1+change+drift)),Math.round(base*0.3));
+      const newP=Math.max(Math.round(cur*(1+change+drift)*100)/100,Math.round(base*0.3*100)/100);
       save.cardPrices[k]=newP;
       const hist=save.priceHistory[k]||[base];
       hist.push(newP);if(hist.length>60)hist.shift();
@@ -1284,7 +1291,7 @@ function tickMarket(save) {
 // ── OPEN PACK ──────────────────────────────────────────────
 function openPack(pack,save,count=1) {
   const sz=PACK_SIZES.find(p=>p.cards===count)||PACK_SIZES[0];
-  const totalPrice=Math.round(pack.basePrice*sz.mult);
+  const totalPrice=Math.round(pack.basePrice*sz.mult*100)/100;
   if(save.coins<totalPrice)return null;
   save.coins-=totalPrice;save.packsOpened++;save.totalSpent+=totalPrice;
   const results=[];
@@ -1499,7 +1506,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US");}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};

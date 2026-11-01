@@ -60,6 +60,13 @@
   --r-xl:   20px;
   --r-2xl:  28px;
 
+  /* Legacy component aliases — keep old component CSS valid */
+  --panel:       var(--surface);
+  --panel2:      var(--surface2);
+  --radius:      var(--r-sm);
+  --radius-lg:   var(--r-lg);
+  --radius-xl:   var(--r-xl);
+
   /* Sidebar */
   --sidebar-w: 220px;
   --topbar-h:  56px;
@@ -1033,9 +1040,9 @@ input,select,textarea,button{max-width:100%}
 </style>
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.1.1</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
-<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Акаунт</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Акаунт</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
 
 <div class="page-header row-between">
@@ -1064,7 +1071,7 @@ input,select,textarea,button{max-width:100%}
 <!-- Main grid -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
   <div class="card">
-    <div class="card-header"><div class="card-title">🏆 Найкращі картки</div><div id="coll-val" style="font-size:11px;color:var(--gold)">$0</div></div>
+    <div class="card-header"><div class="card-title">🏆 Найкращі картки</div><div id="coll-val" style="font-size:11px;color:var(--gold)">$0.00</div></div>
     <div style="padding:16px;display:flex;flex-wrap:wrap;gap:10px;min-height:80px" id="best-cards"></div>
   </div>
   <div class="card">
@@ -1139,10 +1146,10 @@ input,select,textarea,button{max-width:100%}
 </div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.0.0 — shared.js
+// SlidCard v2.1.1 — shared.js
 
 const CX = {
-  VERSION:    "2.0.0",
+  VERSION:    "2.1.1",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1527,7 +1534,7 @@ function getCardPrice(save,k) {
   const card=CARD_BY_ID[id]||CARD_BY_ID[k];
   if(!card)return 0;
   const ym=YEAR_PRICE_MULT[year]||1.0;
-  const vintageBase=Math.round(cardPrice(card)*ym);
+  const vintageBase=Math.round(cardPrice(card)*ym*100)/100;
   return save.cardPrices[k]||vintageBase;
 }
 
@@ -1539,7 +1546,7 @@ function initPrices(save) {
       const ym=YEAR_PRICE_MULT[year]||1.0;
       if(!save.cardPrices[k]){
         const base=cardPrice(card);
-        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16));
+        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16)*100)/100;
       }
       if(!save.priceHistory[k])save.priceHistory[k]=[save.cardPrices[k]];
     }
@@ -1554,12 +1561,12 @@ function tickMarket(save) {
     for(const k of keys){
       const {year}=parseCardKey(k);
       const ym=YEAR_PRICE_MULT[year]||1.0;
-      const base=Math.round(cardPrice(card)*ym);
+      const base=Math.round(cardPrice(card)*ym*100)/100;
       const cur=save.cardPrices[k]||base;
       const v=vol[card.rarity]||0.05;
       const change=(Math.random()-.5)*2*v;
       const drift=(base-cur)/base*0.025;
-      const newP=Math.max(Math.round(cur*(1+change+drift)),Math.round(base*0.3));
+      const newP=Math.max(Math.round(cur*(1+change+drift)*100)/100,Math.round(base*0.3*100)/100);
       save.cardPrices[k]=newP;
       const hist=save.priceHistory[k]||[base];
       hist.push(newP);if(hist.length>60)hist.shift();
@@ -1572,7 +1579,7 @@ function tickMarket(save) {
 // ── OPEN PACK ──────────────────────────────────────────────
 function openPack(pack,save,count=1) {
   const sz=PACK_SIZES.find(p=>p.cards===count)||PACK_SIZES[0];
-  const totalPrice=Math.round(pack.basePrice*sz.mult);
+  const totalPrice=Math.round(pack.basePrice*sz.mult*100)/100;
   if(save.coins<totalPrice)return null;
   save.coins-=totalPrice;save.packsOpened++;save.totalSpent+=totalPrice;
   const results=[];
@@ -1787,7 +1794,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US");}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};
@@ -1810,6 +1817,7 @@ function updateCoinsDisplay(){
   const s=loadSave();const el=document.getElementById("tb-coins");
   if(el)el.textContent=fmtCoins(s.coins);
 }
+function initTicker(){const t=document.getElementById("ticker-track");if(!t)return;const save=loadSave();const items=CARDS.slice(0,30).map(c=>{const p=getCardPrice(save,c.id),h=save.priceHistory[c.id]||[p,p],o=h[h.length-2]||p,u=p>=o;return`<span class="ticker-item"><span class="nm">${c.name}</span><span class="${u?"up":"dn"}">${u?"▲":"▼"} ${fmtCoins(p)}</span></span>`}).join("");t.innerHTML=items+items;}
 </script>
 <script>
 
@@ -2008,51 +2016,10 @@ function render(){
     return`<tr><td><span class="badge ${cls}">${icon}</span></td><td style="color:var(--text2);font-size:12px">${l.text}</td><td style="color:var(--text3);font-size:11px">${l.time||""}</td></tr>`;
   }).join("")||`<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:16px">Немає дій</td></tr>`;
 }
+initTicker();
 render();
 
 </script>
-
-<!-- SETTINGS MODAL -->
-<div class="modal-overlay" id="modal-settings">
-  <div class="modal modal-sm">
-    <div class="modal-header">
-      <div class="modal-title">✏️ Налаштування акаунту</div>
-      <div class="modal-close" onclick="closeModal('modal-settings')">✕</div>
-    </div>
-    <div class="modal-body">
-      <!-- Account info -->
-      <div style="background:var(--surface2);border-radius:var(--r-lg);padding:14px;margin-bottom:16px">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:8px">Інформація акаунту</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">ID</span><span style="font-family:var(--font-mono);color:var(--cyan)" id="s-id">—</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Нікнейм</span><span id="s-username">—</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Email</span><span id="s-email">—</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Дата реєстрації</span><span style="color:var(--text3)" id="s-date">—</span></div>
-        </div>
-      </div>
-      <!-- Edit fields -->
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Змінити дані</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="input-group" style="margin:0"><label class="input-label">Ім'я</label><input class="input" id="set-first" placeholder="Ім'я"/></div>
-          <div class="input-group" style="margin:0"><label class="input-label">Прізвище</label><input class="input" id="set-last" placeholder="Прізвище"/></div>
-        </div>
-        <div class="input-group" style="margin:0"><label class="input-label">Email</label><input class="input" id="set-email" type="email" placeholder="email@example.com"/></div>
-        <div class="input-group" style="margin:0"><label class="input-label">Новий пароль (необов'язково)</label><input class="input" id="set-pass" type="password" placeholder="••••••••"/></div>
-        <div id="set-msg" style="font-size:11px;min-height:16px"></div>
-      </div>
-      <!-- Danger zone -->
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--down);margin-bottom:8px">⚠️ Небезпечна зона</div>
-        <button class="btn btn-down" style="width:100%;margin-top:4px" onclick="doResetGame()">🗑️ Нова гра (скинути всі дані)</button>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modal-settings')">Скасувати</button>
-      <button class="btn btn-primary" onclick="saveSettings()">💾 Зберегти</button>
-    </div>
-  </div>
-</div>
 
 
 <!-- ACTIONS MODAL -->

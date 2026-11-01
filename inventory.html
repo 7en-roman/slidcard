@@ -60,6 +60,13 @@
   --r-xl:   20px;
   --r-2xl:  28px;
 
+  /* Legacy component aliases — keep old component CSS valid */
+  --panel:       var(--surface);
+  --panel2:      var(--surface2);
+  --radius:      var(--r-sm);
+  --radius-lg:   var(--r-lg);
+  --radius-xl:   var(--r-xl);
+
   /* Sidebar */
   --sidebar-w: 220px;
   --topbar-h:  56px;
@@ -790,18 +797,17 @@ input, select, textarea { font-family: inherit; }
 @media (hover:none),(pointer:coarse){.modal-card-flip:hover{transform:none!important;box-shadow:none!important}}
 .modal-card-face{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform-style:preserve-3d;will-change:transform,opacity}
 .modal-card-front{transform:rotateY(0deg) translateZ(1px);opacity:1;visibility:visible}
-.modal-card-back{transform:rotateY(180deg) translateZ(1px);opacity:0;visibility:hidden;border-radius:12px;padding:14px 12px 10px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.modal-card-back{transform:rotateY(180deg) translateZ(1px);opacity:0;visibility:hidden;border:0!important;border-radius:12px;padding:14px 12px 12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:none!important;outline:0!important}
 .modal-card-flip.flipped .modal-card-front{opacity:0;visibility:hidden}
 .modal-card-flip.flipped .modal-card-back{opacity:1;visibility:visible}
 @supports (-webkit-touch-callout:none){.modal-card-face{-webkit-transform-style:preserve-3d}.modal-card-front{-webkit-transform:rotateY(0deg) translateZ(1px)}.modal-card-back{-webkit-transform:rotateY(180deg) translateZ(1px)}}
 
-.modal-card-back .back-title{font-family:var(--font-disp);font-size:12px;font-weight:700;color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:.1em;text-align:center;margin-bottom:6px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1)}
-.modal-card-back .back-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;flex:1;overflow:hidden;align-content:start;min-width:0}
-.modal-card-back .back-col{display:flex;flex-direction:column;gap:4px;overflow:hidden;min-width:0}
-.modal-card-back .back-item{display:flex;flex-direction:column;gap:2px;padding:2px 0}
-.modal-card-back .back-label{font-size:7.5px;color:rgba(255,255,255,.38);font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-family:var(--font-ui)}
-.modal-card-back .back-val{font-size:10px;font-weight:700;color:#fff;word-break:break-word;line-height:1.2;letter-spacing:.01em;font-family:var(--font-disp)}
-.modal-card-back .back-id{font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,.55);word-break:break-all;line-height:1.3}
+.modal-card-back .back-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 10px;flex:1;overflow:hidden;align-content:center;min-width:0}
+.modal-card-back .back-item{display:flex;flex-direction:column;gap:3px;min-width:0;padding:0;overflow:hidden}
+.modal-card-back .back-item-wide{grid-column:1/-1}
+.modal-card-back .back-label{font-size:7.8px;color:rgba(255,255,255,.48);font-weight:800;text-transform:uppercase;letter-spacing:.07em;font-family:var(--font-ui);white-space:nowrap}
+.modal-card-back .back-val{font-size:10.8px;font-weight:750;color:#fff;overflow-wrap:anywhere;line-height:1.18;letter-spacing:0;font-family:var(--font-disp);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.modal-card-back .back-id{font-family:var(--font-mono);font-size:8px;color:rgba(255,255,255,.66);word-break:break-all;line-height:1.18;-webkit-line-clamp:2}
 .flip-hint{font-size:10px;color:var(--dim);text-align:center;margin-top:6px;opacity:.6}
 /* === sc-small — для маленьких карток 100x140 === */
 .sc-small.sport-card .sc-img{font-size:28px !important;top:8px}
@@ -1072,11 +1078,20 @@ input,select,textarea,button{max-width:100%}
   .sidebar-bottom{position:relative!important;bottom:auto!important;flex:0 0 auto!important;background:inherit;z-index:2;}
 }
 </style>
+
+<style id="inventory-market-actions">
+#modal-card .modal-footer{flex-wrap:wrap}
+#modal-card .modal-footer .btn{flex:1 1 150px}
+#modal-market-listing .tx-kv{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+#modal-market-listing .tx-kv:last-child{border-bottom:0}
+#modal-market-listing .tx-kv span{color:var(--text3)}
+#modal-market-listing .tx-kv strong{text-align:right}
+</style>
 </head><body>
 <div class="app">
-<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.0.0</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item active" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v2.1.1</div></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item active" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" onclick="location.href='account.html'" id="sb-user"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
-<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Інвентар</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
+<div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><div class="topbar-title">Інвентар</div><div class="topbar-spacer"></div><div class="row" style="gap:12px"><div class="balance-chip"><div class="balance-icon">$</div><span class="balance-amount" id="tb-coins">$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
 <div class="page-header row-between">
   <div>
@@ -1111,19 +1126,45 @@ input,select,textarea,button{max-width:100%}
     <div class="modal-body" id="mc-body"></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modal-card')">Закрити</button>
-      <button class="btn btn-down" id="mc-sell">💸 Продати</button>
+      <button class="btn btn-down" id="mc-sell">💸 Миттєво продати</button>
+      <button class="btn btn-primary" id="mc-market-list">🛍 Розмістити в User Market</button>
     </div>
   </div>
 </div>
 </div>
 </div>
 </div>
+
+<div class="modal-overlay" id="modal-market-listing">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="ml-title">Розмістити картку</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">ID заявки створить сервер автоматично</div>
+      </div>
+      <div class="modal-close" onclick="closeModal('modal-market-listing')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="tx-kv"><span>Оригінальна ринкова ціна</span><strong id="ml-market-price" style="color:var(--cyan)">$0.00</strong></div>
+      <div style="margin-top:14px"><label style="display:block;font-size:10px;font-weight:800;color:var(--text3);margin-bottom:6px">ЦІНА ЗАЯВКИ</label><input class="input" id="ml-price" type="number" min="0" step="0.01"></div>
+      <div style="margin-top:12px"><label style="display:block;font-size:10px;font-weight:800;color:var(--text3);margin-bottom:6px">ОПИС (НЕОБОВ'ЯЗКОВО)</label><textarea class="input" id="ml-description" rows="3" maxlength="300" placeholder="Короткий опис для покупця"></textarea></div>
+      <div style="margin-top:14px;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface2)">
+        <div class="tx-kv"><span>Комісія User Market</span><strong>5%</strong></div>
+        <div class="tx-kv"><span>Отримаєш після продажу</span><strong id="ml-net" style="color:var(--up)">$0.00</strong></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-market-listing')">Назад</button>
+      <button class="btn btn-primary" id="ml-create">Створити заявку</button>
+    </div>
+  </div>
+</div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v2.0.0 — shared.js
+// SlidCard v2.1.1 — shared.js
 
 const CX = {
-  VERSION:    "2.0.0",
+  VERSION:    "2.1.1",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",
@@ -1508,7 +1549,7 @@ function getCardPrice(save,k) {
   const card=CARD_BY_ID[id]||CARD_BY_ID[k];
   if(!card)return 0;
   const ym=YEAR_PRICE_MULT[year]||1.0;
-  const vintageBase=Math.round(cardPrice(card)*ym);
+  const vintageBase=Math.round(cardPrice(card)*ym*100)/100;
   return save.cardPrices[k]||vintageBase;
 }
 
@@ -1520,7 +1561,7 @@ function initPrices(save) {
       const ym=YEAR_PRICE_MULT[year]||1.0;
       if(!save.cardPrices[k]){
         const base=cardPrice(card);
-        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16));
+        save.cardPrices[k]=Math.round(base*ym*(0.92+Math.random()*0.16)*100)/100;
       }
       if(!save.priceHistory[k])save.priceHistory[k]=[save.cardPrices[k]];
     }
@@ -1535,12 +1576,12 @@ function tickMarket(save) {
     for(const k of keys){
       const {year}=parseCardKey(k);
       const ym=YEAR_PRICE_MULT[year]||1.0;
-      const base=Math.round(cardPrice(card)*ym);
+      const base=Math.round(cardPrice(card)*ym*100)/100;
       const cur=save.cardPrices[k]||base;
       const v=vol[card.rarity]||0.05;
       const change=(Math.random()-.5)*2*v;
       const drift=(base-cur)/base*0.025;
-      const newP=Math.max(Math.round(cur*(1+change+drift)),Math.round(base*0.3));
+      const newP=Math.max(Math.round(cur*(1+change+drift)*100)/100,Math.round(base*0.3*100)/100);
       save.cardPrices[k]=newP;
       const hist=save.priceHistory[k]||[base];
       hist.push(newP);if(hist.length>60)hist.shift();
@@ -1553,7 +1594,7 @@ function tickMarket(save) {
 // ── OPEN PACK ──────────────────────────────────────────────
 function openPack(pack,save,count=1) {
   const sz=PACK_SIZES.find(p=>p.cards===count)||PACK_SIZES[0];
-  const totalPrice=Math.round(pack.basePrice*sz.mult);
+  const totalPrice=Math.round(pack.basePrice*sz.mult*100)/100;
   if(save.coins<totalPrice)return null;
   save.coins-=totalPrice;save.packsOpened++;save.totalSpent+=totalPrice;
   const results=[];
@@ -1768,7 +1809,7 @@ function netWorth(save) {
   for(const[k,qty]of Object.entries(save.owned||{}))w+=getCardPrice(save,k)*qty;
   return w;
 }
-function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US");}
+function fmtCoins(n){const v=Number(n||0);if(v>=1000000)return "$"+(v/1000000).toFixed(2)+"M";return "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function toast(msg,type="info"){
   const root=document.getElementById("toast-root");if(!root)return;
   const icons={info:"💬",win:"✅",lose:"❌",warn:"⚠️"};
@@ -1850,6 +1891,26 @@ function render(){
   }).join("");
 }
 
+const INVENTORY_TX_API_URL='https://script.google.com/macros/s/AKfycby25K1rtKsIwnYNBuaFK4svjG5RQTXa8Q7uNiMvS4VR0r7kJn-qBks4wKHWGuyoahsD/exec';
+const INSTANT_SELL_DISCOUNT_MULT=1.2, INSTANT_SELL_FEE=5;
+let marketListingKey=null;
+
+function escInv(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+async function inventoryTxApi(action,data={}){
+  let response;
+  try{response=await fetch(INVENTORY_TX_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,data}),redirect:'follow'});}catch(e){throw new Error('Немає зв’язку з сервером');}
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  let r;try{r=await response.json()}catch(e){throw new Error('Неправильна відповідь сервера')}
+  if(!r.success)throw new Error(r.error||'Операцію не виконано');return r;
+}
+function inventoryTransferPayload(key,marketPrice){const parsed=parseCardKey(key),base=CARD_BY_ID[parsed.id]||CARD_BY_ID[key];if(!base)return null;return {...base,id:key,key,baseId:parsed.id,year:parsed.year,season:parsed.year,marketPrice:Number(marketPrice||0),transferVersion:2};}
+function instantSellQuote(save,key){const market=Number(getCardPrice(save,key)||0),gross=Math.round((market/INSTANT_SELL_DISCOUNT_MULT)*100)/100,fee=Math.round((gross*INSTANT_SELL_FEE/100)*100)/100,net=Math.max(0,Math.round((gross-fee)*100)/100);return{market,gross,fee,net};}
+function instantSellFromInventory(key){const save=loadSave();if((save.owned?.[key]||0)<1)return false;const q=instantSellQuote(save,key),card=getBaseCard(key),{year}=parseCardKey(key);save.owned[key]-=1;if(save.owned[key]<=0)delete save.owned[key];save.coins=Number(save.coins||0)+q.net;save.totalEarned=Number(save.totalEarned||0)+q.net;save.cardsSold=Number(save.cardsSold||0)+1;const yt=year<2026?' ['+year+']':'';addLog(save,'sell',`Миттєво продано ${card?.name||key}${yt}: ${fmtCoins(q.market)} / 1.2 = ${fmtCoins(q.gross)}, комісія 5% ${fmtCoins(q.fee)}, отримано ${fmtCoins(q.net)}`);writeSave(save);return q;}
+function updateListingNet(){const price=Math.max(0,Number(document.getElementById('ml-price')?.value||0)),fee=Math.round(price*.05*100)/100,net=Math.max(0,Math.round((price-fee)*100)/100);const el=document.getElementById('ml-net');if(el)el.textContent=fmtCoins(net);}
+function openMarketListing(key){const save=loadSave(),parsed=parseCardKey(key),card=CARD_BY_ID[parsed.id]||CARD_BY_ID[key];if(!card||!(save.owned?.[key]>0))return toast('Цієї картки немає в інвентарі','warn');marketListingKey=key;const market=getCardPrice(save,key);document.getElementById('ml-title').textContent='User Market · '+card.name;document.getElementById('ml-market-price').textContent=fmtCoins(market);document.getElementById('ml-price').value=Number(market).toFixed(2);document.getElementById('ml-description').value='';updateListingNet();openModal('modal-market-listing');}
+document.getElementById('ml-price')?.addEventListener('input',updateListingNet);
+document.getElementById('ml-create')?.addEventListener('click',async()=>{const btn=document.getElementById('ml-create'),key=marketListingKey,acc=Account.get(),save=loadSave();if(!key||!acc)return;if((save.owned?.[key]||0)<1)return toast('Цієї картки вже немає в інвентарі','warn');const price=Math.round(Number(document.getElementById('ml-price').value)*100)/100,description=document.getElementById('ml-description').value.trim(),marketPrice=getCardPrice(save,key);if(!Number.isFinite(price)||price<0)return toast('Вкажи коректну ціну','warn');const card=inventoryTransferPayload(key,marketPrice);if(!card)return toast('Не вдалося прочитати картку','lose');const old=btn.textContent;btn.disabled=true;btn.textContent='Створюємо…';try{const r=await inventoryTxApi('create',{sellerId:acc.id,sellerUsername:acc.username||[acc.firstName,acc.lastName].filter(Boolean).join(' ')||'Player',card,price,description,pin:'',visibility:'public'}),tx=r.transaction,latest=loadSave();if((latest.owned?.[key]||0)<1)throw new Error('Заявку створено на сервері, але локальної картки вже немає');latest.owned[key]-=1;if(latest.owned[key]<=0)delete latest.owned[key];latest.transactionEscrow=latest.transactionEscrow||{};latest.transactionEscrow[tx.id]={cardKey:key,createdAt:new Date().toISOString(),price:Number(tx.price||price),marketPrice};addLog(latest,'trade',`Картку ${card.name} розміщено в User Market: ${tx.id} за ${fmtCoins(price)}`);writeSave(latest);closeModal('modal-market-listing');closeModal('modal-card');render();toast('✅ Заявку '+tx.id+' створено без ручного введення ID','win');}catch(e){toast(e.message,'lose');}finally{btn.disabled=false;btn.textContent=old;}});
+
 function openCard(key){
   selId=key;
   const save=loadSave();const parsed=parseCardKey(key);
@@ -1881,19 +1942,14 @@ function openCard(key){
               <div class="sc-rating">${card.rating}</div>
             </div>
           </div>
-          <div class="modal-card-face modal-card-back" style="background:${backBgMap[card.rarity]||backBgMap.common};border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)">
-            <div class="back-title">${card.name}</div>
+          <div class="modal-card-face modal-card-back" style="background:${backBgMap[card.rarity]||backBgMap.common};overflow:hidden">
             <div class="back-grid">
-              <div class="back-col">
-                <div class="back-item"><div class="back-label">🏟 СПОРТ</div><div class="back-val">${sportLabel}</div></div>
-                <div class="back-item"><div class="back-label">🌍 НАЦ-ТЬ</div><div class="back-val">${card.country} ${nationality}</div></div>
-                <div class="back-item"><div class="back-label">🏛 КЛУБ</div><div class="back-val">${isUltimate?"ICON Card":card.team}</div></div>
-              </div>
-              <div class="back-col">
-                <div class="back-item"><div class="back-label">📊 РЕЙТИНГ</div><div class="back-val">${card.rating}<span style="font-size:8px;opacity:.5">/99</span></div></div>
-                <div class="back-item"><div class="back-label">📅 РІК</div><div class="back-val" style="color:${rarColor[card.rarity]}">${year}</div></div>
-                <div class="back-item"><div class="back-label">🏷 ID</div><div class="back-val back-id">${key}</div></div>
-              </div>
+              <div class="back-item"><div class="back-label">СПОРТ</div><div class="back-val">${sportLabel}</div></div>
+              <div class="back-item"><div class="back-label">РЕЙТИНГ</div><div class="back-val">${card.rating}<span style="font-size:7px;opacity:.5"> / 99</span></div></div>
+              <div class="back-item"><div class="back-label">НАЦІОНАЛЬНІСТЬ</div><div class="back-val">${card.country} ${nationality}</div></div>
+              <div class="back-item"><div class="back-label">РІК</div><div class="back-val" style="color:${rarColor[card.rarity]}">${year}</div></div>
+              <div class="back-item back-item-wide"><div class="back-label">КЛУБ / КОМАНДА</div><div class="back-val">${isUltimate?"ICON Card":card.team}</div></div>
+              <div class="back-item back-item-wide"><div class="back-label">ID КАРТКИ</div><div class="back-val back-id">${key}</div></div>
             </div>
           </div>
         </div>
@@ -1901,13 +1957,17 @@ function openCard(key){
       <div class="flip-hint">👆 Натисни щоб перевернути</div>
       <div style="width:100%;display:flex;flex-direction:column;gap:0;margin-top:4px">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text3)">💎 Рідкість</span><span class="badge badge-${card.rarity}">${RARITY[card.rarity].label}</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text3)">💰 Ціна</span><span style="font-family:var(--font-mono);color:var(--gold);font-weight:700">${fmtCoins(price)}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text3)">💰 Ринкова ціна</span><span style="font-family:var(--font-mono);color:var(--gold);font-weight:700">${fmtCoins(price)}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text3)">⚡ Миттєвий продаж</span><span style="font-family:var(--font-mono);color:var(--up);font-weight:700">${fmtCoins(instantSellQuote(save,key).net)} <small style="color:var(--text3)">після 5%</small></span></div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:12px"><span style="color:var(--text3)">👤 У тебе</span><span style="color:var(--cyan);font-weight:700">x${qty}</span></div>
       </div>
     </div>`;
+  const quote=instantSellQuote(save,key);
+  document.getElementById("mc-sell").textContent=`💸 Миттєво · ${fmtCoins(quote.net)}`;
   document.getElementById("mc-sell").onclick=()=>{
-    const s=loadSave();if(sellCard(s,selId,1)){toast("💸 Продано "+card.name+" за "+fmtCoins(price),"info");closeModal("modal-card");render();}
+    const q=instantSellFromInventory(selId);if(q){toast(`💸 Продано: ${fmtCoins(q.gross)} − 5% = ${fmtCoins(q.net)}`,"info");closeModal("modal-card");render();}
   };
+  document.getElementById("mc-market-list").onclick=()=>openMarketListing(selId);
   openModal("modal-card");
 }
 
