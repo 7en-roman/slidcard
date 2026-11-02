@@ -375,6 +375,7 @@ function patchLoginPage(){
   const footer=document.querySelector('.auth-card > div:last-child');if(footer)footer.textContent='Вхід на цьому пристрої зберігається автоматично · .slidcard файл потрібен лише для резервної копії або перенесення';
   window.doRegister=async function(){
     const err=document.getElementById('r-err'),username=document.getElementById('r-user').value.trim(),password=document.getElementById('r-pass').value,firstName=document.getElementById('r-first').value.trim(),lastName=document.getElementById('r-last').value.trim(),email=document.getElementById('r-email').value.trim();err.textContent='';
+    if(!/^[A-Za-z0-9_.-]{3,24}$/.test(username)){err.textContent='Username: 3–24 символи; великі/малі латинські літери, цифри, _, - або .';return;}
     try{
       const r=await api('registerAccount',{username,password,firstName,lastName,email});const server=r.account;
       const oldAcc=AccountRef?.get?.()||null,oldSave=Store.get(CX.SAVE_KEY);

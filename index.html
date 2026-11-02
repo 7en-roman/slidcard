@@ -40,7 +40,7 @@
 <div class="input-group"><label class="input-label">Ім'я</label><input class="input" id="r-first" placeholder="Іван" type="text"/></div>
 <div class="input-group"><label class="input-label">Прізвище</label><input class="input" id="r-last" placeholder="Шевченко" type="text"/></div>
 </div>
-<div class="input-group"><label class="input-label">Нікнейм</label><input class="input" id="r-user" placeholder="username" type="text"/></div>
+<div class="input-group"><label class="input-label">Нікнейм</label><input autocomplete="username" autocapitalize="none" class="input" id="r-user" maxlength="24" minlength="3" pattern="[A-Za-z0-9_.-]{3,24}" placeholder="username" spellcheck="false" type="text"/><div class="input-help">Дозволено: великі та малі латинські літери (A–Z, a–z), цифри (0–9), <b>_</b>, <b>-</b>, <b>.</b> · 3–24 символи</div></div>
 <div class="input-group"><label class="input-label">Email <span style="opacity:.55;font-weight:500">(необов’язково)</span></label><input autocomplete="email" class="input" id="r-email" placeholder="можна залишити порожнім" type="email"/></div>
 <div class="input-group"><label class="input-label">Пароль</label><input class="input" id="r-pass" placeholder="мін. 6 символів" type="password"/></div>
 <div class="auth-err" id="r-err"></div>
@@ -415,7 +415,7 @@ const Account = {
   initials()  { const a=this.get();if(!a)return"SC";const f=(a.firstName||a.username||"S")[0]||"S";const l=(a.lastName||"")[0]||(a.username||"C")[1]||"C";return(f+l).toUpperCase(); },
   logout(){try{localStorage.removeItem("slidcard_v3_authenticated");localStorage.setItem("slidcard_v3_logged_out","1")}catch(e){}try{sessionStorage.removeItem("slidcard_v3_authenticated")}catch(e){}},
   setTheme(t){this.update({theme:t});if(window.SlidTheme)SlidTheme.apply(t);},
-  register(d){if(!d.username||d.username.length<3)return{success:false,error:"Нікнейм мінімум 3 символи"};if(d.email&&(!d.email.includes("@")||d.email.startsWith("@")||d.email.endsWith("@")))return{success:false,error:"Невірний email"};if(!d.password||d.password.length<6)return{success:false,error:"Пароль мінімум 6 символів"};const passHash=btoa(d.password);this.create({...d,passHash});const s=defaultSave();writeSave(s);return{success:true};},
+  register(d){const u=String(d.username||"").trim();if(!/^[A-Za-z0-9_.-]{3,24}$/.test(u))return{success:false,error:"Username: 3–24 символи; великі/малі латинські літери, цифри, _, - або ."};if(d.email&&(!d.email.includes("@")||d.email.startsWith("@")||d.email.endsWith("@")))return{success:false,error:"Невірний email"};if(!d.password||d.password.length<6)return{success:false,error:"Пароль мінімум 6 символів"};const passHash=btoa(d.password);this.create({...d,username:u,passHash});const s=defaultSave();writeSave(s);return{success:true};},
   login(username,password){const acc=this.get();if(!acc)return{success:false,error:"Акаунт не знайдено"};if(acc.username!==username&&acc.email!==username)return{success:false,error:"Невірний нікнейм або email"};if(acc.passHash!==btoa(password))return{success:false,error:"Невірний пароль"};return{success:true};},
 };
 
