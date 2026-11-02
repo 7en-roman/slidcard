@@ -1,10 +1,10 @@
-/* SlidCard v3.0 client integration */
+/* SlidCard v3.3 client integration */
 (function(){
 'use strict';
 
 const API_URL='https://script.google.com/macros/s/AKfycby25K1rtKsIwnYNBuaFK4svjG5RQTXa8Q7uNiMvS4VR0r7kJn-qBks4wKHWGuyoahsD/exec';
 const PAGE=(location.pathname.split('/').pop()||'index.html').toLowerCase();
-const V3={prices:new Map(),previous:new Map(),priceRows:[],notifications:[],priceBusy:false,notifBusy:false};
+const V3={prices:new Map(),previous:new Map(),priceRows:[],remotePricesReady:false,notifications:[],priceBusy:false,notifBusy:false,privateSalesBusy:false,exchangesBusy:false,privateSalesTimer:null,exchangesTimer:null};
 const AccountRef=(typeof Account!=='undefined')?Account:null;
 const CatalogCards=(typeof CARDS!=='undefined'&&Array.isArray(CARDS))?CARDS:null;
 const CardMap=(typeof CARD_BY_ID!=='undefined')?CARD_BY_ID:null;
@@ -17,9 +17,17 @@ function marketMoney(v){let n=round(v);if(n>0&&Math.round(n*100)%100===0)n=round
 function fmt(v){const n=Number(v||0);if(Math.abs(n)>=1000000)return 'S$'+(n/1000000).toFixed(2)+'M';return 'S$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 window.fmtCoins=fmt;
 
-async function api(action,data={}){
+async function api(action,data={},timeoutMs=25000){
+  const controller=typeof AbortController!=="undefined"?new AbortController():null;
+  const timer=controller?setTimeout(()=>controller.abort(),Math.max(1000,Number(timeoutMs)||25000)):null;
   let r;
-  try{r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,data}),redirect:'follow'});}catch(e){throw new Error('Немає зв’язку з сервером');}
+  try{
+    r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,data}),redirect:'follow',...(controller?{signal:controller.signal}:{})});
+  }catch(e){
+    if(e?.name==='AbortError')throw new Error('Сервер не відповідає. Спробуй ще раз.');
+    throw new Error('Немає зв’язку з сервером');
+  }finally{if(timer)clearTimeout(timer);}
+  if(!r.ok)throw new Error(`Помилка сервера HTTP ${r.status}`);
   let j;try{j=await r.json();}catch(e){throw new Error('Сервер повернув неправильну відповідь');}
   if(!j.success)throw new Error(j.error||'Операцію не виконано');
   return j;
@@ -34,6 +42,112 @@ function toastV3(msg,type='info'){
 function account(){try{return AccountRef?.get?.()||null;}catch(_){return null;}}
 function save(){try{return window.loadSave?.()||null;}catch(_){return null;}}
 function write(s){try{window.writeSave?.(s);}catch(_){}}
+
+const AUTH_KEY='slidcard_v3_authenticated';
+const LOGOUT_KEY='slidcard_v3_logged_out';
+function hasAuth(){
+  try{
+    if(localStorage.getItem(AUTH_KEY)==='1')return true;
+    if(sessionStorage.getItem(AUTH_KEY)==='1'){localStorage.setItem(AUTH_KEY,'1');return true;}
+  }catch(_){}
+  return false;
+}
+function wasExplicitlyLoggedOut(){try{return localStorage.getItem(LOGOUT_KEY)==='1';}catch(_){return false;}}
+function persistAuth(){
+  try{localStorage.setItem(AUTH_KEY,'1');localStorage.removeItem(LOGOUT_KEY);}catch(_){}
+  try{sessionStorage.setItem(AUTH_KEY,'1');}catch(_){}
+}
+function clearAuth(explicit=false){
+  try{localStorage.removeItem(AUTH_KEY);if(explicit)localStorage.setItem(LOGOUT_KEY,'1');else localStorage.removeItem(LOGOUT_KEY);}catch(_){}
+  try{sessionStorage.removeItem(AUTH_KEY);}catch(_){}
+}
+V3.auth={isAuthenticated:hasAuth,signIn:persistAuth,signOut:()=>clearAuth(true)};
+
+function normalizeAccountStatus(value){
+  const raw=String(value||'active').trim().toLowerCase();
+  if(raw==='cloded')return 'closed';
+  return ['active','closed','banned'].includes(raw)?raw:'active';
+}
+function isOnlineRestricted(status=V3.accountStatus||account()?.status){return normalizeAccountStatus(status)!=='active';}
+function restrictedStatusMessage(status=V3.accountStatus||account()?.status){
+  const s=normalizeAccountStatus(status);
+  return s==='banned'?'Акаунт заблокований. Доступна лише локальна гра.':s==='closed'?'Акаунт закритий. Доступна лише локальна гра.':'';
+}
+V3.accountStatus=normalizeAccountStatus(account()?.status);
+V3.isOnlineRestricted=isOnlineRestricted;
+
+function applyAccountStatusUI(status){
+  const normalized=normalizeAccountStatus(status);
+  V3.accountStatus=normalized;
+  try{AccountRef?.update?.({status:normalized});}catch(_){}
+  document.documentElement.setAttribute('data-account-status',normalized);
+  const bottom=document.querySelector('.sidebar-bottom');
+  if(bottom){
+    let badge=document.getElementById('account-status-badge');
+    if(normalized==='active'){badge?.remove();}
+    else{
+      if(!badge){badge=document.createElement('div');badge.id='account-status-badge';badge.className='account-status-badge';bottom.insertBefore(badge,bottom.firstChild);}
+      badge.className='account-status-badge '+normalized;
+      badge.textContent=normalized==='banned'?'ЗАБЛОКОВАНО':'ЗАКРИТО';
+      badge.title=restrictedStatusMessage(normalized);
+    }
+  }
+  const bell=document.getElementById('v3-bell');if(bell)bell.style.display=normalized==='active'?'':'none';
+  document.querySelectorAll('a[href="transactions.html"],a[href="user_exchanges.html"]').forEach(a=>{
+    a.classList.toggle('online-locked',normalized!=='active');
+    if(normalized!=='active')a.title=restrictedStatusMessage(normalized);
+  });
+  if(normalized!=='active'){
+    document.getElementById('v3-notif-modal')?.classList.remove('open');
+    if(PAGE==='transactions.html'||PAGE==='user_exchanges.html'){
+      const root=document.querySelector('.main-content');
+      if(root)root.innerHTML=`<div class="v3-page"><section class="v3-panel v3-online-lock"><div class="v3-panel-body"><div class="v3-lock-icon">${normalized==='banned'?'⛔':'🔒'}</div><div class="v3-lock-title">${normalized==='banned'?'Акаунт заблокований':'Акаунт закритий'}</div><div class="v3-lock-text">Онлайн-продажі та приватні обміни недоступні. Ти можеш продовжувати локальну гру, відкривати паки та користуватись Bot Market.</div></div></section></div>`;
+    }
+    if(PAGE==='market.html'){
+      const userTab=document.querySelector('.market-tab[data-market="users"]'),botTab=document.querySelector('.market-tab[data-market="bot"]');
+      if(userTab){userTab.disabled=true;userTab.classList.remove('active');userTab.title=restrictedStatusMessage(normalized);}
+      const users=document.getElementById('market-users'),bot=document.getElementById('market-bot');
+      users?.classList.remove('active');bot?.classList.add('active');botTab?.classList.add('active');
+      const my=document.getElementById('my-market-btn');if(my)my.style.display='none';
+      const grid=document.getElementById('user-market-grid');if(grid)grid.innerHTML=`<div class="market-empty">${esc(restrictedStatusMessage(normalized))}<br><small>User Market недоступний.</small></div>`;
+    }
+  }
+}
+V3.applyAccountStatusUI=applyAccountStatusUI;
+
+const AUTH_NOTICE_KEY='slidcard_v3_auth_notice';
+function authNotice(message){
+  try{if(message)sessionStorage.setItem(AUTH_NOTICE_KEY,String(message));else sessionStorage.removeItem(AUTH_NOTICE_KEY);}catch(_){}
+}
+function consumeAuthNotice(){
+  try{const v=sessionStorage.getItem(AUTH_NOTICE_KEY)||'';sessionStorage.removeItem(AUTH_NOTICE_KEY);return v;}catch(_){return '';}
+}
+function purgeLocalAccount(){
+  try{AccountRef?.delete?.();}catch(_){}
+  try{if(typeof CX!=='undefined'){Store.remove(CX.ACC_KEY);Store.remove(CX.SAVE_KEY);}}catch(_){}
+  clearAuth(false);
+}
+async function verifyServerAccount(){
+  const a=account();
+  if(!a?.username)return {valid:false,missing:true};
+  try{
+    const r=await api('lookupAccount',{username:a.username},8000);
+    const remote=r?.account||null;
+    const exists=!!r?.exists&&!!remote;
+    const sameId=!a.id||!remote?.id||String(a.id)===String(remote.id);
+    if(!exists||!sameId){
+      purgeLocalAccount();
+      return {valid:false,deleted:true};
+    }
+    const status=normalizeAccountStatus(remote.status);
+    V3.accountStatus=status;
+    try{AccountRef?.update?.({...remote,status});}catch(_){}
+    return {valid:true,account:{...remote,status},status,restricted:status!=='active'};
+  }catch(error){
+    return {valid:false,unreachable:true,error};
+  }
+}
+V3.verifyServerAccount=verifyServerAccount;
 
 function baseCardForKey(key){
   try{const p=window.parseCardKey?parseCardKey(key):{id:key,year:2026};return CardMap?.[p.id]||CardMap?.[key]||null;}catch(_){return null;}
@@ -81,6 +195,46 @@ window.getCardPrice=function(_s,key){return priceOf(key);};
 window.tickMarket=function(s){return s;};
 V3.priceOf=priceOf;
 
+const PRICE_CACHE_KEY='slidcard_v3_price_cache_v1';
+function localPriceRows(){
+  if(!CatalogCards)return [];
+  const s=save()||{};
+  return CatalogCards.map(c=>{
+    const price=marketMoney(priceOf(c.id));
+    const hist=Array.isArray(s?.priceHistory?.[c.id])?s.priceHistory[c.id]:[];
+    const previousPrice=marketMoney(hist.length>1?hist[hist.length-2]:(price||Number(c.basePrice||0)));
+    return {key:c.id,cardId:c.id,year:2026,name:c.name,rarity:c.rarity,sport:c.sport,team:c.team,country:c.country,rating:c.rating,pos:c.pos,icon:c.icon,price,previousPrice};
+  }).filter(x=>x.price>0);
+}
+function normalizePriceRows(rows){
+  if(!Array.isArray(rows))return [];
+  return rows.map(x=>{
+    const key=String(x?.key||x?.cardId||'').trim();if(!key)return null;
+    const c=CardMap?.[String(x.cardId||key)]||CardMap?.[key]||null;
+    let price=round(x.price);if(price<=0)price=round(c?.basePrice||0);
+    let previousPrice=round(x.previousPrice);if(previousPrice<=0)previousPrice=price;
+    return {...x,key,cardId:String(x.cardId||c?.id||key),year:Number(x.year||2026),name:String(x.name||c?.name||key),rarity:String(x.rarity||c?.rarity||''),sport:String(x.sport||c?.sport||''),team:String(x.team||c?.team||''),country:String(x.country||c?.country||''),rating:Number(x.rating??c?.rating??0),pos:String(x.pos||c?.pos||''),icon:String(x.icon||c?.icon||''),price,previousPrice};
+  }).filter(Boolean);
+}
+function applyPriceRows(rows,{cache=false,remote=false}={}){
+  const clean=normalizePriceRows(rows);if(!clean.length)return false;
+  V3.priceRows=clean;V3.prices.clear();V3.previous.clear();
+  clean.forEach(x=>{V3.prices.set(String(x.key),round(x.price));V3.previous.set(String(x.key),round(x.previousPrice??x.price));});
+  if(remote)V3.remotePricesReady=true;
+  if(cache){try{localStorage.setItem(PRICE_CACHE_KEY,JSON.stringify({at:Date.now(),rows:clean}))}catch(_){}}
+  return true;
+}
+function primePrices(){
+  let cached=null;try{cached=JSON.parse(localStorage.getItem(PRICE_CACHE_KEY)||'null')}catch(_){}
+  if(cached&&Array.isArray(cached.rows)&&cached.rows.length)applyPriceRows(cached.rows,{remote:true});
+  if(!V3.priceRows.length)applyPriceRows(localPriceRows());
+}
+function displayPriceRows(){
+  if(V3.priceRows.length)return V3.priceRows;
+  const rows=localPriceRows();if(rows.length)applyPriceRows(rows);return rows;
+}
+V3.displayPriceRows=displayPriceRows;
+
 function buildCatalog(){
   if(!CatalogCards)return [];
   // Only one server row per base card: this keeps the 2-second global tick practical
@@ -123,39 +277,59 @@ function refreshKnownView(){
 async function syncPrices(){
   if(V3.priceBusy||!CatalogCards)return;V3.priceBusy=true;
   try{
-    const r=await api('getPrices',{catalog:V3.priceRows.length?[]:buildCatalog()});
-    V3.priceRows=r.prices||[];V3.prices.clear();V3.previous.clear();
-    V3.priceRows.forEach(x=>{V3.prices.set(String(x.key),round(x.price));V3.previous.set(String(x.key),round(x.previousPrice));});
+    // Market/news must never wait for the network before showing useful data.
+    if(!V3.priceRows.length)applyPriceRows(localPriceRows());
+    const r=await api('getPrices',{catalog:V3.remotePricesReady?[]:buildCatalog()},8000);
+    const rows=Array.isArray(r.prices)?r.prices:[];
+    if(rows.length)applyPriceRows(rows,{cache:true,remote:true});
     renderTicker();refreshKnownView();window.dispatchEvent(new CustomEvent('slidcard-prices',{detail:r}));
-  }catch(e){console.debug('Price sync:',e.message);}finally{V3.priceBusy=false;}
+  }catch(e){
+    // Keep the cached/local rows instead of blanking the pulse on a slow server.
+    if(!V3.priceRows.length)applyPriceRows(localPriceRows());
+    renderTicker();refreshKnownView();console.debug('Price sync:',e.message);
+  }finally{V3.priceBusy=false;}
 }
 
 /* ---------- bell notifications ---------- */
 function ensureBell(){
   if(PAGE==='index.html'||PAGE==='admin.html')return;
-  const row=document.querySelector('.topbar .row');if(!row||document.getElementById('v3-bell'))return;
-  const bell=document.createElement('button');bell.id='v3-bell';bell.className='v3-bell';bell.type='button';bell.innerHTML='🔔<span class="v3-bell-dot" id="v3-bell-dot" style="display:none">0</span>';
-  row.insertBefore(bell,row.firstChild);bell.onclick=()=>openNotifModal();
+  const tools=document.querySelector('.topbar-tools');if(!tools)return;
+  let bell=document.getElementById('v3-bell');
+  if(!bell){
+    bell=document.createElement('button');bell.id='v3-bell';bell.className='v3-bell';bell.type='button';bell.setAttribute('aria-label','Відкрити сповіщення');bell.setAttribute('title','Сповіщення');bell.innerHTML='🔔<span class="v3-bell-count" id="v3-bell-count" style="display:none" aria-hidden="true"></span>';
+    tools.insertBefore(bell,tools.firstChild);
+  }
+  bell.onclick=()=>openNotifModal();
+  if(document.getElementById('v3-notif-modal'))return;
   const modal=document.createElement('div');modal.id='v3-notif-modal';modal.className='v3-modal-backdrop';modal.innerHTML=`<div class="v3-modal"><div class="v3-modal-head"><div class="v3-modal-title">🔔 Сповіщення</div><button class="v3-modal-close" type="button">✕</button></div><div class="v3-modal-body" id="v3-notif-body"><div class="v3-empty">Завантаження…</div></div></div>`;
-  document.body.appendChild(modal);modal.querySelector('.v3-modal-close').onclick=()=>modal.classList.remove('open');modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open');};
+  document.body.appendChild(modal);modal.querySelector('.v3-modal-close').onclick=()=>modal.classList.remove('open');modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open');};document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('open');});
 }
-function notifIcon(type){return type==='reward'?'🎁':type==='market'?'🏷️':'📰';}
+function notifIcon(type){return type==='reward'?'🎁':type==='market'?'🏷️':type==='admin_message'?'✉️':'📰';}
+function notificationSeenKey(){const a=account();return 'slidcard_seen_notifications_'+String(a?.id||a?.username||'guest');}
+function seenNotificationIds(){try{return new Set(JSON.parse(localStorage.getItem(notificationSeenKey())||'[]'));}catch(_){return new Set();}}
+function unreadNotifications(){const seen=seenNotificationIds();return V3.notifications.filter(n=>n?.id&&!seen.has(String(n.id)));}
+function markNotificationsSeen(){const ids=V3.notifications.map(n=>String(n.id||'')).filter(Boolean);try{localStorage.setItem(notificationSeenKey(),JSON.stringify(ids.slice(0,250)));}catch(_){};}
 function renderNotifications(){
-  const dot=document.getElementById('v3-bell-dot');const unclaimed=V3.notifications.filter(n=>n.rewardType&&!n.claimed).length;
-  if(dot){dot.style.display=unclaimed?'block':'none';dot.textContent=String(Math.min(99,unclaimed));}
+  const badge=document.getElementById('v3-bell-count');const unread=unreadNotifications(),seen=seenNotificationIds();
+  if(badge){
+    const count=unread.length;
+    badge.style.display=count?'inline-flex':'none';
+    badge.textContent=count>9?'9+':String(count);
+    badge.setAttribute('aria-label',count?`${count} непрочитаних сповіщень`:'');
+  }
   const body=document.getElementById('v3-notif-body');if(!body)return;
-  body.innerHTML=V3.notifications.length?V3.notifications.map(n=>`<div class="v3-notif ${!n.claimed?'new':''}"><div class="v3-notif-title">${notifIcon(n.type)} ${esc(n.title)}</div><div class="v3-notif-msg">${esc(n.message)}</div><div class="v3-notif-meta">${n.createdAt?new Date(n.createdAt).toLocaleString('uk-UA'):''}</div>${n.rewardType?`<button class="v3-reward-btn" data-claim="${esc(n.id)}" ${n.claimed?'disabled':''}>${n.claimed?'✓ Отримано':n.rewardType==='money'?`Забрати ${fmt(n.rewardAmount)}`:'Забрати нагороду'}</button>`:''}</div>`).join(''):'<div class="v3-empty">Нових сповіщень немає</div>';
+  body.innerHTML=V3.notifications.length?V3.notifications.map(n=>`<div class="v3-notif ${!seen.has(String(n.id))?'new':''}"><div class="v3-notif-title">${notifIcon(n.type)} ${esc(n.title)}</div><div class="v3-notif-msg">${esc(n.message)}</div><div class="v3-notif-meta">${n.createdAt?new Date(n.createdAt).toLocaleString('uk-UA'):''}</div>${n.rewardType?`<button class="v3-reward-btn" data-claim="${esc(n.id)}" ${n.claimed?'disabled':''}>${n.claimed?'✓ Отримано':n.rewardType==='money'?`Забрати ${fmt(n.rewardAmount)}`:'Забрати нагороду'}</button>`:''}</div>`).join(''):'<div class="v3-empty">Сповіщень немає</div>';
   body.querySelectorAll('[data-claim]').forEach(b=>b.onclick=()=>claimNotification(b.dataset.claim));
 }
 async function loadNotifications(){
-  const a=account();if(!a?.username||V3.notifBusy)return;V3.notifBusy=true;
-  try{const r=await api('listNotifications',{username:a.username});V3.notifications=r.notifications||[];renderNotifications();}catch(e){console.debug('Notifications:',e.message);}finally{V3.notifBusy=false;}
+  const a=account();if(!a?.username||V3.notifBusy||isOnlineRestricted())return;V3.notifBusy=true;
+  try{const r=await api('listNotifications',{username:a.username,userId:a.id});V3.notifications=r.notifications||[];renderNotifications();}catch(e){console.debug('Notifications:',e.message);}finally{V3.notifBusy=false;}
 }
-function openNotifModal(){document.getElementById('v3-notif-modal')?.classList.add('open');loadNotifications();renderNotifications();}
+async function openNotifModal(){document.getElementById('v3-notif-modal')?.classList.add('open');await loadNotifications();markNotificationsSeen();renderNotifications();}
 async function claimNotification(id){
-  const a=account();if(!a)return;
+  const a=account();if(!a)return;if(isOnlineRestricted())return toastV3(restrictedStatusMessage(),'warn');
   try{
-    const r=await api('claimNotification',{username:a.username,notificationId:id});const reward=r.reward||{},s=save();if(!s)throw new Error('Локальний прогрес не знайдено');
+    const r=await api('claimNotification',{username:a.username,userId:a.id,notificationId:id});const reward=r.reward||{},s=save();if(!s)throw new Error('Локальний прогрес не знайдено');
     if(reward.type==='money'){s.coins=round(Number(s.coins||0)+Number(reward.amount||0));s.totalEarned=round(Number(s.totalEarned||0)+Number(reward.amount||0));logLocal(s,'loan',`Адмін-нагорода +${fmt(reward.amount)}`);}
     else if(reward.type==='card'&&reward.card){addCardLocal(s,reward.card);logLocal(s,'buy',`Отримано подарункову картку ${reward.card.name||cardKey(reward.card)}`);}
     write(s);updateBalanceUI();toastV3('Нагороду отримано','win');await loadNotifications();refreshKnownView();
@@ -184,7 +358,7 @@ async function exportV3File(){
   try{
     await api('loginAccount',{username:a.username,password});
     const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),iterations=180000,key=await keyForFile(password,salt,iterations);
-    const payload={format:'SlidCardAccountPayload',version:3,appVersion:'3.0',exportedAt:new Date().toISOString(),login:{username:a.username,password},account:a,save:s};
+    const payload={format:'SlidCardAccountPayload',version:3,appVersion:'3.3',exportedAt:new Date().toISOString(),login:{username:a.username,password},account:a,save:s};
     const encrypted=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(payload))));
     const env={format:'SlidCardAccountFile',version:3,cipher:'AES-GCM-256',kdf:'PBKDF2-SHA256',iterations,salt:bytesToB64(salt),iv:bytesToB64(iv),data:bytesToB64(encrypted)};
     const blob=new Blob([JSON.stringify(env,null,2)],{type:'application/x-slidcard+json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`SlidCard_${a.username}.slidcard`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toastV3('Файл акаунта експортовано','win');
@@ -192,8 +366,8 @@ async function exportV3File(){
 }
 
 function patchLoginPage(){
-  const sub=document.querySelector('.logo-sub');if(sub)sub.textContent='SPORTS CARD PLATFORM v3.0';
-  const footer=document.querySelector('.auth-card > div:last-child');if(footer)footer.textContent='Акаунт перевіряється через SlidCard DB · прогрес зберігається у файлі';
+  const sub=document.querySelector('.logo-sub');if(sub)sub.textContent='SPORTS CARD PLATFORM v3.3';
+  const footer=document.querySelector('.auth-card > div:last-child');if(footer)footer.textContent='Вхід на цьому пристрої зберігається автоматично · .slidcard файл потрібен лише для резервної копії або перенесення';
   window.doRegister=async function(){
     const err=document.getElementById('r-err'),username=document.getElementById('r-user').value.trim(),password=document.getElementById('r-pass').value,firstName=document.getElementById('r-first').value.trim(),lastName=document.getElementById('r-last').value.trim(),email=document.getElementById('r-email').value.trim();err.textContent='';
     try{
@@ -201,7 +375,7 @@ function patchLoginPage(){
       const oldAcc=AccountRef?.get?.()||null,oldSave=Store.get(CX.SAVE_KEY);
       const migrating=oldAcc&&String(oldAcc.username||'').trim().toLowerCase()===username.toLowerCase()&&oldSave;
       const acc={...(migrating?oldAcc:{}),...server,passHash:btoa(unescape(encodeURIComponent(password))),theme:(oldAcc?.theme||'dark')};
-      Store.set(CX.ACC_KEY,acc);writeSave(migrating?oldSave:defaultSave());sessionStorage.setItem('slidcard_v3_authenticated','1');
+      Store.set(CX.ACC_KEY,acc);writeSave(migrating?oldSave:defaultSave());persistAuth();
       if(migrating)alert('Акаунт додано до SlidCard DB. Твій локальний баланс і колекцію збережено. Після входу експортуй новий .slidcard v3 файл.');
       location.href='index_app.html';
     }catch(e){err.textContent=e.message;}
@@ -212,10 +386,19 @@ function patchLoginPage(){
       if(username.toLowerCase()==='admin'){
         const r=await api('adminLogin',{username,password});sessionStorage.setItem('slidcard_admin_token',r.token);location.href='admin.html';return;
       }
-      if(!file)throw new Error('Оберіть файл акаунта .slidcard');
       const server=await api('loginAccount',{username,password});
-      const payload=await importV3File(file,username,password);const local=payload.account||{},merged={...local,...server.account,passHash:local.passHash||btoa(unescape(encodeURIComponent(password)))};
-      Store.set(CX.ACC_KEY,merged);Store.set(CX.SAVE_KEY,payload.save||defaultSave());sessionStorage.setItem('slidcard_v3_authenticated','1');location.href='index_app.html';
+      const localAcc=account(),localSave=Store.get(CX.SAVE_KEY);
+      const sameLocal=localAcc&&String(localAcc.username||'').trim().toLowerCase()===username.toLowerCase()&&localSave;
+      if(file){
+        const payload=await importV3File(file,username,password),fromFile=payload.account||{};
+        const merged={...fromFile,...server.account,passHash:fromFile.passHash||btoa(unescape(encodeURIComponent(password)))};
+        Store.set(CX.ACC_KEY,merged);Store.set(CX.SAVE_KEY,payload.save||defaultSave());
+      }else if(sameLocal){
+        Store.set(CX.ACC_KEY,{...localAcc,...server.account,passHash:localAcc.passHash||btoa(unescape(encodeURIComponent(password)))});
+      }else{
+        throw new Error('На цьому пристрої немає локального прогресу. Оберіть .slidcard файл лише для відновлення або перенесення акаунта.');
+      }
+      persistAuth();location.href='index_app.html';
     }catch(e){err.textContent=e.message;}
   };
 }
@@ -224,8 +407,8 @@ function patchAccountPage(){
   window.exportAccountFile=exportV3File;
   const settings=document.querySelector('#modal-settings .modal-body');
   if(settings&&!document.getElementById('v3-logout-btn')){
-    const box=document.createElement('div');box.style.cssText='border-top:1px solid var(--border);padding-top:12px';box.innerHTML=`<button id="v3-logout-btn" class="btn btn-block" style="background:rgba(255,77,106,.08);color:var(--down);border:1px solid rgba(255,77,106,.2)">↪ Вийти з акаунта</button><div style="font-size:9px;color:var(--text3);margin-top:6px">Перед виходом експортуй файл, якщо хочеш перенести локальні картки й баланс на інший пристрій.</div>`;settings.appendChild(box);
-    box.querySelector('button').onclick=()=>{if(!confirm('Вийти з акаунта? Локальну сесію буде очищено. Переконайся, що маєш актуальний файл експорту.'))return;Store.remove(CX.ACC_KEY);Store.remove(CX.SAVE_KEY);sessionStorage.removeItem('slidcard_v3_authenticated');location.href='index.html';};
+    const box=document.createElement('div');box.style.cssText='border-top:1px solid var(--border);padding-top:12px';box.innerHTML=`<button id="v3-logout-btn" class="btn btn-block" style="background:rgba(255,77,106,.08);color:var(--down);border:1px solid rgba(255,77,106,.2)">↪ Вийти з акаунта</button><div style="font-size:9px;color:var(--text3);margin-top:6px">Локальний акаунт і прогрес залишаться на цьому пристрої. .slidcard потрібен лише для резервної копії або перенесення.</div>`;settings.appendChild(box);
+    box.querySelector('button').onclick=()=>{if(!confirm('Вийти з акаунта на цьому пристрої? Локальний акаунт і прогрес залишаться збереженими.'))return;clearAuth(true);location.href='index.html';};
   }
   const originalSaveSettings=window.saveSettings;
   window.saveSettings=async function(){
@@ -266,39 +449,57 @@ function statusLabel(s){return {pending:'Очікує',pending_response:'Очі�
 let privateSales=[];
 function patchPrivateSales(){
   const root=document.querySelector('.main-content');if(!root)return;
-  root.innerHTML=`<div class="v3-page"><div class="v3-page-head"><div><div class="v3-page-title">🤝 Приватні продажі</div><div class="v3-page-sub">Без ручних Transaction ID. Вкажи username — пропозиція автоматично з’явиться в акаунті потрібного користувача. Комісія приватного продажу: 2%.</div></div><button class="v3-btn" id="v3-sale-refresh">↻ Оновити</button></div><div class="v3-grid-2"><section class="v3-panel"><div class="v3-panel-head"><div class="v3-panel-title">Створити пропозицію</div></div><div class="v3-panel-body"><div class="v3-field"><label>Username покупця</label><input id="v3-sale-user" class="v3-input" placeholder="username"></div><div id="v3-sale-user-result" class="v3-user-result"></div><div class="v3-field"><label>Твоя картка</label><select id="v3-sale-card" class="v3-input">${ownedOptions(false)}</select></div><div class="v3-field"><label>Ціна</label><input id="v3-sale-price" class="v3-input" type="number" min="0" step="0.01" placeholder="0.00"></div><div id="v3-sale-net" style="font-size:10px;color:var(--text3);margin:-4px 0 10px">Після 2% комісії: —</div><div class="v3-field"><label>Опис</label><textarea id="v3-sale-desc" class="v3-input" rows="3" placeholder="Необов’язково"></textarea></div><button id="v3-sale-create" class="v3-btn primary" style="width:100%">Створити приватний продаж</button></div></section><section class="v3-panel"><div class="v3-panel-head"><div class="v3-panel-title">Мої приватні заявки</div><span style="font-size:9px;color:var(--text3)">пошук за username автоматичний</span></div><div class="v3-panel-body"><div class="v3-list" id="v3-sale-list"><div class="v3-empty">Завантаження…</div></div></div></section></div></div>`;
-  const salePanels=root.querySelectorAll('section.v3-panel');if(salePanels[1])salePanels[1].remove();
-  const saleHead=root.querySelector('.v3-page-head');const saleOpen=document.createElement('button');saleOpen.id='v3-sale-open-list';saleOpen.className='v3-btn primary';saleOpen.textContent='📋 Мої приватні продажі';saleHead.appendChild(saleOpen);
-  const saleModal=document.createElement('div');saleModal.id='v3-sale-list-modal';saleModal.className='v3-modal-backdrop';saleModal.innerHTML='<div class="v3-modal"><div class="v3-modal-head"><div class="v3-modal-title">📋 Мої приватні продажі</div><button class="v3-modal-close">✕</button></div><div class="v3-modal-body"><div class="v3-list" id="v3-sale-list"><div class="v3-empty">Завантаження…</div></div></div></div>';document.body.appendChild(saleModal);saleOpen.onclick=()=>{saleModal.classList.add('open');loadPrivateSales();};saleModal.querySelector('.v3-modal-close').onclick=()=>saleModal.classList.remove('open');saleModal.onclick=e=>{if(e.target===saleModal)saleModal.classList.remove('open');};
+  const direct=root.querySelector('.v3-page[data-v3-direct=\"sales\"]');
+  if(!direct)root.innerHTML=`<div class="v3-page"><div class="v3-page-head"><div><div class="v3-page-title">🤝 Приватні продажі</div><div class="v3-page-sub">Створи пропозицію за username. Вхідні пропозиції від інших користувачів показуються окремо, а твої власні — у вікні «Мої приватні продажі».</div></div><div class="v3-page-actions"><button class="v3-btn primary" id="v3-sale-open-list">📋 Мої приватні продажі</button><button class="v3-btn" id="v3-sale-refresh">↻ Оновити</button></div></div><div class="v3-grid-2"><section class="v3-panel"><div class="v3-panel-head"><div class="v3-panel-title">Створити пропозицію</div></div><div class="v3-panel-body"><div class="v3-field"><label>Username покупця</label><input id="v3-sale-user" class="v3-input" placeholder="username"></div><div id="v3-sale-user-result" class="v3-user-result"></div><div class="v3-field"><label>Твоя картка</label><select id="v3-sale-card" class="v3-input">${ownedOptions(false)}</select></div><div class="v3-field"><label>Ціна</label><input id="v3-sale-price" class="v3-input" type="number" min="0" step="0.01" placeholder="0.00"></div><div id="v3-sale-net" style="font-size:10px;color:var(--text3);margin:-4px 0 10px">Після 2% комісії: —</div><div class="v3-field"><label>Опис</label><textarea id="v3-sale-desc" class="v3-input" rows="3" placeholder="Необов’язково"></textarea></div><button id="v3-sale-create" class="v3-btn primary" style="width:100%">Створити приватний продаж</button></div></section><section class="v3-panel"><div class="v3-panel-head"><div><div class="v3-panel-title">📥 Вхідні пропозиції</div><div style="font-size:9px;color:var(--text3);margin-top:3px">Пропозиції, які інші користувачі надіслали тобі</div></div><span id="v3-sale-incoming-count" class="v3-status">0</span></div><div class="v3-panel-body"><div class="v3-list" id="v3-sale-incoming-list"><div class="v3-empty">Завантаження…</div></div></div></section></div></div>`;
+  else { const saleCard=root.querySelector('#v3-sale-card'); if(saleCard) saleCard.innerHTML=ownedOptions(false); }
+  const saleOpen=root.querySelector('#v3-sale-open-list');
+  let saleModal=document.getElementById('v3-sale-list-modal');if(!saleModal){saleModal=document.createElement('div');saleModal.id='v3-sale-list-modal';saleModal.className='v3-modal-backdrop';saleModal.innerHTML='<div class="v3-modal"><div class="v3-modal-head"><div><div class="v3-modal-title">📋 Мої приватні продажі</div><div style="font-size:9px;color:var(--text3);margin-top:3px">Тільки пропозиції, створені тобою</div></div><button type="button" class="v3-modal-close">✕</button></div><div class="v3-modal-body"><div class="v3-list" id="v3-sale-own-list"><div class="v3-empty">Завантаження…</div></div></div></div>';document.body.appendChild(saleModal);}if(saleOpen)saleOpen.onclick=()=>{saleModal.classList.add('open');loadPrivateSales();};const saleClose=saleModal.querySelector('.v3-modal-close');if(saleClose)saleClose.onclick=()=>saleModal.classList.remove('open');saleModal.onclick=e=>{if(e.target===saleModal)saleModal.classList.remove('open');};
   document.getElementById('v3-sale-refresh').onclick=loadPrivateSales;
   document.getElementById('v3-sale-price').oninput=e=>{const p=Math.max(0,Number(e.target.value||0));document.getElementById('v3-sale-net').textContent='Після 2% комісії: '+fmt(p*.98);};
-  let userTimer;document.getElementById('v3-sale-user').oninput=e=>{clearTimeout(userTimer);const u=e.target.value.trim(),out=document.getElementById('v3-sale-user-result');out.textContent='';if(u.length<3)return;userTimer=setTimeout(async()=>{try{const r=await api('lookupAccount',{username:u});out.textContent=r.exists?'✓ '+r.account.username:'Користувача не знайдено';out.style.color=r.exists?'var(--up)':'var(--down)';}catch(_){out.textContent='';}},350);};
-  document.getElementById('v3-sale-create').onclick=createPrivateSale;loadPrivateSales();setInterval(loadPrivateSales,6000);
+  let userTimer;document.getElementById('v3-sale-user').oninput=e=>{clearTimeout(userTimer);const u=e.target.value.trim(),out=document.getElementById('v3-sale-user-result');out.textContent='';if(u.length<3)return;userTimer=setTimeout(async()=>{try{const r=await api('lookupAccount',{username:u});const ok=r.exists&&normalizeAccountStatus(r.account?.status)==='active';out.textContent=!r.exists?'Користувача не знайдено':ok?'✓ '+r.account.username:'⛔ '+r.account.username+' · '+normalizeAccountStatus(r.account?.status).toUpperCase();out.style.color=ok?'var(--up)':'var(--down)';}catch(_){out.textContent='';}},350);};
+  const saleCreate=document.getElementById('v3-sale-create');if(saleCreate)saleCreate.onclick=createPrivateSale;loadPrivateSales();if(!V3.privateSalesTimer)V3.privateSalesTimer=setInterval(loadPrivateSales,6000);
 }
 async function createPrivateSale(){
-  const a=account(),s=save(),target=document.getElementById('v3-sale-user').value.trim(),key=document.getElementById('v3-sale-card').value,price=round(document.getElementById('v3-sale-price').value),description=document.getElementById('v3-sale-desc').value.trim();
+  const btn=document.getElementById('v3-sale-create');if(btn?.disabled)return;
+  const a=account(),s=save(),target=document.getElementById('v3-sale-user')?.value.trim()||'',key=document.getElementById('v3-sale-card')?.value||'',price=round(document.getElementById('v3-sale-price')?.value),description=document.getElementById('v3-sale-desc')?.value.trim()||'';
+  if(!a||!s)return toastV3('Не вдалося завантажити акаунт','lose');
   if(!target||!key)return toastV3('Вкажи username і картку','warn');if(price<0)return toastV3('Невірна ціна','warn');
-  const card=cardPayload(key);try{
-    const r=await api('privateSaleCreate',{sellerId:a.id,sellerUsername:a.username,targetUsername:target,card,price,description});const latest=save();removeCardLocal(latest,key);markMap(latest,'v3PrivateSaleEscrow')[r.transaction.id]={cardKey:key,at:new Date().toISOString()};logLocal(latest,'sell',`Приватний продаж для @${target}: ${card.name} за ${fmt(price)}`);write(latest);updateBalanceUI();document.getElementById('v3-sale-card').innerHTML=ownedOptions(false);toastV3('Пропозицію створено','win');loadPrivateSales();
+  if((s.owned?.[key]||0)<1)return toastV3('Цієї картки вже немає в інвентарі','lose');
+  const card=cardPayload(key);if(!card)return toastV3('Не вдалося прочитати картку','lose');
+  if(btn)btn.disabled=true;
+  try{
+    const r=await api('privateSaleCreate',{sellerId:a.id,sellerUsername:a.username,targetUsername:target,card,price,description});const latest=save();removeCardLocal(latest,key);markMap(latest,'v3PrivateSaleEscrow')[r.transaction.id]={cardKey:key,at:new Date().toISOString()};logLocal(latest,'sell',`Приватний продаж для @${target}: ${card.name} за ${fmt(price)}`);write(latest);updateBalanceUI();const cardSelect=document.getElementById('v3-sale-card');if(cardSelect)cardSelect.innerHTML=ownedOptions(false);toastV3('Пропозицію створено','win');loadPrivateSales();
   }catch(e){toastV3(e.message,'lose');}
+  finally{if(btn)btn.disabled=false;}
 }
 async function loadPrivateSales(){
-  const a=account();if(!a?.username)return;try{const r=await api('privateSalesList',{username:a.username});privateSales=r.transactions||[];reconcilePrivateSales();renderPrivateSales();}catch(e){const el=document.getElementById('v3-sale-list');if(el)el.innerHTML=`<div class="v3-empty">${esc(e.message)}</div>`;}
+  const a=account();if(!a?.username||V3.privateSalesBusy)return;V3.privateSalesBusy=true;
+  try{const r=await api('privateSalesList',{username:a.username,userId:a.id});privateSales=r.transactions||[];reconcilePrivateSales();renderPrivateSales();}
+  catch(e){['v3-sale-incoming-list','v3-sale-own-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=`<div class="v3-empty">${esc(e.message)}</div>`;});}
+  finally{V3.privateSalesBusy=false;}
 }
 function reconcilePrivateSales(){
   const a=account(),s=save();if(!s)return;let changed=false;const restored=markMap(s,'v3PrivateSaleRestored');
   privateSales.forEach(t=>{if(t.status==='canceled'&&String(t.sellerId)===String(a.id)&&!restored[t.id]){const escrow=s.v3PrivateSaleEscrow?.[t.id];if(escrow||t.card){addCardLocal(s,t.card);restored[t.id]=true;if(s.v3PrivateSaleEscrow)delete s.v3PrivateSaleEscrow[t.id];changed=true;}}});if(changed){write(s);document.getElementById('v3-sale-card')&&(document.getElementById('v3-sale-card').innerHTML=ownedOptions(false));}
 }
+function saleOfferHtml(t,a){
+  const seller=String(t.sellerId)===String(a.id),buyer=String(t.targetUsername||'').toLowerCase()===String(a.username||'').toLowerCase();let actions='';
+  if(seller&&t.status==='pending')actions=`<button class="v3-btn bad" data-sale-cancel="${esc(t.id)}">Скасувати</button>`;
+  if(buyer&&t.status==='pending')actions+=`<button class="v3-btn primary" data-sale-buy="${esc(t.id)}">Купити за ${fmt(t.price)}</button>`;
+  if(seller&&t.status==='completed'&&!t.sellerClaimed)actions=`<button class="v3-btn good" data-sale-claim="${esc(t.id)}">💰 Отримати ${fmt(t.sellerAmount)}</button>`;
+  return `<div class="v3-offer"><div class="v3-offer-card">${miniCard(t.card)}</div><div class="v3-offer-main"><div class="v3-offer-top"><div class="v3-offer-title">${esc(t.card?.name||'Картка')} <span style="color:var(--text3);font-weight:500">${seller?'→ @'+esc(t.targetUsername):'від @'+esc(t.sellerUsername)}</span></div><span class="v3-status ${esc(t.status)}">${esc(statusLabel(t.status))}</span></div><div class="v3-kv"><div><small>Ціна</small><strong>${fmt(t.price)}</strong></div><div><small>Комісія</small><strong>${t.feePercent}% · ${fmt(t.feeAmount)}</strong></div><div><small>Ринкова ціна</small><strong>${fmt(t.card?.marketPriceSnapshot||priceOf(cardKey(t.card)))}</strong></div><div><small>Продавцю</small><strong>${fmt(t.sellerAmount)}</strong></div></div>${t.description?`<div style="font-size:10px;color:var(--text3)">${esc(t.description)}</div>`:''}<div class="v3-actions">${actions}</div></div></div>`;
+}
+function bindSaleActions(el){
+  if(!el)return;el.querySelectorAll('[data-sale-buy]').forEach(b=>b.onclick=()=>acceptPrivateSale(b.dataset.saleBuy));el.querySelectorAll('[data-sale-cancel]').forEach(b=>b.onclick=()=>cancelPrivateSale(b.dataset.saleCancel));el.querySelectorAll('[data-sale-claim]').forEach(b=>b.onclick=()=>claimPrivateSale(b.dataset.saleClaim));
+}
 function renderPrivateSales(){
-  const el=document.getElementById('v3-sale-list');if(!el)return;const a=account(),s=save();
-  el.innerHTML=privateSales.length?privateSales.map(t=>{
-    const seller=String(t.sellerId)===String(a.id),buyer=String(t.targetUsername||'').toLowerCase()===String(a.username||'').toLowerCase();let actions='';
-    if(seller&&t.status==='pending')actions=`<button class="v3-btn bad" data-sale-cancel="${esc(t.id)}">Скасувати</button>`;
-    if(buyer&&t.status==='pending')actions+=`<button class="v3-btn primary" data-sale-buy="${esc(t.id)}">Купити за ${fmt(t.price)}</button>`;
-    if(seller&&t.status==='completed'&&!t.sellerClaimed)actions=`<button class="v3-btn good" data-sale-claim="${esc(t.id)}">💰 Отримати ${fmt(t.sellerAmount)}</button>`;
-    return `<div class="v3-offer"><div class="v3-offer-card">${miniCard(t.card)}</div><div class="v3-offer-main"><div class="v3-offer-top"><div class="v3-offer-title">${esc(t.card?.name||'Картка')} <span style="color:var(--text3);font-weight:500">${seller?'→ @'+t.targetUsername:'від @'+t.sellerUsername}</span></div><span class="v3-status ${esc(t.status)}">${esc(statusLabel(t.status))}</span></div><div class="v3-kv"><div><small>Ціна</small><strong>${fmt(t.price)}</strong></div><div><small>Комісія</small><strong>${t.feePercent}% · ${fmt(t.feeAmount)}</strong></div><div><small>Ринкова ціна</small><strong>${fmt(t.card?.marketPriceSnapshot||priceOf(cardKey(t.card)))}</strong></div><div><small>Продавцю</small><strong>${fmt(t.sellerAmount)}</strong></div></div>${t.description?`<div style="font-size:10px;color:var(--text3)">${esc(t.description)}</div>`:''}<div class="v3-actions">${actions}</div></div></div>`;
-  }).join(''):'<div class="v3-empty">Приватних заявок поки немає</div>';
-  el.querySelectorAll('[data-sale-buy]').forEach(b=>b.onclick=()=>acceptPrivateSale(b.dataset.saleBuy));el.querySelectorAll('[data-sale-cancel]').forEach(b=>b.onclick=()=>cancelPrivateSale(b.dataset.saleCancel));el.querySelectorAll('[data-sale-claim]').forEach(b=>b.onclick=()=>claimPrivateSale(b.dataset.saleClaim));
+  const a=account();if(!a)return;const uname=String(a.username||'').toLowerCase();
+  const incoming=privateSales.filter(t=>String(t.targetUsername||'').toLowerCase()===uname&&String(t.sellerId)!==String(a.id));
+  const own=privateSales.filter(t=>String(t.sellerId)===String(a.id));
+  const inEl=document.getElementById('v3-sale-incoming-list'),ownEl=document.getElementById('v3-sale-own-list'),count=document.getElementById('v3-sale-incoming-count');
+  if(count)count.textContent=String(incoming.filter(t=>t.status==='pending').length);
+  if(inEl){inEl.innerHTML=incoming.length?incoming.map(t=>saleOfferHtml(t,a)).join(''):'<div class="v3-empty">Нових пропозицій для тебе поки немає</div>';bindSaleActions(inEl);}
+  if(ownEl){ownEl.innerHTML=own.length?own.map(t=>saleOfferHtml(t,a)).join(''):'<div class="v3-empty">Ти ще не створював приватних продажів</div>';bindSaleActions(ownEl);}
 }
 async function acceptPrivateSale(id){
   const t=privateSales.find(x=>x.id===id),a=account(),s=save();if(!t)return;if(Number(s.coins||0)<Number(t.price||0))return toastV3('Недостатньо S$','lose');
@@ -311,37 +512,56 @@ async function claimPrivateSale(id){const a=account(),s=save();try{const r=await
 let exchanges=[];
 function patchPrivateExchanges(){
   const root=document.querySelector('.main-content');if(!root)return;
-  root.innerHTML=`<div class="v3-page"><div class="v3-page-head"><div><div class="v3-page-title">🔐 Приватні обміни v3</div><div class="v3-page-sub">Обмін прив’язаний до username. Отримувач формує відповідь або контрпропозицію, після чого автор обміну ще раз підтверджує фінальні умови. Комісії між користувачами немає.</div></div><button class="v3-btn" id="v3-ex-refresh">↻ Оновити</button></div><div class="v3-grid-2"><section class="v3-panel"><div class="v3-panel-head"><div class="v3-panel-title">Нова пропозиція</div></div><div class="v3-panel-body"><div class="v3-field"><label>Username</label><input id="v3-ex-user" class="v3-input" placeholder="username"></div><div id="v3-ex-user-result" class="v3-user-result"></div><div class="v3-field"><label>Картка, яку віддаєш</label><select id="v3-ex-card" class="v3-input">${ownedOptions(true)}</select></div><div class="v3-field"><label>S$, які віддаєш</label><input id="v3-ex-coins" class="v3-input" type="number" min="0" step="0.01" value="0"></div><div class="v3-field"><label>Картка, яку хочеш отримати</label><select id="v3-ex-request-card" class="v3-input">${catalogOptions(true)}</select></div><div class="v3-field"><label>Скільки S$ хочеш отримати</label><input id="v3-ex-request" class="v3-input" type="number" min="0" step="0.01" value="0"></div><div class="v3-field"><label>Що хочеш отримати / коментар</label><textarea id="v3-ex-desc" class="v3-input" rows="3" placeholder="Наприклад: хочу Epic F1 2024 або запропонуй свою картку"></textarea></div><button id="v3-ex-create" class="v3-btn primary" style="width:100%">Надіслати пропозицію</button></div></section><section class="v3-panel"><div class="v3-panel-head"><div class="v3-panel-title">Мої обміни</div><span style="font-size:9px;color:var(--text3)">ID прихований — усе через username</span></div><div class="v3-panel-body"><div id="v3-ex-list" class="v3-list"><div class="v3-empty">Завантаження…</div></div></div></section></div></div>`;
-  const exPanels=root.querySelectorAll('section.v3-panel');if(exPanels[1])exPanels[1].remove();
-  const exHead=root.querySelector('.v3-page-head');const exOpen=document.createElement('button');exOpen.id='v3-ex-open-list';exOpen.className='v3-btn primary';exOpen.textContent='📋 Мої приватні обміни';exHead.appendChild(exOpen);
-  const exModal=document.createElement('div');exModal.id='v3-ex-list-modal';exModal.className='v3-modal-backdrop';exModal.innerHTML='<div class="v3-modal"><div class="v3-modal-head"><div class="v3-modal-title">📋 Мої приватні обміни</div><button class="v3-modal-close">✕</button></div><div class="v3-modal-body"><div id="v3-ex-list" class="v3-list"><div class="v3-empty">Завантаження…</div></div></div></div>';document.body.appendChild(exModal);exOpen.onclick=()=>{exModal.classList.add('open');loadExchanges();};exModal.querySelector('.v3-modal-close').onclick=()=>exModal.classList.remove('open');exModal.onclick=e=>{if(e.target===exModal)exModal.classList.remove('open');};
+  const direct=root.querySelector('.v3-page[data-v3-direct=\"exchanges\"]');
+  if(!direct)root.innerHTML=`<div class="v3-page"><div class="v3-page-head"><div><div class="v3-page-title">🔐 Приватні обміни</div><div class="v3-page-sub">Створи обмін за username. Вхідні обміни інших користувачів показуються окремо, а твої власні — у вікні «Мої приватні обміни».</div></div><div class="v3-page-actions"><button class="v3-btn primary" id="v3-ex-open-list">📋 Мої приватні обміни</button><button class="v3-btn" id="v3-ex-refresh">↻ Оновити</button></div></div><div class="v3-grid-2"><section class="v3-panel"><div class="v3-panel-head"><div class="v3-panel-title">Нова пропозиція</div></div><div class="v3-panel-body"><div class="v3-field"><label>Username</label><input id="v3-ex-user" class="v3-input" placeholder="username"></div><div id="v3-ex-user-result" class="v3-user-result"></div><div class="v3-field"><label>Картка, яку віддаєш</label><select id="v3-ex-card" class="v3-input">${ownedOptions(true)}</select></div><div class="v3-field"><label>S$, які віддаєш</label><input id="v3-ex-coins" class="v3-input" type="number" min="0" step="0.01" value="0"></div><div class="v3-field"><label>Картка, яку хочеш отримати</label><select id="v3-ex-request-card" class="v3-input">${catalogOptions(true)}</select></div><div class="v3-field"><label>Скільки S$ хочеш отримати</label><input id="v3-ex-request" class="v3-input" type="number" min="0" step="0.01" value="0"></div><div class="v3-field"><label>Що хочеш отримати / коментар</label><textarea id="v3-ex-desc" class="v3-input" rows="3" placeholder="Наприклад: хочу Epic F1 2024 або запропонуй свою картку"></textarea></div><button id="v3-ex-create" class="v3-btn primary" style="width:100%">Надіслати пропозицію</button></div></section><section class="v3-panel"><div class="v3-panel-head"><div><div class="v3-panel-title">📥 Вхідні обміни</div><div style="font-size:9px;color:var(--text3);margin-top:3px">Обміни, які інші користувачі надіслали тобі</div></div><span id="v3-ex-incoming-count" class="v3-status">0</span></div><div class="v3-panel-body"><div id="v3-ex-incoming-list" class="v3-list"><div class="v3-empty">Завантаження…</div></div></div></section></div></div>`;
+  else { const offer=root.querySelector('#v3-ex-card'); if(offer) offer.innerHTML=ownedOptions(true); const requested=root.querySelector('#v3-ex-request-card'); if(requested) requested.innerHTML=catalogOptions(true); }
+  const exOpen=root.querySelector('#v3-ex-open-list');
+  let exModal=document.getElementById('v3-ex-list-modal');if(!exModal){exModal=document.createElement('div');exModal.id='v3-ex-list-modal';exModal.className='v3-modal-backdrop';exModal.innerHTML='<div class="v3-modal"><div class="v3-modal-head"><div><div class="v3-modal-title">📋 Мої приватні обміни</div><div style="font-size:9px;color:var(--text3);margin-top:3px">Тільки обміни, створені тобою</div></div><button type="button" class="v3-modal-close">✕</button></div><div class="v3-modal-body"><div id="v3-ex-own-list" class="v3-list"><div class="v3-empty">Завантаження…</div></div></div></div>';document.body.appendChild(exModal);}if(exOpen)exOpen.onclick=()=>{exModal.classList.add('open');loadExchanges();};const exClose=exModal.querySelector('.v3-modal-close');if(exClose)exClose.onclick=()=>exModal.classList.remove('open');exModal.onclick=e=>{if(e.target===exModal)exModal.classList.remove('open');};
   document.getElementById('v3-ex-refresh').onclick=loadExchanges;document.getElementById('v3-ex-create').onclick=createExchangeV3;
-  let timer;document.getElementById('v3-ex-user').oninput=e=>{clearTimeout(timer);const u=e.target.value.trim(),out=document.getElementById('v3-ex-user-result');out.textContent='';if(u.length<3)return;timer=setTimeout(async()=>{try{const r=await api('lookupAccount',{username:u});out.textContent=r.exists?'✓ '+r.account.username:'Користувача не знайдено';out.style.color=r.exists?'var(--up)':'var(--down)';}catch(_){}},350);};
-  loadExchanges();setInterval(loadExchanges,6000);
+  let timer;document.getElementById('v3-ex-user').oninput=e=>{clearTimeout(timer);const u=e.target.value.trim(),out=document.getElementById('v3-ex-user-result');out.textContent='';if(u.length<3)return;timer=setTimeout(async()=>{try{const r=await api('lookupAccount',{username:u});const ok=r.exists&&normalizeAccountStatus(r.account?.status)==='active';out.textContent=!r.exists?'Користувача не знайдено':ok?'✓ '+r.account.username:'⛔ '+r.account.username+' · '+normalizeAccountStatus(r.account?.status).toUpperCase();out.style.color=ok?'var(--up)':'var(--down)';}catch(_){}},350);};
+  loadExchanges();if(!V3.exchangesTimer)V3.exchangesTimer=setInterval(loadExchanges,6000);
 }
 async function createExchangeV3(){
-  const a=account(),s=save(),target=document.getElementById('v3-ex-user').value.trim(),key=document.getElementById('v3-ex-card').value,offerCoins=round(document.getElementById('v3-ex-coins').value),requestCardKey=document.getElementById('v3-ex-request-card').value,requestCoins=round(document.getElementById('v3-ex-request').value),description=document.getElementById('v3-ex-desc').value.trim();
-  if(!target)return toastV3('Вкажи username','warn');if(!key&&offerCoins<=0)return toastV3('Додай картку або S$','warn');if(s.coins<offerCoins)return toastV3('Недостатньо S$','lose');
-  try{const r=await api('exchangeCreate',{senderId:a.id,senderUsername:a.username,targetUsername:target,offerCard:key?cardPayload(key):null,offerCoins,requestCardKey,requestCoins,description});const latest=save();if(key)removeCardLocal(latest,key);latest.coins=round(latest.coins-offerCoins);markMap(latest,'v3ExchangeEscrow')[r.exchange.id]={cardKey:key||'',coins:offerCoins};logLocal(latest,'trade',`Пропозиція обміну → @${target}`);write(latest);updateBalanceUI();document.getElementById('v3-ex-card').innerHTML=ownedOptions(true);toastV3('Пропозицію надіслано','win');loadExchanges();}catch(e){toastV3(e.message,'lose');}
+  const btn=document.getElementById('v3-ex-create');if(btn?.disabled)return;
+  const a=account(),s=save(),target=document.getElementById('v3-ex-user')?.value.trim()||'',key=document.getElementById('v3-ex-card')?.value||'',offerCoins=round(document.getElementById('v3-ex-coins')?.value),requestCardKey=document.getElementById('v3-ex-request-card')?.value||'',requestCoins=round(document.getElementById('v3-ex-request')?.value),description=document.getElementById('v3-ex-desc')?.value.trim()||'';
+  if(!a||!s)return toastV3('Не вдалося завантажити акаунт','lose');
+  if(!target)return toastV3('Вкажи username','warn');if(!key&&offerCoins<=0)return toastV3('Додай картку або S$','warn');if(Number(s.coins||0)<offerCoins)return toastV3('Недостатньо S$','lose');if(key&&(s.owned?.[key]||0)<1)return toastV3('Цієї картки вже немає в інвентарі','lose');
+  if(btn)btn.disabled=true;
+  try{const r=await api('exchangeCreate',{senderId:a.id,senderUsername:a.username,targetUsername:target,offerCard:key?cardPayload(key):null,offerCoins,requestCardKey,requestCoins,description});const latest=save();if(key)removeCardLocal(latest,key);latest.coins=round(Number(latest.coins||0)-offerCoins);markMap(latest,'v3ExchangeEscrow')[r.exchange.id]={cardKey:key||'',coins:offerCoins};logLocal(latest,'trade',`Пропозиція обміну → @${target}`);write(latest);updateBalanceUI();const offer=document.getElementById('v3-ex-card');if(offer)offer.innerHTML=ownedOptions(true);toastV3('Пропозицію надіслано','win');loadExchanges();}catch(e){toastV3(e.message,'lose');}
+  finally{if(btn)btn.disabled=false;}
 }
-async function loadExchanges(){const a=account();if(!a?.username)return;try{const r=await api('exchangeListByUsername',{username:a.username});exchanges=r.exchanges||[];reconcileExchanges();renderExchanges();}catch(e){const el=document.getElementById('v3-ex-list');if(el)el.innerHTML=`<div class="v3-empty">${esc(e.message)}</div>`;}}
+async function loadExchanges(){
+  const a=account();if(!a?.username||V3.exchangesBusy)return;V3.exchangesBusy=true;
+  try{const r=await api('exchangeListByUsername',{username:a.username,userId:a.id});exchanges=r.exchanges||[];reconcileExchanges();renderExchanges();}
+  catch(e){['v3-ex-incoming-list','v3-ex-own-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=`<div class="v3-empty">${esc(e.message)}</div>`;});}
+  finally{V3.exchangesBusy=false;}
+}
 function reconcileExchanges(){
   const a=account(),s=save();if(!s)return;let changed=false;const done=markMap(s,'v3ExchangeCancelRestored');
   exchanges.forEach(x=>{if(x.status!=='canceled'||done[x.id])return;const sender=String(x.senderId)===String(a.id),receiver=String(x.targetUsername||'').toLowerCase()===String(a.username||'').toLowerCase();if(sender&&s.v3ExchangeEscrow?.[x.id]){const e=s.v3ExchangeEscrow[x.id];if(e.cardKey)addCardLocal(s,x.offerCard);s.coins=round(Number(s.coins||0)+Number(e.coins||0));delete s.v3ExchangeEscrow[x.id];changed=true;}if(receiver&&s.v3ExchangeResponseEscrow?.[x.id]){const e=s.v3ExchangeResponseEscrow[x.id];if(e.cardKey)addCardLocal(s,x.responseCard);s.coins=round(Number(s.coins||0)+Number(e.coins||0));delete s.v3ExchangeResponseEscrow[x.id];changed=true;}done[x.id]=true;});if(changed){write(s);updateBalanceUI();document.getElementById('v3-ex-card')&&(document.getElementById('v3-ex-card').innerHTML=ownedOptions(true));}
 }
 function exchangeCardsHtml(x){const requested=[x.requestCardKey?esc(cardLabelFromKey(x.requestCardKey)):'',x.requestCoins?fmt(x.requestCoins):''].filter(Boolean).join(' + ')||'Будь-яка контрпропозиція';return `<div class="v3-kv"><div><small>@${esc(x.senderUsername)} віддає</small><strong>${esc(x.offerCard?.name||'Без картки')} ${x.offerCoins?'+ '+fmt(x.offerCoins):''}</strong></div><div><small>Початково просить</small><strong>${requested}</strong></div><div><small>@${esc(x.targetUsername)} відповідь</small><strong>${x.responseCard||x.responseCoins?`${esc(x.responseCard?.name||'Без картки')} ${x.responseCoins?'+ '+fmt(x.responseCoins):''}`:'Ще немає'}</strong></div></div>`;}
+function exchangeOfferHtml(x,a){
+  const sender=String(x.senderId)===String(a.id),receiver=String(x.targetUsername||'').toLowerCase()===String(a.username||'').toLowerCase();let act='';
+  if(receiver&&x.status==='pending_response')act=`<button class="v3-btn good" data-ex-accept="${esc(x.id)}">✓ Прийняти умови</button><button class="v3-btn primary" data-ex-respond="${esc(x.id)}">Запропонувати зміни</button><button class="v3-btn bad" data-ex-cancel="${esc(x.id)}">Відхилити</button>`;
+  if(sender&&x.status==='pending_response')act=`<button class="v3-btn bad" data-ex-cancel="${esc(x.id)}">Скасувати</button>`;
+  if(sender&&x.status==='awaiting_sender_confirm')act=`<button class="v3-btn good" data-ex-confirm="${esc(x.id)}">✓ Підтвердити фінальні умови</button><button class="v3-btn bad" data-ex-cancel="${esc(x.id)}">Відхилити</button>`;
+  if(receiver&&x.status==='awaiting_sender_confirm')act=`<span style="font-size:10px;color:var(--gold)">Очікуємо фінального підтвердження @${esc(x.senderUsername)}</span><button class="v3-btn bad" data-ex-cancel="${esc(x.id)}">Скасувати</button>`;
+  if(sender&&x.status==='completed'&&!x.senderClaimed)act=`<button class="v3-btn good" data-ex-claim-s="${esc(x.id)}">Отримати відповідь</button>`;
+  if(receiver&&x.status==='completed'&&!x.receiverClaimed)act+=`<button class="v3-btn good" data-ex-claim-r="${esc(x.id)}">Отримати пропозицію</button>`;
+  return `<div class="v3-offer"><div class="v3-offer-card">${miniCard(x.offerCard)}</div><div class="v3-offer-main"><div class="v3-offer-top"><div class="v3-offer-title">${sender?'Для @'+esc(x.targetUsername):'Від @'+esc(x.senderUsername)}</div><span class="v3-status ${esc(x.status)}">${esc(statusLabel(x.status))}</span></div>${exchangeCardsHtml(x)}${x.requestCoins?`<div style="font-size:10px;color:var(--text3)">Запитано: ${fmt(x.requestCoins)}</div>`:''}${x.description?`<div style="font-size:10px;color:var(--text3);margin-top:4px">${esc(x.description)}</div>`:''}<div class="v3-actions">${act}</div></div></div>`;
+}
+function bindExchangeActions(el){
+  if(!el)return;el.querySelectorAll('[data-ex-accept]').forEach(b=>b.onclick=()=>acceptExchangeOriginal(b.dataset.exAccept));el.querySelectorAll('[data-ex-respond]').forEach(b=>b.onclick=()=>openExchangeResponse(b.dataset.exRespond));el.querySelectorAll('[data-ex-confirm]').forEach(b=>b.onclick=()=>confirmExchange(b.dataset.exConfirm));el.querySelectorAll('[data-ex-cancel]').forEach(b=>b.onclick=()=>cancelExchange(b.dataset.exCancel));el.querySelectorAll('[data-ex-claim-s]').forEach(b=>b.onclick=()=>claimExchangeSender(b.dataset.exClaimS));el.querySelectorAll('[data-ex-claim-r]').forEach(b=>b.onclick=()=>claimExchangeReceiver(b.dataset.exClaimR));
+}
 function renderExchanges(){
-  const el=document.getElementById('v3-ex-list');if(!el)return;const a=account();el.innerHTML=exchanges.length?exchanges.map(x=>{
-    const sender=String(x.senderId)===String(a.id),receiver=String(x.targetUsername||'').toLowerCase()===String(a.username||'').toLowerCase();let act='';
-    if(receiver&&x.status==='pending_response')act=`<button class="v3-btn good" data-ex-accept="${esc(x.id)}">✓ Прийняти умови</button><button class="v3-btn primary" data-ex-respond="${esc(x.id)}">Запропонувати зміни</button><button class="v3-btn bad" data-ex-cancel="${esc(x.id)}">Відхилити</button>`;
-    if(sender&&x.status==='pending_response')act=`<button class="v3-btn bad" data-ex-cancel="${esc(x.id)}">Скасувати</button>`;
-    if(sender&&x.status==='awaiting_sender_confirm')act=`<button class="v3-btn good" data-ex-confirm="${esc(x.id)}">✓ Підтвердити фінальні умови</button><button class="v3-btn bad" data-ex-cancel="${esc(x.id)}">Відхилити</button>`;
-    if(receiver&&x.status==='awaiting_sender_confirm')act=`<span style="font-size:10px;color:var(--gold)">Очікуємо фінального підтвердження @${esc(x.senderUsername)}</span><button class="v3-btn bad" data-ex-cancel="${esc(x.id)}">Скасувати</button>`;
-    if(sender&&x.status==='completed'&&!x.senderClaimed)act=`<button class="v3-btn good" data-ex-claim-s="${esc(x.id)}">Отримати відповідь</button>`;
-    if(receiver&&x.status==='completed'&&!x.receiverClaimed)act+=`<button class="v3-btn good" data-ex-claim-r="${esc(x.id)}">Отримати пропозицію</button>`;
-    return `<div class="v3-offer"><div class="v3-offer-card">${miniCard(x.offerCard)}</div><div class="v3-offer-main"><div class="v3-offer-top"><div class="v3-offer-title">${sender?'Для @'+esc(x.targetUsername):'Від @'+esc(x.senderUsername)}</div><span class="v3-status ${esc(x.status)}">${esc(statusLabel(x.status))}</span></div>${exchangeCardsHtml(x)}${x.requestCoins?`<div style="font-size:10px;color:var(--text3)">Запитано: ${fmt(x.requestCoins)}</div>`:''}${x.description?`<div style="font-size:10px;color:var(--text3);margin-top:4px">${esc(x.description)}</div>`:''}<div class="v3-actions">${act}</div></div></div>`;
-  }).join(''):'<div class="v3-empty">Активних приватних обмінів немає</div>';
-  el.querySelectorAll('[data-ex-accept]').forEach(b=>b.onclick=()=>acceptExchangeOriginal(b.dataset.exAccept));el.querySelectorAll('[data-ex-respond]').forEach(b=>b.onclick=()=>openExchangeResponse(b.dataset.exRespond));el.querySelectorAll('[data-ex-confirm]').forEach(b=>b.onclick=()=>confirmExchange(b.dataset.exConfirm));el.querySelectorAll('[data-ex-cancel]').forEach(b=>b.onclick=()=>cancelExchange(b.dataset.exCancel));el.querySelectorAll('[data-ex-claim-s]').forEach(b=>b.onclick=()=>claimExchangeSender(b.dataset.exClaimS));el.querySelectorAll('[data-ex-claim-r]').forEach(b=>b.onclick=()=>claimExchangeReceiver(b.dataset.exClaimR));
+  const a=account();if(!a)return;const uname=String(a.username||'').toLowerCase();
+  const incoming=exchanges.filter(x=>String(x.targetUsername||'').toLowerCase()===uname&&String(x.senderId)!==String(a.id));
+  const own=exchanges.filter(x=>String(x.senderId)===String(a.id));
+  const inEl=document.getElementById('v3-ex-incoming-list'),ownEl=document.getElementById('v3-ex-own-list'),count=document.getElementById('v3-ex-incoming-count');
+  if(count)count.textContent=String(incoming.filter(x=>x.status==='pending_response'||x.status==='awaiting_sender_confirm'||(x.status==='completed'&&!x.receiverClaimed)).length);
+  if(inEl){inEl.innerHTML=incoming.length?incoming.map(x=>exchangeOfferHtml(x,a)).join(''):'<div class="v3-empty">Нових обмінів для тебе поки немає</div>';bindExchangeActions(inEl);}
+  if(ownEl){ownEl.innerHTML=own.length?own.map(x=>exchangeOfferHtml(x,a)).join(''):'<div class="v3-empty">Ти ще не створював приватних обмінів</div>';bindExchangeActions(ownEl);}
 }
 function openExchangeResponse(id){
   const x=exchanges.find(v=>v.id===id);if(!x)return;let modal=document.getElementById('v3-ex-response-modal');if(!modal){modal=document.createElement('div');modal.id='v3-ex-response-modal';modal.className='v3-modal-backdrop';document.body.appendChild(modal);}modal.innerHTML=`<div class="v3-modal" style="max-width:560px"><div class="v3-modal-head"><div class="v3-modal-title">Контрпропозиція для @${esc(x.senderUsername)}</div><button class="v3-modal-close">✕</button></div><div class="v3-modal-body">${exchangeCardsHtml(x)}<div class="v3-field"><label>Твоя картка у відповідь</label><select id="v3-ex-response-card" class="v3-input">${ownedOptions(true)}</select></div><div class="v3-field"><label>S$ у відповідь</label><input id="v3-ex-response-coins" class="v3-input" type="number" min="0" step="0.01" value="${esc(x.requestCoins||0)}"></div><div style="font-size:10px;color:var(--text3);margin-bottom:12px">Після відправлення автор побачить твої умови й повинен підтвердити їх ще раз.</div><button class="v3-btn primary" id="v3-ex-response-send" style="width:100%">Надіслати умови</button></div></div>`;modal.classList.add('open');modal.querySelector('.v3-modal-close').onclick=()=>modal.classList.remove('open');modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open');};const responseSelect=modal.querySelector('#v3-ex-response-card');if(x.requestCardKey&&responseSelect&&Array.from(responseSelect.options).some(o=>o.value===x.requestCardKey))responseSelect.value=x.requestCardKey;modal.querySelector('#v3-ex-response-send').onclick=()=>respondExchange(id,modal);
@@ -378,7 +598,7 @@ const EXTRA_NEWS=[
 function patchNews(){
   if(PAGE!=='news.html')return;
   window.renderNews=function(){
-    const pb=document.getElementById('prices-bar');if(pb){pb.className='v3-price-strip';const rows=(V3.priceRows||[]).filter(x=>x.year===2026).sort((a,b)=>b.price-a.price).slice(0,12);pb.innerHTML=rows.map(x=>{const ch=x.previousPrice?((x.price-x.previousPrice)/x.previousPrice*100):0,up=ch>=0;return `<div class="v3-price-tile"><div class="v3-price-name">${esc(x.name)}</div><div class="v3-price-value">${fmt(x.price)}</div><div class="v3-price-change" style="color:${up?'var(--up)':'var(--down)'}">${up?'▲':'▼'} ${Math.abs(ch).toFixed(2)}%</div></div>`;}).join('');}
+    const pb=document.getElementById('prices-bar');if(pb){pb.className='v3-price-strip';const rows=displayPriceRows().filter(x=>x.year===2026).sort((a,b)=>b.price-a.price).slice(0,12);pb.innerHTML=rows.map(x=>{const ch=x.previousPrice?((x.price-x.previousPrice)/x.previousPrice*100):0,up=ch>=0;return `<div class="v3-price-tile"><div class="v3-price-name">${esc(x.name)}</div><div class="v3-price-value">${fmt(x.price)}</div><div class="v3-price-change" style="color:${up?'var(--up)':'var(--down)'}">${up?'▲':'▼'} ${Math.abs(ch).toFixed(2)}%</div></div>`;}).join('');}
     const grid=document.getElementById('news-grid');if(!grid)return;grid.className='v3-news-grid';const hour=Math.floor(Date.now()/3600000),base=(typeof SPORT_NEWS!=='undefined'&&Array.isArray(SPORT_NEWS)?SPORT_NEWS:[]).map(n=>[n.text,n.sport]),pool=[...base,...EXTRA_NEWS],filter=typeof nF!=='undefined'?nF:'all';const ordered=pool.map((n,i)=>pool[(i+hour)%pool.length]).filter(n=>filter==='all'||n[1]===filter||n[1]==='all').slice(0,16);grid.innerHTML=ordered.map((n,i)=>`<div class="v3-news-card"><div class="v3-news-icon">${n[0].match(/^\S+/)?.[0]||'📰'}</div><div><div class="v3-news-title">${esc(n[0])}</div><div class="v3-news-time">Добірка #${(hour%24)+1} · оновлюється щогодини</div></div></div>`).join('');
   };
   renderNews();setInterval(renderNews,60000);
@@ -392,18 +612,79 @@ function patchWallet(){
 }
 
 /* ---------- init ---------- */
-function updateVersion(){document.querySelectorAll('.brand-ver').forEach(x=>x.textContent='v3.0');document.title=document.title.replace(/v2\.1\.1/gi,'v3.0');}
-function init(){
+function updateVersion(){document.querySelectorAll('.brand-ver').forEach(x=>x.textContent='v3.3');document.title=document.title.replace(/v2\.1\.1/gi,'v3.3');}
+async function init(){
   updateVersion();document.querySelectorAll('.balance-icon').forEach(x=>x.textContent='S$');
-  if(PAGE==='index.html'){patchLoginPage();return;}
-  if(PAGE!=='admin.html'&&account()&&sessionStorage.getItem('slidcard_v3_authenticated')!=='1'){location.href='index.html';return;}
-  ensureBell();loadNotifications();setInterval(loadNotifications,15000);
-  if(CatalogCards){syncPrices();setInterval(syncPrices,2000);}renderTicker();
+  if(PAGE==='index.html'){
+    const local=account();
+    if(local&&!wasExplicitlyLoggedOut()){
+      const check=await verifyServerAccount();
+      if(check.valid){persistAuth();location.href='index_app.html';return;}
+      patchLoginPage();
+      const err=document.getElementById('l-err');
+      if(err){
+        if(check.deleted)err.textContent='Цього акаунта більше немає в SlidCard DB. Локальну копію видалено.';
+        else if(check.unreachable)err.textContent='Не вдалося перевірити акаунт у SlidCard DB. Перевір з’єднання та увійди ще раз.';
+      }
+      return;
+    }
+    patchLoginPage();
+    const notice=consumeAuthNotice();
+    if(notice){const err=document.getElementById('l-err');if(err)err.textContent=notice;}
+    return;
+  }
+  if(PAGE!=='admin.html'){
+    if(!account()){clearAuth(false);location.href='index.html';return;}
+    if(wasExplicitlyLoggedOut()){location.href='index.html';return;}
+    const check=await verifyServerAccount();
+    if(!check.valid){
+      if(check.deleted)authNotice('Акаунт було видалено з SlidCard DB. Локальну сесію очищено.');
+      else authNotice('Не вдалося підтвердити акаунт у SlidCard DB. Увійди ще раз після відновлення з’єднання.');
+      if(check.unreachable)clearAuth(false);
+      location.href='index.html';return;
+    }
+    if(!hasAuth())persistAuth();
+    applyAccountStatusUI(check.status||check.account?.status||'active');
+    // Keep an already-open page tied to the server account as well.
+    setInterval(async()=>{
+      if(V3.authCheckBusy||document.hidden)return;
+      V3.authCheckBusy=true;
+      try{
+        const before=normalizeAccountStatus(V3.accountStatus);
+        const live=await verifyServerAccount();
+        if(live.deleted){authNotice('Акаунт було видалено з SlidCard DB. Локальну сесію очищено.');location.href='index.html';return;}
+        if(live.valid){
+          const after=normalizeAccountStatus(live.status||live.account?.status);
+          if(after!==before){applyAccountStatusUI(after);location.reload();return;}
+          applyAccountStatusUI(after);
+        }
+      }finally{V3.authCheckBusy=false;}
+    },30000);
+  }
+  if(!isOnlineRestricted()){
+    ensureBell();loadNotifications();setInterval(loadNotifications,15000);
+    if(CatalogCards){primePrices();renderTicker();syncPrices();setInterval(syncPrices,15000);}else renderTicker();
+  }else{
+    renderTicker();
+  }
   if(PAGE==='account.html')patchAccountPage();
-  if(PAGE==='transactions.html')patchPrivateSales();
-  if(PAGE==='user_exchanges.html')patchPrivateExchanges();
+  if(PAGE==='transactions.html'&&!isOnlineRestricted())patchPrivateSales();
+  if(PAGE==='user_exchanges.html'&&!isOnlineRestricted())patchPrivateExchanges();
   patchBotTradeFee();patchNews();patchWallet();updateBalanceUI();
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));else setTimeout(init,0);
+})();
+
+/* v3.3 price heartbeat: keep simulated card market moving every 2 seconds on every app page. */
+(function initSlidCardPriceHeartbeat(){
+  if(window.__slidcardPriceHeartbeat)return;
+  if(typeof tickMarket!=='function'||typeof loadSave!=='function'||typeof writeSave!=='function')return;
+  window.__slidcardPriceHeartbeat=setInterval(()=>{
+    try{
+      const save=tickMarket(loadSave());
+      writeSave(save);
+      window.dispatchEvent(new CustomEvent('slidcard:prices-updated',{detail:{at:Number(save.lastMarketTick||Date.now())}}));
+    }catch(_){ }
+  },2000);
 })();
