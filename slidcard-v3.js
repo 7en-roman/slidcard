@@ -1,4 +1,4 @@
-/* SlidCard v3.3 client integration */
+/* SlidCard v3.4 client integration */
 (function(){
 'use strict';
 
@@ -91,6 +91,11 @@ function applyAccountStatusUI(status){
       badge.textContent=normalized==='banned'?'ЗАБЛОКОВАНО':'ЗАКРИТО';
       badge.title=restrictedStatusMessage(normalized);
     }
+  }
+  const profileBadge=document.getElementById('account-profile-status-badge');
+  if(profileBadge){
+    if(normalized==='active'){profileBadge.hidden=true;profileBadge.textContent='';}
+    else{profileBadge.hidden=false;profileBadge.className='account-status-badge account-profile-status-badge '+normalized;profileBadge.textContent=normalized==='banned'?'ЗАБЛОКОВАНО':'ЗАКРИТО';profileBadge.title=restrictedStatusMessage(normalized);}
   }
   const bell=document.getElementById('v3-bell');if(bell)bell.style.display=normalized==='active'?'':'none';
   document.querySelectorAll('a[href="transactions.html"],a[href="user_exchanges.html"]').forEach(a=>{
@@ -358,7 +363,7 @@ async function exportV3File(){
   try{
     await api('loginAccount',{username:a.username,password});
     const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),iterations=180000,key=await keyForFile(password,salt,iterations);
-    const payload={format:'SlidCardAccountPayload',version:3,appVersion:'3.3',exportedAt:new Date().toISOString(),login:{username:a.username,password},account:a,save:s};
+    const payload={format:'SlidCardAccountPayload',version:3,appVersion:'3.4',exportedAt:new Date().toISOString(),login:{username:a.username,password},account:a,save:s};
     const encrypted=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(payload))));
     const env={format:'SlidCardAccountFile',version:3,cipher:'AES-GCM-256',kdf:'PBKDF2-SHA256',iterations,salt:bytesToB64(salt),iv:bytesToB64(iv),data:bytesToB64(encrypted)};
     const blob=new Blob([JSON.stringify(env,null,2)],{type:'application/x-slidcard+json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`SlidCard_${a.username}.slidcard`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toastV3('Файл акаунта експортовано','win');
@@ -366,7 +371,7 @@ async function exportV3File(){
 }
 
 function patchLoginPage(){
-  const sub=document.querySelector('.logo-sub');if(sub)sub.textContent='SPORTS CARD PLATFORM v3.3';
+  const sub=document.querySelector('.logo-sub');if(sub)sub.textContent='SPORTS CARD PLATFORM v3.4';
   const footer=document.querySelector('.auth-card > div:last-child');if(footer)footer.textContent='Вхід на цьому пристрої зберігається автоматично · .slidcard файл потрібен лише для резервної копії або перенесення';
   window.doRegister=async function(){
     const err=document.getElementById('r-err'),username=document.getElementById('r-user').value.trim(),password=document.getElementById('r-pass').value,firstName=document.getElementById('r-first').value.trim(),lastName=document.getElementById('r-last').value.trim(),email=document.getElementById('r-email').value.trim();err.textContent='';
@@ -612,9 +617,10 @@ function patchWallet(){
 }
 
 /* ---------- init ---------- */
-function updateVersion(){document.querySelectorAll('.brand-ver').forEach(x=>x.textContent='v3.3');document.title=document.title.replace(/v2\.1\.1/gi,'v3.3');}
+function updateVersion(){document.querySelectorAll('.brand-ver').forEach(x=>x.textContent='v3.4');document.title=document.title.replace(/v2\.1\.1/gi,'v3.4');}
 async function init(){
   updateVersion();document.querySelectorAll('.balance-icon').forEach(x=>x.textContent='S$');
+  if(PAGE!=='index.html'&&PAGE!=='admin.html'&&account())applyAccountStatusUI(account()?.status||'active');
   if(PAGE==='index.html'){
     const local=account();
     if(local&&!wasExplicitlyLoggedOut()){
@@ -676,7 +682,7 @@ async function init(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));else setTimeout(init,0);
 })();
 
-/* v3.3 price heartbeat: keep simulated card market moving every 2 seconds on every app page. */
+/* v3.4 price heartbeat: keep simulated card market moving every 2 seconds on every app page. */
 (function initSlidCardPriceHeartbeat(){
   if(window.__slidcardPriceHeartbeat)return;
   if(typeof tickMarket!=='function'||typeof loadSave!=='function'||typeof writeSave!=='function')return;

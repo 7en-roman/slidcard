@@ -62,7 +62,7 @@
 #best-cards{align-items:flex-start}.auth-shell{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 0,rgba(0,212,255,.10),transparent 34%),var(--bg)}.auth-card{width:min(520px,100%);border:1px solid var(--border);background:rgba(17,21,32,.88);border-radius:24px;box-shadow:0 26px 80px rgba(0,0,0,.35);padding:25px}.auth-logo{text-align:center;margin-bottom:20px}.auth-logo .brand-name{font-size:31px}.logo-sub{font:700 9px var(--font-mono);letter-spacing:.14em;color:var(--text3);margin-top:8px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:18px;padding:5px;border-radius:13px;background:var(--surface2)}.auth-tab{min-height:40px;border-radius:10px;background:transparent;color:var(--text3);font-size:11px;font-weight:750;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 14px;border:0;cursor:pointer}.auth-tab.on{background:var(--surface3);color:var(--text);box-shadow:0 5px 15px rgba(0,0,0,.14)}.auth-err{min-height:18px;color:var(--down);font-size:10px;margin-top:7px}.auth-note{padding:10px;border:1px solid var(--border);border-radius:11px;background:var(--surface2);font-size:10px;color:var(--text3);line-height:1.5}
 .admin-page{min-height:100vh;background:radial-gradient(circle at 70% -10%,rgba(0,212,255,.08),transparent 28%),var(--bg);padding:22px}.admin-shell{width:min(1180px,100%);margin:0 auto;display:flex;flex-direction:column;gap:16px}.admin-top{display:flex;align-items:center;justify-content:space-between;gap:14px}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.admin-panel{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:17px}.admin-panel h2,.admin-panel h3{font:750 14px var(--font-disp);margin-bottom:12px}.admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.admin-stat{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:12px}.admin-stat span{display:block;font:700 8px var(--font-mono);color:var(--text3);text-transform:uppercase;letter-spacing:.08em}.admin-stat strong{display:block;margin-top:5px;font:800 18px var(--font-disp)}.msg{min-height:16px;font-size:10px;color:var(--text3);margin-top:7px}
 @media(max-width:960px){.market-toolbar{grid-template-columns:1fr 160px}.market-toolbar .mobile-filter-toggle{display:inline-flex}.user-market-grid{grid-template-columns:1fr 1fr}.wallet-stats-grid,.account-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
-@media(max-width:760px){.page-header{border-radius:18px;padding:18px 16px}.page-title{font-size:25px}.page-sub{font-size:11px}.row-between{align-items:flex-start;flex-direction:column}.card{border-radius:16px}.card-header{padding:13px 14px}.card-body{padding:14px}.inventory-card-grid,#packs-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.market-toolbar{grid-template-columns:1fr}.market-sort{width:100%}.mobile-filter-toggle{display:inline-flex;align-items:center;justify-content:center}.user-market-grid{grid-template-columns:1fr}.market-modal-top{grid-template-columns:1fr}.wallet-stats-grid,.account-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.admin-grid{grid-template-columns:1fr}.admin-page{padding:12px}.data-table{min-width:560px}}
+@media(max-width:760px){.page-header{border-radius:18px;padding:18px 16px}.page-title{font-size:25px}.page-sub{font-size:11px}.row-between{align-items:flex-start;flex-direction:column}.card{border-radius:16px}.card-header{padding:13px 14px}.card-body{padding:14px}.inventory-card-grid,#packs-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.market-toolbar{grid-template-columns:1fr}.market-sort{width:100%}.mobile-filter-toggle{display:inline-flex;align-items:center;justify-content:center}.user-market-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.market-modal-top{grid-template-columns:1fr}.wallet-stats-grid,.account-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.admin-grid{grid-template-columns:1fr}.admin-page{padding:12px}.data-table{min-width:560px}}
 @media(max-width:430px){.inventory-card-grid,#packs-grid{grid-template-columns:1fr 1fr}.wallet-stats-grid,.account-stats-grid{grid-template-columns:1fr 1fr!important}.page-header .row{width:100%;flex-wrap:wrap}.btn{white-space:normal}}
 
 /* Auth/admin aliases retained only for functional markup. */
@@ -243,10 +243,10 @@ body.admin-page{overflow:auto}.admin-page .top{width:min(1180px,calc(100% - 28px
   text-align:center !important;
 }
 @media (max-width: 640px){
-  .user-listing{padding:14px !important}
+  .user-listing{padding:8px !important}
 }
 
-/* canonical v3.3 shell — identical on every authenticated page */
+/* canonical v3.4 shell — identical on every authenticated page */
 .sidebar{
   line-height:21px;
 }
@@ -385,3 +385,215 @@ body.admin-page{overflow:auto}.admin-page .top{width:min(1180px,calc(100% - 28px
 .admin-market-summary span{color:var(--text3);font:700 10px var(--font-mono)}
 .admin-market-actions{display:flex;gap:8px;align-items:center;margin-top:14px}.admin-market-actions .spacer{flex:1}
 @media(max-width:780px){.admin-page .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-market-toolbar{grid-template-columns:1fr}.admin-market-summary{align-items:flex-start;flex-direction:column}}
+
+/* v3.4 account status badge inside profile hero */
+.account-profile-hero{position:relative}
+.account-profile-status-badge{position:absolute!important;top:16px;right:16px;margin:0!important;z-index:4;max-width:none!important}
+.account-profile-status-badge[hidden]{display:none!important}
+.account-profile-hero #a-name{padding-right:108px}
+@media (max-width:560px){
+  .account-profile-status-badge{top:12px;right:12px}
+  .account-profile-hero #a-name{padding-right:92px;font-size:19px!important}
+}
+
+/* v3.4 admin notification management */
+.admin-notif-preview{margin-top:4px;max-width:420px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;color:var(--text3)}
+.admin-notif-global{display:inline-flex;padding:3px 7px;border-radius:999px;border:1px solid var(--border2);font-size:9px;font-weight:800;letter-spacing:.08em;color:var(--cyan)}
+.admin-notif-status{display:inline-flex;padding:4px 7px;border-radius:7px;border:1px solid currentColor;font-size:9px;font-weight:800;letter-spacing:.06em}
+.admin-notif-status.active{color:var(--up);background:color-mix(in srgb,var(--up) 10%,transparent)}
+.admin-notif-status.inactive{color:var(--text3);background:var(--surface2)}
+.admin-notif-status.expired{color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.admin-notif-claims{margin-top:4px;font-size:9px;color:var(--text3)}
+.admin-notification-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface2);font-size:11px}
+.admin-notification-summary span{color:var(--text3);font-family:var(--font-mono)}
+.admin-notification-reward-note{min-height:0;margin:8px 0 2px;padding:0 2px;font-size:10px;color:var(--gold);line-height:1.5}
+
+
+/* v3.4 market mobile density — multiple offers per row without changing canonical v2 card geometry */
+@media (max-width:760px){
+  #market-users .user-market-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:9px!important;
+    align-items:stretch!important;
+  }
+  #market-users .user-listing{
+    min-width:0!important;
+    width:100%!important;
+    height:100%!important;
+    padding:8px!important;
+    gap:7px!important;
+    border-radius:14px!important;
+  }
+  #market-users .user-listing-card{
+    width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+  }
+  #market-users .user-listing-card .sc-card-slot{
+    --sc-scale:.54!important;
+  }
+  #market-users .user-listing-meta{
+    padding-top:7px!important;
+  }
+  #market-users .user-listing-user{
+    font-size:9px!important;
+    line-height:1.25!important;
+  }
+  #market-users .user-listing-price{
+    margin-top:5px!important;
+    font-size:12px!important;
+    line-height:1.2!important;
+  }
+  #market-users .status-ribbon{
+    top:-7px!important;
+    padding:4px 7px!important;
+    font-size:8px!important;
+  }
+
+  #market-bot .data-table tbody{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:9px!important;
+  }
+  #market-bot .data-table tr{
+    min-width:0!important;
+    padding:9px!important;
+    gap:6px 8px!important;
+  }
+  #market-bot .data-table td:nth-child(1){
+    padding-bottom:7px!important;
+  }
+  #market-bot .data-table td:nth-child(1)>div>span:first-child{
+    font-size:18px!important;
+  }
+  #market-bot .data-table td:nth-child(1)>div>span:last-child{
+    font-size:11px!important;
+  }
+  #market-bot .data-table td:nth-child(n+2)::before{
+    font-size:7px!important;
+  }
+  #market-bot .data-table td:nth-child(3) span,
+  #market-bot .data-table td:nth-child(4) span,
+  #market-bot .data-table td:nth-child(5){
+    font-size:10px!important;
+  }
+}
+
+@media (max-width:520px){
+  #market-users .user-market-grid,
+  #market-bot .data-table tbody{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+  #market-users .user-listing-card .sc-card-slot{
+    --sc-scale:.58!important;
+  }
+}
+
+@media (max-width:350px){
+  #market-users .user-market-grid,
+  #market-bot .data-table tbody{
+    gap:6px!important;
+  }
+  #market-users .user-listing{
+    padding:6px!important;
+    gap:5px!important;
+    border-radius:12px!important;
+  }
+  #market-users .user-listing-card .sc-card-slot{
+    --sc-scale:.52!important;
+  }
+  #market-users .user-listing-user{
+    font-size:8px!important;
+  }
+  #market-users .user-listing-price{
+    font-size:11px!important;
+  }
+  #market-bot .data-table tr{
+    padding:7px!important;
+  }
+}
+
+
+/* v3.4 User Market SOLD/CANCELED visibility fix — keep original slight protrusion */
+#market-users .user-market-grid{
+  overflow:visible!important;
+}
+#market-users .user-listing{
+  position:relative!important;
+  overflow:visible!important;
+  z-index:1;
+}
+#market-users .user-listing:hover,
+#market-users .user-listing:focus-within{
+  z-index:5;
+}
+#market-users .status-ribbon{
+  top:-9px!important;
+  left:50%!important;
+  transform:translateX(-50%) rotate(-2deg)!important;
+  z-index:60!important;
+  pointer-events:none;
+  white-space:nowrap;
+}
+
+
+/* v3.4 mobile User Market — larger card, taller listing without widening columns */
+@media (max-width:760px){
+  #market-users .user-listing{
+    min-height:210px!important;
+    justify-content:flex-start!important;
+  }
+  #market-users .user-listing-card{
+    padding-top:4px!important;
+  }
+  #market-users .user-listing-card .sc-card-slot{
+    --sc-scale:.66!important;
+  }
+  #market-users .user-listing-meta{
+    margin-top:auto!important;
+  }
+}
+
+@media (max-width:520px){
+  #market-users .user-listing{
+    min-height:228px!important;
+  }
+  #market-users .user-listing-card .sc-card-slot{
+    --sc-scale:.72!important;
+  }
+}
+
+@media (max-width:350px){
+  #market-users .user-listing{
+    min-height:205px!important;
+  }
+  #market-users .user-listing-card .sc-card-slot{
+    --sc-scale:.64!important;
+  }
+}
+
+/* v3.4 mobile User Market — extra-large card while keeping the same column widths */
+@media (max-width:760px){
+  #market-users .user-listing{
+    min-height:228px!important;
+  }
+  #market-users .user-listing-card .sc-card-slot{
+    --sc-scale:.72!important;
+  }
+}
+@media (max-width:520px){
+  #market-users .user-listing{
+    min-height:252px!important;
+  }
+  #market-users .user-listing-card .sc-card-slot{
+    --sc-scale:.82!important;
+  }
+}
+@media (max-width:350px){
+  #market-users .user-listing{
+    min-height:225px!important;
+  }
+  #market-users .user-listing-card .sc-card-slot{
+    --sc-scale:.72!important;
+  }
+}

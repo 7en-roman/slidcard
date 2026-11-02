@@ -10,7 +10,7 @@
 <link href="card-system.css" rel="stylesheet"/>
 </head><body>
 <div class="app">
-<nav class="sidebar" id="app-sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v3.3</div></div><div class="sidebar-nav"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" id="sb-user" onclick="location.href='account.html'"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
+<nav class="sidebar" id="app-sidebar"><div class="sidebar-brand"><div class="brand-name">Slid<span>Card</span></div><div class="brand-ver">v3.4</div></div><div class="sidebar-nav"><div class="sidebar-section-label">ОГЛЯД</div><a class="nav-item" href="index_app.html"><div class="nav-icon">🏠</div><span class="nav-label">Головна</span></a><a class="nav-item" href="packs.html"><div class="nav-icon">📦</div><span class="nav-label">Паки</span></a><a class="nav-item" href="inventory.html"><div class="nav-icon">🎒</div><span class="nav-label">Інвентар</span></a><div class="sidebar-section-label">ТОРГІВЛЯ</div><a class="nav-item" href="market.html"><div class="nav-icon">📈</div><span class="nav-label">Ринок</span></a><a class="nav-item" href="trades.html"><div class="nav-icon">🔄</div><span class="nav-label">Обміни</span></a><a class="nav-item" href="transactions.html"><div class="nav-icon">🤝</div><span class="nav-label">Продаж карток</span></a><a class="nav-item" href="user_exchanges.html"><div class="nav-icon">🔐</div><span class="nav-label">Приватні обміни</span></a><a class="nav-item" href="news.html"><div class="nav-icon">📰</div><span class="nav-label">Новини</span></a><div class="sidebar-section-label">ФІНАНСИ</div><a class="nav-item" href="wallet.html"><div class="nav-icon">💰</div><span class="nav-label">Гаманець</span></a></div><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-user" id="sb-user" onclick="location.href='account.html'"><div class="user-av" id="sb-av">SC</div><div class="user-info"><div class="user-name" id="sb-name">Гравець</div><div class="user-id" id="sb-id">—</div></div></div></div></nav>
 <div class="main-wrap">
 <div class="ticker-bar"><div class="ticker-track" id="ticker-track"></div></div><header class="topbar"><button aria-controls="app-sidebar" aria-expanded="false" aria-label="Відкрити меню" class="mobile-nav-toggle" type="button">☰</button><div class="topbar-title">Акаунт</div><div class="topbar-spacer"></div><div class="topbar-tools"><button id="v3-bell" class="v3-bell" type="button" aria-label="Відкрити сповіщення" title="Сповіщення">🔔<span class="v3-bell-count" id="v3-bell-count" style="display:none" aria-hidden="true"></span></button><div class="balance-chip"><div class="balance-icon">S$</div><span class="balance-amount" id="tb-coins">S$0.00</span></div><div class="live-badge"><div class="live-dot"></div>LIVE</div><div class="tb-clock mono" id="tb-clock">00:00:00</div></div></header>
 <div class="main-content">
@@ -19,8 +19,9 @@
 <button class="btn btn-ghost btn-sm" onclick="openModal('modal-settings')" type="button">⚙️ Налаштування</button>
 </div>
 <!-- Profile hero -->
-<div style="background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border2);border-radius:var(--r-2xl);padding:24px;margin-bottom:16px">
-<div style="display:flex;align-items:center;gap:20px;margin-bottom:20px">
+<div class="account-profile-hero" style="background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border2);border-radius:var(--r-2xl);padding:24px;margin-bottom:16px">
+<div id="account-profile-status-badge" class="account-status-badge account-profile-status-badge" hidden></div>
+<div class="account-profile-row" style="display:flex;align-items:center;gap:20px;margin-bottom:20px">
 <div id="a-av" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--cyan2),#6B6BFF);display:flex;align-items:center;justify-content:center;font-family:var(--font-disp);font-size:24px;font-weight:800;color:#fff;flex-shrink:0">SC</div>
 <div style="flex:1;min-width:0">
 <div id="a-name" style="font-family:var(--font-disp);font-size:22px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Гравець</div>
@@ -105,10 +106,10 @@
 </div>
 <div id="toast-root"></div>
 <script>
-// SlidCard v3.3 — shared.js
+// SlidCard v3.4 — shared.js
 
 const CX = {
-  VERSION:    "3.3",
+  VERSION:    "3.4",
   NAME:       "SlidCard",
   ACC_KEY:    "slidcard_v11_acc",
   SAVE_KEY:   "slidcard_v11_save",

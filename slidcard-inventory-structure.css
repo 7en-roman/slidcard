@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   SlidCard v3.3 — Premium Dark Design System
+   SlidCard v3.4 — Premium Dark Design System
    Palette: Deep black + Electric cyan accent
    ═══════════════════════════════════════════════════════════ */
 
@@ -1053,7 +1053,7 @@ input,select,textarea,button{max-width:100%}
 .tx-card-preview.rarity-legendary .tx-card-name,.tx-card-preview.rarity-legendary .tx-rarity,.tx-card-preview.rarity-legendary .tx-year{color:var(--c-legendary)!important}
 .tx-card-preview.rarity-ultimate .tx-card-name,.tx-card-preview.rarity-ultimate .tx-rarity,.tx-card-preview.rarity-ultimate .tx-year{color:var(--c-ultimate)!important}
 
-/* v3.3 mobile sidebar reliability */
+/* v3.4 mobile sidebar reliability */
 @media (max-width:760px){
   .sidebar{overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
   .sidebar>div:nth-child(2){flex:0 0 auto!important;}

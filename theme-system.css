@@ -5,7 +5,7 @@ html[data-theme="light"]{--bg:#F4F7FC;--bg2:#E9EFF8;--surface:#FFFFFF;--surface2
 html,body{background:var(--bg)!important;color:var(--text)!important}.sidebar,.topbar{background:var(--bg2)!important}.ticker-bar{background:var(--surface2)!important}.card,.modal,.modal-content,.data-table-wrap{background-color:var(--surface)!important}.input,select,textarea{background:var(--surface2)!important;color:var(--text)!important;border-color:var(--border2)!important}.data-table th{background:var(--surface2)!important;color:var(--text3)!important}.data-table td{color:var(--text2)}.nav-item{color:var(--text2)}.nav-item.active{color:var(--text)!important}.toast{background:var(--surface3)!important;color:var(--text)!important;opacity:1!important}
 
 
-/* v3.3: selected theme must win over the modern shell defaults. */
+/* v3.4: selected theme must win over the modern shell defaults. */
 html[data-theme="dark"] .app,
 html[data-theme="midnight"] .app,
 html[data-theme="light"] .app{background:radial-gradient(circle at 74% -18%,var(--cyan-dim),transparent 30%),var(--bg)!important}
