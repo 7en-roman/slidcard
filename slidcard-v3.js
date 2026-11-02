@@ -348,7 +348,8 @@ function bytesToB64(bytes){let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=Stri
 function b64ToBytes(v){const s=atob(v),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a;}
 async function keyForFile(password,salt,iterations){const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
 async function importV3File(file,username,password){
-  if(!file)throw new Error('Оберіть файл акаунта .slidcard');
+  if(!file)throw new Error('Оберіть файл резервної копії SlidCard');
+  if(Number(file.size||0)>5*1024*1024)throw new Error('Файл завеликий. Максимальний розмір резервної копії — 5 MB');
   let env;try{env=JSON.parse(await file.text());}catch(_){throw new Error('Файл акаунта пошкоджений');}
   if(env?.format!=='SlidCardAccountFile'||![2,3].includes(Number(env.version)))throw new Error('Це не файл акаунта SlidCard');
   const key=await keyForFile(password,b64ToBytes(env.salt),Number(env.iterations)||150000);

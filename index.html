@@ -25,9 +25,9 @@
 <div id="frm-login">
 <div class="input-group">
 <label class="input-label">Файл акаунта <span style="opacity:.55;font-weight:500">(необов’язково)</span></label>
-<input accept=".slidcard,application/json,application/x-slidcard+json" class="auth-file-input" id="l-file" type="file"/>
+<input class="auth-file-input" id="l-file" type="file"/>
 <label class="auth-file-picker" for="l-file"><span class="auth-file-button">Обрати файл</span><span class="auth-file-name" id="l-file-name">Файл не обрано</span></label>
-<div style="font-size:10px;color:var(--text3);margin-top:6px">На цьому пристрої файл не потрібен. <b>.slidcard</b> використовується лише для відновлення або перенесення акаунта.</div>
+<div style="font-size:10px;color:var(--text3);margin-top:6px">На цьому пристрої файл не потрібен. Можна обрати будь-який файл — SlidCard сам перевірить, чи це правильна резервна копія. <b>.slidcard</b> залишається рекомендованим форматом.</div>
 </div>
 <div class="input-group"><label class="input-label">Ім'я користувача</label><input autocomplete="username" class="input" id="l-user" placeholder="username" type="text"/></div>
 <div class="input-group"><label class="input-label">Пароль</label><input autocomplete="current-password" class="input" id="l-pass" placeholder="••••••••" type="password"/></div>
@@ -690,7 +690,8 @@ async function deriveAccountFileKey(password,salt,iterations){
   );
 }
 async function importAccountFile(file,username,password){
-  if(!file)throw new Error("Оберіть файл акаунта .slidcard");
+  if(!file)throw new Error("Оберіть файл резервної копії SlidCard");
+  if(Number(file.size||0)>5*1024*1024)throw new Error("Файл завеликий. Максимальний розмір резервної копії — 5 MB");
   if(!username)throw new Error("Введіть ім'я користувача");
   if(!password)throw new Error("Введіть пароль");
   if(!window.crypto?.subtle)throw new Error("Цей браузер не підтримує захищений імпорт");
